@@ -28,12 +28,26 @@ Future<void> writeLibrary({
   );
   final generated = library.accept(emitter).toString();
   final formatted = _formatterFor(config).format(generated);
+  final hasBody = formatted.trim().isNotEmpty;
 
-  return buildStep.writeAsString(
-    outputId,
-    "// GENERATED CODE - DO NOT MODIFY BY HAND\n"
-    "// ignore_for_file: type=lint\n\n"
-    "${config.format ? "" : "// dart format off\n\n"}"
-    "$formatted",
-  );
+  final buffer = StringBuffer()
+    ..writeln("// GENERATED CODE - DO NOT MODIFY BY HAND")
+    ..writeln("// ignore_for_file: type=lint");
+
+  if (!config.format) {
+    buffer
+      ..writeln()
+      ..writeln("// dart format off");
+    if (hasBody) {
+      buffer.writeln();
+    }
+  } else if (hasBody) {
+    buffer.writeln();
+  }
+
+  if (hasBody) {
+    buffer.write(formatted);
+  }
+
+  return buildStep.writeAsString(outputId, buffer.toString());
 }

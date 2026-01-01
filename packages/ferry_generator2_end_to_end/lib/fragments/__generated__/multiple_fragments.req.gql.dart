@@ -4,10 +4,10 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:ferry_exec/ferry_exec.dart' as _i1;
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/multiple_fragments.ast.gql.dart'
-    as _i4;
+    as _i5;
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/multiple_fragments.data.gql.dart'
     as _i2;
-import 'package:gql/ast.dart' as _i5;
+import 'package:gql/ast.dart' as _i4;
 import 'package:gql_exec/gql_exec.dart' as _i3;
 
 class GHeroWith2FragmentsReq
@@ -47,8 +47,14 @@ class GHeroWith2FragmentsReq
 
   final _i3.Context? context;
 
+  static final _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
+    _i5.heroName,
+    _i5.heroId,
+    _i5.HeroWith2Fragments,
+  ]);
+
   static final _i3.Operation _operation = _i3.Operation(
-    document: _i4.document,
+    document: _document,
     operationName: 'HeroWith2Fragments',
   );
 
@@ -84,20 +90,21 @@ class GHeroWith2FragmentsReq
 
 class GheroNameReq implements _i1.FragmentRequest<_i2.GheroNameData, Null> {
   GheroNameReq({
-    _i5.DocumentNode? document,
+    _i4.DocumentNode? document,
     this.fragmentName = 'heroName',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
   final Null vars = null;
 
-  final _i5.DocumentNode document;
+  final _i4.DocumentNode document;
 
   final String? fragmentName;
 
   final Map<String, dynamic> idFields;
 
-  static final _i5.DocumentNode _document = _i4.document;
+  static final _i4.DocumentNode _document =
+      _i4.DocumentNode(definitions: [_i5.heroName]);
 
   _i2.GheroNameData? parseData(Map<String, dynamic> json) =>
       _i2.GheroNameData.fromJson(json);
@@ -109,20 +116,21 @@ class GheroNameReq implements _i1.FragmentRequest<_i2.GheroNameData, Null> {
 
 class GheroIdReq implements _i1.FragmentRequest<_i2.GheroIdData, Null> {
   GheroIdReq({
-    _i5.DocumentNode? document,
+    _i4.DocumentNode? document,
     this.fragmentName = 'heroId',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
   final Null vars = null;
 
-  final _i5.DocumentNode document;
+  final _i4.DocumentNode document;
 
   final String? fragmentName;
 
   final Map<String, dynamic> idFields;
 
-  static final _i5.DocumentNode _document = _i4.document;
+  static final _i4.DocumentNode _document =
+      _i4.DocumentNode(definitions: [_i5.heroId]);
 
   _i2.GheroIdData? parseData(Map<String, dynamic> json) =>
       _i2.GheroIdData.fromJson(json);

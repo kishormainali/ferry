@@ -4,12 +4,12 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:ferry_exec/ferry_exec.dart' as _i1;
 import 'package:ferry_generator2_end_to_end/interfaces/__generated__/hero_for_episode.ast.gql.dart'
-    as _i5;
+    as _i6;
 import 'package:ferry_generator2_end_to_end/interfaces/__generated__/hero_for_episode.data.gql.dart'
     as _i2;
 import 'package:ferry_generator2_end_to_end/interfaces/__generated__/hero_for_episode.var.gql.dart'
     as _i3;
-import 'package:gql/ast.dart' as _i6;
+import 'package:gql/ast.dart' as _i5;
 import 'package:gql_exec/gql_exec.dart' as _i4;
 
 class GHeroForEpisodeReq
@@ -51,8 +51,13 @@ class GHeroForEpisodeReq
 
   final _i4.Context? context;
 
+  static final _i5.DocumentNode _document = _i5.DocumentNode(definitions: [
+    _i6.DroidFragment,
+    _i6.HeroForEpisode,
+  ]);
+
   static final _i4.Operation _operation = _i4.Operation(
-    document: _i5.document,
+    document: _document,
     operationName: 'HeroForEpisode',
   );
 
@@ -90,20 +95,21 @@ class GHeroForEpisodeReq
 class GDroidFragmentReq
     implements _i1.FragmentRequest<_i2.GDroidFragmentData, Null> {
   GDroidFragmentReq({
-    _i6.DocumentNode? document,
+    _i5.DocumentNode? document,
     this.fragmentName = 'DroidFragment',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
   final Null vars = null;
 
-  final _i6.DocumentNode document;
+  final _i5.DocumentNode document;
 
   final String? fragmentName;
 
   final Map<String, dynamic> idFields;
 
-  static final _i6.DocumentNode _document = _i5.document;
+  static final _i5.DocumentNode _document =
+      _i5.DocumentNode(definitions: [_i6.DroidFragment]);
 
   _i2.GDroidFragmentData? parseData(Map<String, dynamic> json) =>
       _i2.GDroidFragmentData.fromJson(json);

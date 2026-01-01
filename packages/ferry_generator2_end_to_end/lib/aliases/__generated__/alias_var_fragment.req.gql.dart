@@ -4,12 +4,12 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:ferry_exec/ferry_exec.dart' as _i1;
 import 'package:ferry_generator2_end_to_end/aliases/__generated__/alias_var_fragment.ast.gql.dart'
-    as _i5;
+    as _i6;
 import 'package:ferry_generator2_end_to_end/aliases/__generated__/alias_var_fragment.data.gql.dart'
     as _i2;
 import 'package:ferry_generator2_end_to_end/aliases/__generated__/alias_var_fragment.var.gql.dart'
     as _i3;
-import 'package:gql/ast.dart' as _i6;
+import 'package:gql/ast.dart' as _i5;
 import 'package:gql_exec/gql_exec.dart' as _i4;
 
 class GPostsReq
@@ -50,8 +50,13 @@ class GPostsReq
 
   final _i4.Context? context;
 
+  static final _i5.DocumentNode _document = _i5.DocumentNode(definitions: [
+    _i6.PostFragment,
+    _i6.Posts,
+  ]);
+
   static final _i4.Operation _operation = _i4.Operation(
-    document: _i5.document,
+    document: _document,
     operationName: 'Posts',
   );
 
@@ -90,20 +95,21 @@ class GPostFragmentReq
         _i1.FragmentRequest<_i2.GPostFragmentData, _i3.GPostFragmentVars> {
   GPostFragmentReq({
     required this.vars,
-    _i6.DocumentNode? document,
+    _i5.DocumentNode? document,
     this.fragmentName = 'PostFragment',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
   final _i3.GPostFragmentVars vars;
 
-  final _i6.DocumentNode document;
+  final _i5.DocumentNode document;
 
   final String? fragmentName;
 
   final Map<String, dynamic> idFields;
 
-  static final _i6.DocumentNode _document = _i5.document;
+  static final _i5.DocumentNode _document =
+      _i5.DocumentNode(definitions: [_i6.PostFragment]);
 
   _i2.GPostFragmentData? parseData(Map<String, dynamic> json) =>
       _i2.GPostFragmentData.fromJson(json);

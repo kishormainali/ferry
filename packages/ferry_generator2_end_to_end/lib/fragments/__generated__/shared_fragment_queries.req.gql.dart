@@ -4,10 +4,10 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:ferry_exec/ferry_exec.dart' as _i1;
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/shared_fragment_queries.ast.gql.dart'
-    as _i4;
+    as _i5;
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/shared_fragment_queries.data.gql.dart'
     as _i2;
-import 'package:gql/ast.dart' as _i5;
+import 'package:gql/ast.dart' as _i4;
 import 'package:gql_exec/gql_exec.dart' as _i3;
 
 class GSharedBooksAReq
@@ -47,8 +47,14 @@ class GSharedBooksAReq
 
   final _i3.Context? context;
 
+  static final _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
+    _i5.SharedAuthorFragment,
+    _i5.SharedBookFragment,
+    _i5.SharedBooksA,
+  ]);
+
   static final _i3.Operation _operation = _i3.Operation(
-    document: _i4.document,
+    document: _document,
     operationName: 'SharedBooksA',
   );
 
@@ -118,8 +124,14 @@ class GSharedBooksBReq
 
   final _i3.Context? context;
 
+  static final _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
+    _i5.SharedAuthorFragment,
+    _i5.SharedBookFragment,
+    _i5.SharedBooksB,
+  ]);
+
   static final _i3.Operation _operation = _i3.Operation(
-    document: _i4.document,
+    document: _document,
     operationName: 'SharedBooksB',
   );
 
@@ -155,20 +167,21 @@ class GSharedBooksBReq
 class GSharedAuthorFragmentReq
     implements _i1.FragmentRequest<_i2.GSharedAuthorFragmentData, Null> {
   GSharedAuthorFragmentReq({
-    _i5.DocumentNode? document,
+    _i4.DocumentNode? document,
     this.fragmentName = 'SharedAuthorFragment',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
   final Null vars = null;
 
-  final _i5.DocumentNode document;
+  final _i4.DocumentNode document;
 
   final String? fragmentName;
 
   final Map<String, dynamic> idFields;
 
-  static final _i5.DocumentNode _document = _i4.document;
+  static final _i4.DocumentNode _document =
+      _i4.DocumentNode(definitions: [_i5.SharedAuthorFragment]);
 
   _i2.GSharedAuthorFragmentData? parseData(Map<String, dynamic> json) =>
       _i2.GSharedAuthorFragmentData.fromJson(json);
@@ -182,20 +195,23 @@ class GSharedAuthorFragmentReq
 class GSharedBookFragmentReq
     implements _i1.FragmentRequest<_i2.GSharedBookFragmentData, Null> {
   GSharedBookFragmentReq({
-    _i5.DocumentNode? document,
+    _i4.DocumentNode? document,
     this.fragmentName = 'SharedBookFragment',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
   final Null vars = null;
 
-  final _i5.DocumentNode document;
+  final _i4.DocumentNode document;
 
   final String? fragmentName;
 
   final Map<String, dynamic> idFields;
 
-  static final _i5.DocumentNode _document = _i4.document;
+  static final _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
+    _i5.SharedAuthorFragment,
+    _i5.SharedBookFragment,
+  ]);
 
   _i2.GSharedBookFragmentData? parseData(Map<String, dynamic> json) =>
       _i2.GSharedBookFragmentData.fromJson(json);

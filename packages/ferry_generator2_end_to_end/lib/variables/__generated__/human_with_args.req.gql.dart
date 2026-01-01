@@ -4,11 +4,12 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:ferry_exec/ferry_exec.dart' as _i1;
 import 'package:ferry_generator2_end_to_end/variables/__generated__/human_with_args.ast.gql.dart'
-    as _i5;
+    as _i6;
 import 'package:ferry_generator2_end_to_end/variables/__generated__/human_with_args.data.gql.dart'
     as _i2;
 import 'package:ferry_generator2_end_to_end/variables/__generated__/human_with_args.var.gql.dart'
     as _i3;
+import 'package:gql/ast.dart' as _i5;
 import 'package:gql_exec/gql_exec.dart' as _i4;
 
 class GHumanWithArgsReq
@@ -50,8 +51,11 @@ class GHumanWithArgsReq
 
   final _i4.Context? context;
 
+  static final _i5.DocumentNode _document =
+      _i5.DocumentNode(definitions: [_i6.HumanWithArgs]);
+
   static final _i4.Operation _operation = _i4.Operation(
-    document: _i5.document,
+    document: _document,
     operationName: 'HumanWithArgs',
   );
 

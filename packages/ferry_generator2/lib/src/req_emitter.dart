@@ -3,12 +3,20 @@ import "package:gql/ast.dart";
 
 import "config.dart";
 import "naming.dart";
+import "selection_resolver.dart";
 
 class ReqEmitter {
   final BuilderConfig config;
   final Set<String> fragmentsWithVars;
+  final DocumentIndex documentIndex;
+  final Map<String, String> fragmentSourceUrls;
 
-  ReqEmitter({required this.config, required this.fragmentsWithVars});
+  ReqEmitter({
+    required this.config,
+    required this.fragmentsWithVars,
+    required this.documentIndex,
+    required this.fragmentSourceUrls,
+  });
 
   Library buildLibrary({
     required Iterable<OperationDefinitionNode> ownedOperations,
@@ -49,6 +57,8 @@ class ReqEmitter {
         ..types.addAll([dataTypeRef, varsTypeRef]),
     );
     final nullableDataType = _nullableReference(dataTypeRef);
+
+    final documentExpr = _documentForOperation(operation);
 
     final fields = <Field>[
       Field(
@@ -149,6 +159,14 @@ class ReqEmitter {
       ),
       Field(
         (b) => b
+          ..name = "_document"
+          ..static = true
+          ..modifier = FieldModifier.final$
+          ..type = refer("DocumentNode", "package:gql/ast.dart")
+          ..assignment = documentExpr.code,
+      ),
+      Field(
+        (b) => b
           ..name = "_operation"
           ..static = true
           ..modifier = FieldModifier.final$
@@ -159,7 +177,7 @@ class ReqEmitter {
           ).call(
             [],
             {
-              "document": Reference("document", "#ast"),
+              "document": refer("_document"),
               "operationName": literalString(operationName),
             },
           ).code,
@@ -374,6 +392,8 @@ ${hasVars ? "  vars: vars," : ""}
     );
     final nullableDataType = _nullableReference(dataTypeRef);
 
+    final documentExpr = _documentForFragment(fragment);
+
     return Class(
       (b) => b
         ..name = className
@@ -421,7 +441,7 @@ ${hasVars ? "  vars: vars," : ""}
               ..static = true
               ..modifier = FieldModifier.final$
               ..type = refer("DocumentNode", "package:gql/ast.dart")
-              ..assignment = Reference("document", "#ast").code,
+              ..assignment = documentExpr.code,
           ),
         ])
         ..constructors.add(
@@ -505,6 +525,106 @@ ${hasVars ? "  vars: vars," : ""}
           ),
         ]),
     );
+  }
+
+  Expression _documentForOperation(OperationDefinitionNode operation) {
+    final name = operation.name?.value;
+    if (name == null) {
+      throw StateError("Operations must be named");
+    }
+    final fragmentNames = _collectFragmentSpreads(operation.selectionSet);
+    final definitionRefs = _definitionRefsForOperation(
+      operationName: name,
+      fragmentNames: fragmentNames,
+    );
+    return _documentExpression(definitionRefs);
+  }
+
+  Expression _documentForFragment(FragmentDefinitionNode fragment) {
+    final fragmentNames = _collectFragmentSpreads(fragment.selectionSet)
+      ..add(fragment.name.value);
+    final definitionRefs = _definitionRefsForOperation(
+      operationName: null,
+      fragmentNames: fragmentNames,
+    );
+    return _documentExpression(definitionRefs);
+  }
+
+  Expression _documentExpression(List<Expression> definitionRefs) =>
+      refer("DocumentNode", "package:gql/ast.dart").call(
+        [],
+        {
+          "definitions": literalList(definitionRefs),
+        },
+      );
+
+  List<Expression> _definitionRefsForOperation({
+    required String? operationName,
+    required Set<String> fragmentNames,
+  }) {
+    final refs = <Expression>[];
+    var foundOperation = false;
+    for (final definition in documentIndex.document.definitions) {
+      if (definition is OperationDefinitionNode) {
+        final name = definition.name?.value;
+        if (name == null || name != operationName) {
+          continue;
+        }
+        refs.add(_definitionRef(name));
+        foundOperation = true;
+      } else if (definition is FragmentDefinitionNode) {
+        final name = definition.name.value;
+        if (!fragmentNames.contains(name)) {
+          continue;
+        }
+        refs.add(_definitionRef(name, sourceUrl: fragmentSourceUrls[name]));
+      }
+    }
+
+    if (operationName != null && !foundOperation) {
+      throw StateError("Missing operation definition for $operationName");
+    }
+    if (refs.isEmpty) {
+      throw StateError("No definitions found for request document");
+    }
+    return refs;
+  }
+
+  Expression _definitionRef(
+    String definitionName, {
+    String? sourceUrl,
+  }) {
+    final url = sourceUrl == null ? "#ast" : "$sourceUrl#ast";
+    return Reference(identifier(definitionName), url);
+  }
+
+  Set<String> _collectFragmentSpreads(SelectionSetNode selectionSet) {
+    final fragments = <String>{};
+    final visited = <String>{};
+
+    void visit(SelectionSetNode set) {
+      for (final selection in set.selections) {
+        if (selection is FieldNode) {
+          final nested = selection.selectionSet;
+          if (nested != null) {
+            visit(nested);
+          }
+        } else if (selection is InlineFragmentNode) {
+          visit(selection.selectionSet);
+        } else if (selection is FragmentSpreadNode) {
+          final name = selection.name.value;
+          fragments.add(name);
+          if (!visited.add(name)) {
+            continue;
+          }
+          final fragment = documentIndex.getFragment(name);
+          visit(fragment.selectionSet);
+        }
+      }
+    }
+
+    visit(selectionSet);
+    return fragments;
   }
 
   Reference _nullableReference(Reference reference) {

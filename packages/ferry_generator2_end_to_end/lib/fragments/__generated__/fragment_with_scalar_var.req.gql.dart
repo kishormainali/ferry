@@ -4,12 +4,12 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:ferry_exec/ferry_exec.dart' as _i1;
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/fragment_with_scalar_var.ast.gql.dart'
-    as _i5;
+    as _i6;
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/fragment_with_scalar_var.data.gql.dart'
     as _i2;
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/fragment_with_scalar_var.var.gql.dart'
     as _i3;
-import 'package:gql/ast.dart' as _i6;
+import 'package:gql/ast.dart' as _i5;
 import 'package:gql_exec/gql_exec.dart' as _i4;
 
 class GPostsWithFixedVariableReq
@@ -52,8 +52,13 @@ class GPostsWithFixedVariableReq
 
   final _i4.Context? context;
 
+  static final _i5.DocumentNode _document = _i5.DocumentNode(definitions: [
+    _i6.PostFragmentForUser1,
+    _i6.PostsWithFixedVariable,
+  ]);
+
   static final _i4.Operation _operation = _i4.Operation(
-    document: _i5.document,
+    document: _document,
     operationName: 'PostsWithFixedVariable',
   );
 
@@ -92,20 +97,21 @@ class GPostsWithFixedVariableReq
 class GPostFragmentForUser1Req
     implements _i1.FragmentRequest<_i2.GPostFragmentForUser1Data, Null> {
   GPostFragmentForUser1Req({
-    _i6.DocumentNode? document,
+    _i5.DocumentNode? document,
     this.fragmentName = 'PostFragmentForUser1',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
   final Null vars = null;
 
-  final _i6.DocumentNode document;
+  final _i5.DocumentNode document;
 
   final String? fragmentName;
 
   final Map<String, dynamic> idFields;
 
-  static final _i6.DocumentNode _document = _i5.document;
+  static final _i5.DocumentNode _document =
+      _i5.DocumentNode(definitions: [_i6.PostFragmentForUser1]);
 
   _i2.GPostFragmentForUser1Data? parseData(Map<String, dynamic> json) =>
       _i2.GPostFragmentForUser1Data.fromJson(json);

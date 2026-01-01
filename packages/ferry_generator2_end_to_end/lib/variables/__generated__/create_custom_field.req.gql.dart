@@ -4,11 +4,12 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:ferry_exec/ferry_exec.dart' as _i1;
 import 'package:ferry_generator2_end_to_end/variables/__generated__/create_custom_field.ast.gql.dart'
-    as _i5;
+    as _i6;
 import 'package:ferry_generator2_end_to_end/variables/__generated__/create_custom_field.data.gql.dart'
     as _i2;
 import 'package:ferry_generator2_end_to_end/variables/__generated__/create_custom_field.var.gql.dart'
     as _i3;
+import 'package:gql/ast.dart' as _i5;
 import 'package:gql_exec/gql_exec.dart' as _i4;
 
 class GCreateCustomFieldReq
@@ -51,8 +52,11 @@ class GCreateCustomFieldReq
 
   final _i4.Context? context;
 
+  static final _i5.DocumentNode _document =
+      _i5.DocumentNode(definitions: [_i6.CreateCustomField]);
+
   static final _i4.Operation _operation = _i4.Operation(
-    document: _i5.document,
+    document: _document,
     operationName: 'CreateCustomField',
   );
 

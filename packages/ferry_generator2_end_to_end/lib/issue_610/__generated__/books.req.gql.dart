@@ -4,10 +4,10 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:ferry_exec/ferry_exec.dart' as _i1;
 import 'package:ferry_generator2_end_to_end/issue_610/__generated__/books.ast.gql.dart'
-    as _i4;
+    as _i5;
 import 'package:ferry_generator2_end_to_end/issue_610/__generated__/books.data.gql.dart'
     as _i2;
-import 'package:gql/ast.dart' as _i5;
+import 'package:gql/ast.dart' as _i4;
 import 'package:gql_exec/gql_exec.dart' as _i3;
 
 class GGetBooksReq implements _i1.OperationRequest<_i2.GGetBooksData, Null> {
@@ -46,8 +46,14 @@ class GGetBooksReq implements _i1.OperationRequest<_i2.GGetBooksData, Null> {
 
   final _i3.Context? context;
 
+  static final _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
+    _i5.AuthorFragment,
+    _i5.BookFragment,
+    _i5.GetBooks,
+  ]);
+
   static final _i3.Operation _operation = _i3.Operation(
-    document: _i4.document,
+    document: _document,
     operationName: 'GetBooks',
   );
 
@@ -83,20 +89,21 @@ class GGetBooksReq implements _i1.OperationRequest<_i2.GGetBooksData, Null> {
 class GAuthorFragmentReq
     implements _i1.FragmentRequest<_i2.GAuthorFragmentData, Null> {
   GAuthorFragmentReq({
-    _i5.DocumentNode? document,
+    _i4.DocumentNode? document,
     this.fragmentName = 'AuthorFragment',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
   final Null vars = null;
 
-  final _i5.DocumentNode document;
+  final _i4.DocumentNode document;
 
   final String? fragmentName;
 
   final Map<String, dynamic> idFields;
 
-  static final _i5.DocumentNode _document = _i4.document;
+  static final _i4.DocumentNode _document =
+      _i4.DocumentNode(definitions: [_i5.AuthorFragment]);
 
   _i2.GAuthorFragmentData? parseData(Map<String, dynamic> json) =>
       _i2.GAuthorFragmentData.fromJson(json);
@@ -110,20 +117,23 @@ class GAuthorFragmentReq
 class GBookFragmentReq
     implements _i1.FragmentRequest<_i2.GBookFragmentData, Null> {
   GBookFragmentReq({
-    _i5.DocumentNode? document,
+    _i4.DocumentNode? document,
     this.fragmentName = 'BookFragment',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
   final Null vars = null;
 
-  final _i5.DocumentNode document;
+  final _i4.DocumentNode document;
 
   final String? fragmentName;
 
   final Map<String, dynamic> idFields;
 
-  static final _i5.DocumentNode _document = _i4.document;
+  static final _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
+    _i5.AuthorFragment,
+    _i5.BookFragment,
+  ]);
 
   _i2.GBookFragmentData? parseData(Map<String, dynamic> json) =>
       _i2.GBookFragmentData.fromJson(json);

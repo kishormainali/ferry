@@ -4,12 +4,12 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:ferry_exec/ferry_exec.dart' as _i1;
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/hero_with_interface_subtyped_fragments.ast.gql.dart'
-    as _i5;
+    as _i6;
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/hero_with_interface_subtyped_fragments.data.gql.dart'
     as _i2;
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/hero_with_interface_subtyped_fragments.var.gql.dart'
     as _i3;
-import 'package:gql/ast.dart' as _i6;
+import 'package:gql/ast.dart' as _i5;
 import 'package:gql_exec/gql_exec.dart' as _i4;
 
 class GHeroWithInterfaceSubTypedFragmentsReq
@@ -52,8 +52,15 @@ class GHeroWithInterfaceSubTypedFragmentsReq
 
   final _i4.Context? context;
 
+  static final _i5.DocumentNode _document = _i5.DocumentNode(definitions: [
+    _i6.HeroWithInterfaceSubTypedFragments,
+    _i6.heroFieldsFragment,
+    _i6.humanFieldsFragment,
+    _i6.droidFieldsFragment,
+  ]);
+
   static final _i4.Operation _operation = _i4.Operation(
-    document: _i5.document,
+    document: _document,
     operationName: 'HeroWithInterfaceSubTypedFragments',
   );
 
@@ -94,20 +101,24 @@ class GHeroWithInterfaceSubTypedFragmentsReq
 class GheroFieldsFragmentReq
     implements _i1.FragmentRequest<_i2.GheroFieldsFragmentData, Null> {
   GheroFieldsFragmentReq({
-    _i6.DocumentNode? document,
+    _i5.DocumentNode? document,
     this.fragmentName = 'heroFieldsFragment',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
   final Null vars = null;
 
-  final _i6.DocumentNode document;
+  final _i5.DocumentNode document;
 
   final String? fragmentName;
 
   final Map<String, dynamic> idFields;
 
-  static final _i6.DocumentNode _document = _i5.document;
+  static final _i5.DocumentNode _document = _i5.DocumentNode(definitions: [
+    _i6.heroFieldsFragment,
+    _i6.humanFieldsFragment,
+    _i6.droidFieldsFragment,
+  ]);
 
   _i2.GheroFieldsFragmentData? parseData(Map<String, dynamic> json) =>
       _i2.GheroFieldsFragmentData.fromJson(json);
@@ -121,20 +132,23 @@ class GheroFieldsFragmentReq
 class GhumanFieldsFragmentReq
     implements _i1.FragmentRequest<_i2.GhumanFieldsFragmentData, Null> {
   GhumanFieldsFragmentReq({
-    _i6.DocumentNode? document,
+    _i5.DocumentNode? document,
     this.fragmentName = 'humanFieldsFragment',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
   final Null vars = null;
 
-  final _i6.DocumentNode document;
+  final _i5.DocumentNode document;
 
   final String? fragmentName;
 
   final Map<String, dynamic> idFields;
 
-  static final _i6.DocumentNode _document = _i5.document;
+  static final _i5.DocumentNode _document = _i5.DocumentNode(definitions: [
+    _i6.humanFieldsFragment,
+    _i6.droidFieldsFragment,
+  ]);
 
   _i2.GhumanFieldsFragmentData? parseData(Map<String, dynamic> json) =>
       _i2.GhumanFieldsFragmentData.fromJson(json);
@@ -148,20 +162,21 @@ class GhumanFieldsFragmentReq
 class GdroidFieldsFragmentReq
     implements _i1.FragmentRequest<_i2.GdroidFieldsFragmentData, Null> {
   GdroidFieldsFragmentReq({
-    _i6.DocumentNode? document,
+    _i5.DocumentNode? document,
     this.fragmentName = 'droidFieldsFragment',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
   final Null vars = null;
 
-  final _i6.DocumentNode document;
+  final _i5.DocumentNode document;
 
   final String? fragmentName;
 
   final Map<String, dynamic> idFields;
 
-  static final _i6.DocumentNode _document = _i5.document;
+  static final _i5.DocumentNode _document =
+      _i5.DocumentNode(definitions: [_i6.droidFieldsFragment]);
 
   _i2.GdroidFieldsFragmentData? parseData(Map<String, dynamic> json) =>
       _i2.GdroidFieldsFragmentData.fromJson(json);

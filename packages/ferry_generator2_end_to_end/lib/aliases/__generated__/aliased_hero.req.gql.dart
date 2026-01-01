@@ -4,9 +4,10 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:ferry_exec/ferry_exec.dart' as _i1;
 import 'package:ferry_generator2_end_to_end/aliases/__generated__/aliased_hero.ast.gql.dart'
-    as _i4;
+    as _i5;
 import 'package:ferry_generator2_end_to_end/aliases/__generated__/aliased_hero.data.gql.dart'
     as _i2;
+import 'package:gql/ast.dart' as _i4;
 import 'package:gql_exec/gql_exec.dart' as _i3;
 
 class GAliasedHeroReq
@@ -46,8 +47,11 @@ class GAliasedHeroReq
 
   final _i3.Context? context;
 
+  static final _i4.DocumentNode _document =
+      _i4.DocumentNode(definitions: [_i5.AliasedHero]);
+
   static final _i3.Operation _operation = _i3.Operation(
-    document: _i4.document,
+    document: _document,
     operationName: 'AliasedHero',
   );
 

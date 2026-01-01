@@ -170,6 +170,8 @@ class GraphqlBuilder implements Builder {
     final reqEmitter = ReqEmitter(
       config: config,
       fragmentsWithVars: fragmentsWithVars,
+      documentIndex: documentIndex,
+      fragmentSourceUrls: fragmentSourceUrls,
     );
 
     final sourceUrl = buildStep.inputId.uri.toString();

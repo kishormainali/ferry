@@ -28,6 +28,7 @@ class BuilderConfig {
   final bool generateCopyWith;
   final bool generateEquals;
   final bool generateHashCode;
+  final bool generateToString;
   final bool generateDocs;
 
   BuilderConfig(Map<String, dynamic> config)
@@ -48,8 +49,9 @@ class BuilderConfig {
         formatterLanguageVersion = _getFormatterLanguageVersion(config),
         outputs = _getOutputsConfig(config),
         generateCopyWith = _readBool(config["generate_copy_with"], false),
-        generateEquals = _readBool(config["generate_equals"], true),
-        generateHashCode = _readBool(config["generate_hash_code"], true),
+        generateEquals = _readBool(config["generate_equals"], false),
+        generateHashCode = _readBool(config["generate_hash_code"], false),
+        generateToString = _readBool(config["generate_to_string"], false),
         generateDocs = _readBool(config["generate_docs"], true);
 }
 

@@ -503,6 +503,22 @@ class DataEmitter {
     required List<FieldSpec> superFields,
     required bool usesSuperToJson,
   }) {
+    final methods = <Method>[
+      _buildToJsonMethod(fields, usesSuper: usesSuperToJson),
+    ];
+    if (config.generateCopyWith) {
+      methods.add(_buildCopyWithMethod(className, fields));
+    }
+    if (config.generateEquals) {
+      methods.add(_buildEqualsMethod(className, fields));
+    }
+    if (config.generateHashCode) {
+      methods.add(_buildHashCodeGetter(fields));
+    }
+    if (config.generateToString) {
+      methods.add(_buildToStringMethod(className, fields));
+    }
+
     return Class(
       (b) => b
         ..name = className
@@ -517,9 +533,7 @@ class DataEmitter {
           _buildConstructor(fields, extendsRef, superFields: superFields),
           _buildConcreteFromJson(className, fields),
         ])
-        ..methods.add(
-          _buildToJsonMethod(fields, usesSuper: usesSuperToJson),
-        ),
+        ..methods.addAll(methods),
     );
   }
 
@@ -642,6 +656,125 @@ class DataEmitter {
         ..name = "toJson"
         ..returns = _mapStringDynamicType()
         ..body = Block.of(statements),
+    );
+  }
+
+  Method _buildCopyWithMethod(String className, List<FieldSpec> fields) {
+    final parameters = <Parameter>[];
+    final args = <String, Expression>{};
+
+    for (final field in fields) {
+      final isNullable = _isNullableField(field);
+      final paramType =
+          isNullable ? field.typeRef : _nullableTypeReference(field.typeRef);
+      parameters.add(
+        Parameter(
+          (b) => b
+            ..name = field.propertyName
+            ..type = paramType
+            ..named = true,
+        ),
+      );
+
+      if (isNullable) {
+        final isSetName = _copyWithIsSetName(field.propertyName);
+        parameters.add(
+          Parameter(
+            (b) => b
+              ..name = isSetName
+              ..type = refer("bool")
+              ..named = true
+              ..defaultTo = const Code("false"),
+          ),
+        );
+        args[field.propertyName] = _conditionalExpression(
+          refer(isSetName),
+          refer(field.propertyName),
+          refer("this").property(field.propertyName),
+        );
+      } else {
+        args[field.propertyName] = refer(field.propertyName)
+            .ifNullThen(refer("this").property(field.propertyName));
+      }
+    }
+
+    final constructorCall = refer(className).call([], args);
+    return Method(
+      (b) => b
+        ..name = "copyWith"
+        ..returns = refer(className)
+        ..optionalParameters.addAll(parameters)
+        ..body = Block.of([constructorCall.returned.statement]),
+    );
+  }
+
+  Method _buildEqualsMethod(String className, List<FieldSpec> fields) {
+    final comparisons = fields
+        .map((field) => "${field.propertyName} == other.${field.propertyName}")
+        .join(" && ");
+    final body = fields.isEmpty
+        ? "return identical(this, other) || other is $className;"
+        : "return identical(this, other) || "
+            "(other is $className && $comparisons);";
+
+    return Method(
+      (b) => b
+        ..name = "operator =="
+        ..annotations.add(refer("override"))
+        ..returns = refer("bool")
+        ..requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = "other"
+              ..type = refer("Object"),
+          ),
+        )
+        ..body = Code(body),
+    );
+  }
+
+  Method _buildHashCodeGetter(List<FieldSpec> fields) {
+    final entries = [
+      "runtimeType",
+      ...fields.map((field) => field.propertyName)
+    ];
+    final body = Code("return Object.hashAll([${entries.join(", ")}]);");
+    return Method(
+      (b) => b
+        ..annotations.add(refer("override"))
+        ..name = "hashCode"
+        ..type = MethodType.getter
+        ..returns = refer("int")
+        ..body = body,
+    );
+  }
+
+  Method _buildToStringMethod(String className, List<FieldSpec> fields) {
+    final parts = fields
+        .map((field) => "${field.propertyName}: \$${field.propertyName}")
+        .join(", ");
+    final value = fields.isEmpty ? "$className()" : "$className($parts)";
+    return Method(
+      (b) => b
+        ..annotations.add(refer("override"))
+        ..name = "toString"
+        ..returns = refer("String")
+        ..body = Code("return '$value';"),
+    );
+  }
+
+  String _copyWithIsSetName(String propertyName) =>
+      identifier("${propertyName}IsSet");
+
+  Reference _nullableTypeReference(Reference typeRef) {
+    if (typeRef is TypeReference) {
+      return typeRef.rebuild((b) => b..isNullable = true);
+    }
+    return TypeReference(
+      (b) => b
+        ..symbol = typeRef.symbol
+        ..url = typeRef.url
+        ..isNullable = true,
     );
   }
 
@@ -1184,6 +1317,22 @@ Expression _nullGuard(Expression valueExpr, Expression innerExpr) {
       valueExpr.code,
       const Code(" == null ? null : "),
       innerExpr.code,
+    ]),
+  );
+}
+
+Expression _conditionalExpression(
+  Expression condition,
+  Expression whenTrue,
+  Expression whenFalse,
+) {
+  return CodeExpression(
+    Block.of([
+      condition.code,
+      const Code(" ? "),
+      whenTrue.code,
+      const Code(" : "),
+      whenFalse.code,
     ]),
   );
 }

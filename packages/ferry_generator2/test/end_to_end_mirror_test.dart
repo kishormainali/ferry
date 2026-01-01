@@ -33,6 +33,10 @@ void main() {
         'schema': 'end_to_end_test|lib/graphql/schema.graphql',
         'add_typenames': true,
         'tristate_optionals': true,
+        'generate_copy_with': true,
+        'generate_equals': true,
+        'generate_hash_code': true,
+        'generate_to_string': true,
         'type_overrides': {
           'Date': {
             'type': 'CustomDate',
@@ -243,6 +247,19 @@ void main() {
     expect(req, contains('class GHeroNoVarsReq'));
     expect(req, contains('Request get execRequest'));
     expect(req, contains('parseData'));
+  });
+
+  test('data classes include copyWith and overrides', () async {
+    final contents = await _readOutput(
+      readerWriter,
+      'lib/interfaces/hero_for_episode.graphql',
+      _dataExtension,
+    );
+
+    expect(contents, contains('copyWith'));
+    expect(contents, contains('operator =='));
+    expect(contents, contains('hashCode'));
+    expect(contents, contains('toString'));
   });
 }
 

@@ -231,7 +231,8 @@ class DataEmitter {
         typeName,
         classImplements,
       );
-      final fragmentInfo = fragmentName == null ? null : _fragmentInfo[fragmentName];
+      final fragmentInfo =
+          fragmentName == null ? null : _fragmentInfo[fragmentName];
       if (fragmentInfo != null && fragmentInfo.inlineTypes.contains(typeName)) {
         inlineImplements.add(
           refer(builtClassName("${fragmentName}__as$typeName")),
@@ -415,8 +416,7 @@ class DataEmitter {
   ) {
     final specs = <Spec>[];
     for (final field in fields) {
-      if (field.selectionSet == null ||
-          field.fragmentSpreadOnlyName != null) {
+      if (field.selectionSet == null || field.fragmentSpreadOnlyName != null) {
         continue;
       }
       final nestedName = "${baseName}_${field.responseKey}";
@@ -855,8 +855,7 @@ class DataEmitter {
       final propertyName = identifier(fieldName);
       final nestedBaseName = "${baseName}_$fieldName";
       final namedTypeName = unwrapNamedTypeName(selection.typeNode) ?? "Object";
-      final typeDef =
-          schema.lookupType(NameNode(value: namedTypeName));
+      final typeDef = schema.lookupType(NameNode(value: namedTypeName));
 
       String? fragmentName = config.dataClassConfig.reuseFragments
           ? selection.fragmentSpreadOnlyName

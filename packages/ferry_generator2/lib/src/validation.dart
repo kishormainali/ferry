@@ -18,13 +18,13 @@ class DocumentValidator {
   void validate(DocumentNode document) {
     _validateDefinitionNames(document);
 
-    for (final fragment in document.definitions
-        .whereType<FragmentDefinitionNode>()) {
+    for (final fragment
+        in document.definitions.whereType<FragmentDefinitionNode>()) {
       _validateFragmentDefinition(fragment);
     }
 
-    for (final operation in document.definitions
-        .whereType<OperationDefinitionNode>()) {
+    for (final operation
+        in document.definitions.whereType<OperationDefinitionNode>()) {
       _validateOperation(operation);
     }
   }
@@ -349,8 +349,8 @@ class DocumentValidator {
     }
 
     for (final definition in definitions) {
-      final isRequired = definition.type.isNonNull &&
-          definition.defaultValue == null;
+      final isRequired =
+          definition.type.isNonNull && definition.defaultValue == null;
       if (isRequired && !providedNames.contains(definition.name.value)) {
         throw StateError(
           "Missing required argument ${definition.name.value} on $contextName",
@@ -407,7 +407,8 @@ class DocumentValidator {
     }
 
     if (expectedType.isNonNull) {
-      _validateValue(value, _withNonNullFalse(expectedType), context, contextName);
+      _validateValue(
+          value, _withNonNullFalse(expectedType), context, contextName);
       return;
     }
 
@@ -502,8 +503,7 @@ class DocumentValidator {
     }
 
     for (final field in fieldsByName.values) {
-      final isRequired =
-          field.type.isNonNull && field.defaultValue == null;
+      final isRequired = field.type.isNonNull && field.defaultValue == null;
       if (isRequired && !providedNames.contains(field.name.value)) {
         throw StateError(
           "Missing required field ${field.name.value} on input ${typeDef.name.value}",
@@ -655,7 +655,8 @@ class DocumentValidator {
       args: [
         InputValueDefinitionNode(
           name: NameNode(value: "if"),
-          type: NamedTypeNode(name: NameNode(value: "Boolean"), isNonNull: true),
+          type:
+              NamedTypeNode(name: NameNode(value: "Boolean"), isNonNull: true),
         ),
       ],
       locations: const [
@@ -670,7 +671,8 @@ class DocumentValidator {
       args: [
         InputValueDefinitionNode(
           name: NameNode(value: "if"),
-          type: NamedTypeNode(name: NameNode(value: "Boolean"), isNonNull: true),
+          type:
+              NamedTypeNode(name: NameNode(value: "Boolean"), isNonNull: true),
         ),
       ],
       locations: const [
@@ -704,7 +706,8 @@ class ValidationContext {
       );
 }
 
-DirectiveLocation _operationDirectiveLocation(OperationType type) => switch (type) {
+DirectiveLocation _operationDirectiveLocation(OperationType type) =>
+    switch (type) {
       OperationType.query => DirectiveLocation.query,
       OperationType.mutation => DirectiveLocation.mutation,
       OperationType.subscription => DirectiveLocation.subscription,

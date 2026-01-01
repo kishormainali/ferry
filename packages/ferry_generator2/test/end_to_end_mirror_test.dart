@@ -65,7 +65,8 @@ void main() {
     expect(contents, contains('enum GEpisode'));
     expect(contents, contains('class GReviewInput'));
     expect(contents, contains('Value<String>'));
-    expect(contents, contains('const Map<String, Set<String>> possibleTypesMap'));
+    expect(
+        contents, contains('const Map<String, Set<String>> possibleTypesMap'));
     expect(contents, contains("'Character'"));
     expect(contents, contains("'SearchResult'"));
     expect(contents, contains("'Human'"));
@@ -184,7 +185,10 @@ void main() {
       _dataExtension,
     );
     expect(data, contains('class GheroDataData'));
-    expect(data, isNot(contains('class GcomparisonFieldsData_friendsConnection_edges_node')));
+    expect(
+        data,
+        isNot(contains(
+            'class GcomparisonFieldsData_friendsConnection_edges_node')));
   });
 
   test('list variables and input objects are typed correctly', () async {
@@ -252,7 +256,8 @@ Future<Map<String, Object>> _loadGraphqlAssets(
     throw StateError('Missing fixture lib directory at ${libRoot.path}');
   }
 
-  await for (final entity in libRoot.list(recursive: true, followLinks: false)) {
+  await for (final entity
+      in libRoot.list(recursive: true, followLinks: false)) {
     if (entity is! File || !entity.path.endsWith('.graphql')) {
       continue;
     }

@@ -229,7 +229,8 @@ query Hero {
 
     await _expectBuildFailure(
       document: document,
-      expectedMessage: 'Polymorphic selections require add_typenames to be true.',
+      expectedMessage:
+          'Polymorphic selections require add_typenames to be true.',
       config: const {
         'add_typenames': false,
       },
@@ -270,7 +271,8 @@ query Books {
 
     await _expectBuildFailure(
       document: document,
-      expectedMessage: 'Field title of type String must not have a selection set',
+      expectedMessage:
+          'Field title of type String must not have a selection set',
     );
   });
 
@@ -445,7 +447,8 @@ query Books {
 
     await _expectBuildFailure(
       document: document,
-      expectedMessage: 'Directive @fieldOnly cannot be used on FRAGMENT_DEFINITION',
+      expectedMessage:
+          'Directive @fieldOnly cannot be used on FRAGMENT_DEFINITION',
     );
   });
 
@@ -542,6 +545,6 @@ Future<void> _expectBuildFailure({
     generateFor: {_queryPath},
   );
 
-  expect(result.buildResult.status.name, 'failure');
-  expect(result.buildResult.errors.join('\n'), contains(expectedMessage));
+  expect(result.succeeded, isFalse);
+  expect(result.errors.join('\n'), contains(expectedMessage));
 }

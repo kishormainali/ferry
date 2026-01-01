@@ -109,9 +109,8 @@ class VarsEmitter {
           ..named = true
           ..required = field.isRequired
           ..toThis = true
-          ..defaultTo = field.isTriState
-              ? const Code("const Value.absent()")
-              : null,
+          ..defaultTo =
+              field.isTriState ? const Code("const Value.absent()") : null,
       ),
     );
 
@@ -302,7 +301,8 @@ class VarsEmitter {
     if (typeNode is NamedTypeNode) {
       if (namedTypeRef is TypeReference) {
         return namedTypeRef.rebuild(
-          (b) => b..isNullable = forceNonNullOuter ? false : !typeNode.isNonNull,
+          (b) =>
+              b..isNullable = forceNonNullOuter ? false : !typeNode.isNonNull,
         );
       }
       return TypeReference(
@@ -501,12 +501,11 @@ class VarsEmitter {
             schema.lookupFieldDefinitionNode(parentType, selection.name);
         if (fieldDef != null) {
           for (final argument in selection.arguments) {
-            final argDef = fieldDef.args
-                .whereType<InputValueDefinitionNode?>()
-                .firstWhere(
-                  (arg) => arg?.name.value == argument.name.value,
-                  orElse: () => null,
-                );
+            final argDef =
+                fieldDef.args.whereType<InputValueDefinitionNode?>().firstWhere(
+                      (arg) => arg?.name.value == argument.name.value,
+                      orElse: () => null,
+                    );
             if (argDef != null) {
               _mergeVarTypes(
                 result,

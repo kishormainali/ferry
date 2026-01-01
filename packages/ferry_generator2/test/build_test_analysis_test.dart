@@ -15,8 +15,7 @@ const _schemaPath = '$_package|lib/schema.graphql';
 const _fragmentPath = '$_package|lib/fragments.graphql';
 const _queryPath = '$_package|lib/queries.graphql';
 
-const _fragmentDataPath =
-    '$_package|lib/__generated__/fragments.data.gql.dart';
+const _fragmentDataPath = '$_package|lib/__generated__/fragments.data.gql.dart';
 const _queryVarPath = '$_package|lib/__generated__/queries.var.gql.dart';
 const _queryReqPath = '$_package|lib/__generated__/queries.req.gql.dart';
 
@@ -200,7 +199,8 @@ Future<Map<String, String>> _runBuilder(Map<String, Object?> config) async {
     _queryPath: _queries,
   };
 
-  final builder = graphqlBuilder(BuilderOptions(config.cast<String, dynamic>()));
+  final builder =
+      graphqlBuilder(BuilderOptions(config.cast<String, dynamic>()));
 
   final result = await testBuilder(
     builder,
@@ -264,14 +264,12 @@ Future<void> _expectNoErrors(LibraryElement library) async {
   final sourcePath = library.firstFragment.source.fullName;
   final result = await library.session.getErrors(sourcePath);
   if (result is ErrorsResult) {
-    final errors =
-        result.diagnostics
-            .where(
-              (diagnostic) =>
-                  diagnostic.diagnosticCode.severity ==
-                  DiagnosticSeverity.ERROR,
-            )
-            .toList();
+    final errors = result.diagnostics
+        .where(
+          (diagnostic) =>
+              diagnostic.diagnosticCode.severity == DiagnosticSeverity.ERROR,
+        )
+        .toList();
     expect(errors, isEmpty, reason: errors.join('\n'));
   }
 }

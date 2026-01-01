@@ -57,8 +57,9 @@ class GeneratorAllocator implements Allocator {
 
   String _mapReferenceUrl(Uri uri) {
     if (uri.path.isEmpty && uri.fragment.isNotEmpty) {
-      final baseUrl =
-          uri.fragment == "schema" && schemaUrl != null ? schemaUrl! : sourceUrl;
+      final baseUrl = uri.fragment == "schema" && schemaUrl != null
+          ? schemaUrl!
+          : sourceUrl;
       final sourceUri = Uri.parse(baseUrl);
       final mappedPath = replaceSourceExtension(
         outputPath(sourceUri.path, outputDir),

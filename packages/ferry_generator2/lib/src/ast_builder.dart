@@ -85,7 +85,8 @@ class _AstPrintVisitor extends Visitor<Expression> {
       );
 
   @override
-  Expression visitDirectiveDefinitionNode(DirectiveDefinitionNode node) => _node(
+  Expression visitDirectiveDefinitionNode(DirectiveDefinitionNode node) =>
+      _node(
         "DirectiveDefinitionNode",
         {
           "name": _acceptOne(node.name),
@@ -135,7 +136,8 @@ class _AstPrintVisitor extends Visitor<Expression> {
       );
 
   @override
-  Expression visitEnumValueDefinitionNode(EnumValueDefinitionNode node) => _node(
+  Expression visitEnumValueDefinitionNode(EnumValueDefinitionNode node) =>
+      _node(
         "EnumValueDefinitionNode",
         {
           "name": _acceptOne(node.name),
@@ -321,8 +323,7 @@ class _AstPrintVisitor extends Visitor<Expression> {
       );
 
   @override
-  Expression visitNullValueNode(NullValueNode node) =>
-      _node("NullValueNode");
+  Expression visitNullValueNode(NullValueNode node) => _node("NullValueNode");
 
   @override
   Expression visitObjectFieldNode(ObjectFieldNode node) => _node(
@@ -464,7 +465,8 @@ class _AstPrintVisitor extends Visitor<Expression> {
       );
 
   @override
-  Expression visitUnionTypeDefinitionNode(UnionTypeDefinitionNode node) => _node(
+  Expression visitUnionTypeDefinitionNode(UnionTypeDefinitionNode node) =>
+      _node(
         "UnionTypeDefinitionNode",
         {
           "name": _acceptOne(node.name),

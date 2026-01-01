@@ -145,7 +145,8 @@ void main() {
     'build_runner smoke test with interface fragments',
     () async {
       final packageRoot = Directory.current.path;
-      final ferryExecPath = p.normalize(p.join(packageRoot, '..', 'ferry_exec'));
+      final ferryExecPath =
+          p.normalize(p.join(packageRoot, '..', 'ferry_exec'));
       final fixtureRoot = p.join(
         packageRoot,
         'test',
@@ -162,8 +163,11 @@ void main() {
 
       await _copyDirectory(Directory(fixtureRoot), tempDir);
 
+      final pubspecTemplate = File(
+        p.join(tempDir.path, 'pubspec.template.yaml'),
+      );
       final pubspec = File(p.join(tempDir.path, 'pubspec.yaml'));
-      final updatedPubspec = (await pubspec.readAsString())
+      final updatedPubspec = (await pubspecTemplate.readAsString())
           .replaceAll('__FERRY_GENERATOR2_PATH__', packageRoot)
           .replaceAll('__FERRY_EXEC_PATH__', ferryExecPath);
       await pubspec.writeAsString(updatedPubspec);
@@ -211,8 +215,10 @@ void main() {
       expect(dataContents, contains("case 'Human':"));
       expect(dataContents, contains("case 'Droid':"));
       expect(dataContents, contains('GFriendInfoData'));
-      expect(dataContents, contains('implements GFriendInfo, GFriendInfo__asHuman'));
-      expect(dataContents, contains('implements GFriendInfo, GFriendInfo__asDroid'));
+      expect(dataContents,
+          contains('implements GFriendInfo, GFriendInfo__asHuman'));
+      expect(dataContents,
+          contains('implements GFriendInfo, GFriendInfo__asDroid'));
       expect(dataContents, isNot(contains('GCharacterDetails__asHuman')));
       expect(dataContents, isNot(contains('GCharacterDetails__asDroid')));
       expect(dataContents, isNot(contains('#data')));

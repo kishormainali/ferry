@@ -32,8 +32,8 @@ Future<void> writeLibrary({
   return buildStep.writeAsString(
     outputId,
     "// GENERATED CODE - DO NOT MODIFY BY HAND\n"
-        "// ignore_for_file: type=lint\n\n"
-        "${config.format ? "" : "// dart format off\n\n"}"
-        "$formatted",
+    "// ignore_for_file: type=lint\n\n"
+    "${config.format ? "" : "// dart format off\n\n"}"
+    "$formatted",
   );
 }

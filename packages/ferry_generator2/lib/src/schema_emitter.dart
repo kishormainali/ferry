@@ -58,11 +58,9 @@ Method _buildEnumFromJson(
   List<_EnumMappedValue> values,
   String? fallbackName,
 ) {
-  final cases = values
-      .where((value) => value.graphQLName != fallbackName)
-      .map(
-        (value) =>
-            Code("case r'${value.graphQLName}': return $enumName.${value.dartName};"),
+  final cases = values.where((value) => value.graphQLName != fallbackName).map(
+        (value) => Code(
+            "case r'${value.graphQLName}': return $enumName.${value.dartName};"),
       );
 
   final fallbackCase = fallbackName == null
@@ -225,9 +223,8 @@ class _SchemaEmitter {
           ..named = true
           ..required = field.isRequired
           ..toThis = true
-          ..defaultTo = field.isTriState
-              ? const Code("const Value.absent()")
-              : null,
+          ..defaultTo =
+              field.isTriState ? const Code("const Value.absent()") : null,
       ),
     );
 
@@ -415,7 +412,8 @@ class _SchemaEmitter {
     if (typeNode is NamedTypeNode) {
       if (namedTypeRef is TypeReference) {
         return namedTypeRef.rebuild(
-          (b) => b..isNullable = forceNonNullOuter ? false : !typeNode.isNonNull,
+          (b) =>
+              b..isNullable = forceNonNullOuter ? false : !typeNode.isNonNull,
         );
       }
       return TypeReference(

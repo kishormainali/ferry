@@ -274,7 +274,12 @@ void main() {
       ),
     );
     final varsJson = vars.toJson();
-    expect(varsJson, equals({'episode': 'JEDI', 'review': {'stars': 5, 'commentary': 'Great'}}));
+    expect(
+        varsJson,
+        equals({
+          'episode': 'JEDI',
+          'review': {'stars': 5, 'commentary': 'Great'}
+        }));
     expect(GCreateReviewVars.fromJson(varsJson).toJson(), equals(varsJson));
 
     final req = GCreateReviewReq(vars: vars);
@@ -418,10 +423,12 @@ void main() {
       'createCustomField': 'payload-1',
     });
     expect(data.createCustomField, 'payload-1');
-    expect(data.toJson(), equals({
-      '__typename': 'Mutation',
-      'createCustomField': 'payload-1',
-    }));
+    expect(
+        data.toJson(),
+        equals({
+          '__typename': 'Mutation',
+          'createCustomField': 'payload-1',
+        }));
 
     final vars = GCreateCustomFieldVars(
       input: _schema.GCustomFieldInput(
@@ -439,7 +446,8 @@ void main() {
         },
       }),
     );
-    expect(GCreateCustomFieldVars.fromJson(varsJson).toJson(), equals(varsJson));
+    expect(
+        GCreateCustomFieldVars.fromJson(varsJson).toJson(), equals(varsJson));
   });
 
   test('scalar overrides map Json to Map<String, dynamic>', () {

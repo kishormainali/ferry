@@ -21,7 +21,8 @@ import "src/vars_emitter.dart";
 import "src/writer.dart";
 import "src/validation.dart";
 
-Builder graphqlBuilder(BuilderOptions options) => GraphqlBuilder(options.config);
+Builder graphqlBuilder(BuilderOptions options) =>
+    GraphqlBuilder(options.config);
 
 class GraphqlBuilder implements Builder {
   final BuilderConfig config;
@@ -71,9 +72,8 @@ class GraphqlBuilder implements Builder {
       buildStep,
       config.sourceExtension,
     );
-    final sourceWithTypenames = config.shouldAddTypenames
-        ? addTypenamesToSource(docSource)
-        : docSource;
+    final sourceWithTypenames =
+        config.shouldAddTypenames ? addTypenamesToSource(docSource) : docSource;
 
     DocumentSource? schemaSource;
     AssetId? schemaId;

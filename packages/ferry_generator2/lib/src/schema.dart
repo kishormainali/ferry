@@ -140,8 +140,13 @@ class SchemaIndex {
   final Map<OperationType, TypeDefinitionNode?> _operationTypeCache = {};
   Map<String, Set<String>>? _possibleTypesCache;
 
-  SchemaIndex._(this.document, this._typeDefinitions, this._objectExtensions,
-      this._interfaceExtensions, this._inputExtensions, this._enumExtensions,
+  SchemaIndex._(
+      this.document,
+      this._typeDefinitions,
+      this._objectExtensions,
+      this._interfaceExtensions,
+      this._inputExtensions,
+      this._enumExtensions,
       this._unionExtensions);
 
   factory SchemaIndex.fromDocuments(Iterable<DocumentNode> documents) {
@@ -177,8 +182,7 @@ class SchemaIndex {
         interfaceExtensions, inputExtensions, enumExtensions, unionExtensions);
   }
 
-  TypeDefinitionNode? lookupType(NameNode name) =>
-      _typeDefinitions[name.value];
+  TypeDefinitionNode? lookupType(NameNode name) => _typeDefinitions[name.value];
 
   TType? lookupTypeAs<TType extends TypeDefinitionNode>(NameNode name) {
     final def = lookupType(name);
@@ -190,23 +194,22 @@ class SchemaIndex {
     if (_operationTypeCache.containsKey(operationType)) {
       return _operationTypeCache[operationType];
     }
-    final opNode = document.definitions
-        .expand<OperationTypeDefinitionNode?>((definition) {
-          if (definition is SchemaDefinitionNode) {
-            return definition.operationTypes;
-          }
-          if (definition is SchemaExtensionNode) {
-            return definition.operationTypes;
-          }
-          return [];
-        })
-        .firstWhere(
-          (element) => element != null && element.operation == operationType,
-          orElse: () => null,
-        );
+    final opNode =
+        document.definitions.expand<OperationTypeDefinitionNode?>((definition) {
+      if (definition is SchemaDefinitionNode) {
+        return definition.operationTypes;
+      }
+      if (definition is SchemaExtensionNode) {
+        return definition.operationTypes;
+      }
+      return [];
+    }).firstWhere(
+      (element) => element != null && element.operation == operationType,
+      orElse: () => null,
+    );
 
-    final typeName = opNode?.type.name ??
-        NameNode(value: defaultRootTypes[operationType]!);
+    final typeName =
+        opNode?.type.name ?? NameNode(value: defaultRootTypes[operationType]!);
     return _operationTypeCache[operationType] = lookupType(typeName);
   }
 
@@ -230,9 +233,7 @@ class SchemaIndex {
     }
 
     if (typeDefinition is InterfaceTypeDefinitionNode) {
-      return document.definitions
-          .whereType<ObjectTypeDefinitionNode>()
-          .where(
+      return document.definitions.whereType<ObjectTypeDefinitionNode>().where(
             (element) => element.interfaces
                 .where((iface) => iface.name.value == name.value)
                 .isNotEmpty,
@@ -348,9 +349,7 @@ class SchemaIndex {
   List<InputValueDefinitionNode> lookupInputValueDefinitions(
     InputObjectTypeDefinitionNode node,
   ) =>
-      _lookupInputFieldDefinitionsForTypeDefinitionNode(node)
-          .values
-          .toList();
+      _lookupInputFieldDefinitionsForTypeDefinitionNode(node).values.toList();
 
   Map<String, FieldDefinitionNode> _lookupFieldDefinitionsForTypeDefinitionNode(
     TypeDefinitionNode onType,

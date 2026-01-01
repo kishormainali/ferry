@@ -11,15 +11,14 @@ class DocumentIndex {
 
   DocumentIndex(this.document)
       : fragments = {
-          for (final fragment in document.definitions
-              .whereType<FragmentDefinitionNode>())
+          for (final fragment
+              in document.definitions.whereType<FragmentDefinitionNode>())
             fragment.name.value: fragment,
         },
         operations = {
-          for (final operation in document.definitions
-              .whereType<OperationDefinitionNode>())
-            if (operation.name != null)
-              operation.name!.value: operation,
+          for (final operation
+              in document.definitions.whereType<OperationDefinitionNode>())
+            if (operation.name != null) operation.name!.value: operation,
         };
 
   FragmentDefinitionNode getFragment(String name) {
@@ -164,10 +163,9 @@ class SelectionResolver {
       }
     }
 
-    final needsTypename =
-        parentType is InterfaceTypeDefinitionNode ||
-            parentType is UnionTypeDefinitionNode ||
-            result.inlineFragments.isNotEmpty;
+    final needsTypename = parentType is InterfaceTypeDefinitionNode ||
+        parentType is UnionTypeDefinitionNode ||
+        result.inlineFragments.isNotEmpty;
     if (needsTypename && !result.fields.containsKey("__typename")) {
       if (!addTypenames) {
         throw StateError(
@@ -206,8 +204,7 @@ class SelectionResolver {
 
     if (field.selectionSet != null) {
       fragmentSpreadOnlyName = _fragmentSpreadOnlyName(field.selectionSet!);
-      final fieldType =
-          schema.lookupTypeDefinitionFromTypeNode(typeNode);
+      final fieldType = schema.lookupTypeDefinitionFromTypeNode(typeNode);
       if (fieldType == null) {
         throw StateError(
           "Failed to find type definition for ${field.name.value} on ${parentType.name.value}",
@@ -234,7 +231,8 @@ class SelectionResolver {
     if (existing == null) {
       result.fields[responseKey] = selection;
     } else {
-      _assertCompatibleFieldSelection(existing, selection, parentType.name.value);
+      _assertCompatibleFieldSelection(
+          existing, selection, parentType.name.value);
       result.fields[responseKey] = existing.mergeWith(selection);
     }
   }
@@ -346,8 +344,7 @@ TypeNode _applyConditionalNullability(
 
 bool _hasConditionalDirective(List<DirectiveNode> directives) {
   for (final directive in directives) {
-    if (directive.name.value == "include" ||
-        directive.name.value == "skip") {
+    if (directive.name.value == "include" || directive.name.value == "skip") {
       return true;
     }
   }

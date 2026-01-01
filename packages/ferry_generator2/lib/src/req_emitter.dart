@@ -329,13 +329,15 @@ class ReqEmitter {
                     ),
                 ),
               )
-              ..body = Code(_transformOperationBody(className, hasVars: hasVars)),
+              ..body =
+                  Code(_transformOperationBody(className, hasVars: hasVars)),
           ),
         ]),
     );
   }
 
-  String _transformOperationBody(String className, {required bool hasVars}) => """
+  String _transformOperationBody(String className, {required bool hasVars}) =>
+      """
 return $className(
 ${hasVars ? "  vars: vars," : ""}
   operation: transform(operation),

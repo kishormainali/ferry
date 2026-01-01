@@ -4,6 +4,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.schema.gql.dart'
     as _i1;
+import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
+    as _gqlUtils;
 
 class GreviewsWithListArgumentData {
   const GreviewsWithListArgumentData({
@@ -54,13 +56,13 @@ class GreviewsWithListArgumentData {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GreviewsWithListArgumentData &&
-            reviews == other.reviews &&
+            _gqlUtils.listEquals(reviews, other.reviews) &&
             G__typename == other.G__typename);
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, reviews, G__typename]);
+    return Object.hash(runtimeType, _gqlUtils.listHash(reviews), G__typename);
   }
 
   @override
@@ -118,7 +120,7 @@ class GreviewsWithListArgumentData_reviews {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, episode, G__typename]);
+    return Object.hash(runtimeType, episode, G__typename);
   }
 
   @override

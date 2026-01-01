@@ -7,9 +7,7 @@ import 'package:ferry_generator2_end_to_end/fragments/__generated__/multiple_fra
     as _i4;
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/multiple_fragments.data.gql.dart'
     as _i2;
-import 'package:ferry_generator2_end_to_end/fragments/__generated__/multiple_fragments.var.gql.dart'
-    as _i5;
-import 'package:gql/ast.dart' as _i6;
+import 'package:gql/ast.dart' as _i5;
 import 'package:gql_exec/gql_exec.dart' as _i3;
 
 class GHeroWith2FragmentsReq
@@ -84,56 +82,52 @@ class GHeroWith2FragmentsReq
   }
 }
 
-class GheroNameReq
-    implements _i1.FragmentRequest<_i2.GheroNameData, _i5.GheroNameVars> {
+class GheroNameReq implements _i1.FragmentRequest<_i2.GheroNameData, Null> {
   GheroNameReq({
-    required this.vars,
-    _i6.DocumentNode? document,
+    _i5.DocumentNode? document,
     this.fragmentName = 'heroName',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
-  final _i5.GheroNameVars vars;
+  final Null vars = null;
 
-  final _i6.DocumentNode document;
+  final _i5.DocumentNode document;
 
   final String? fragmentName;
 
   final Map<String, dynamic> idFields;
 
-  static final _i6.DocumentNode _document = _i4.document;
+  static final _i5.DocumentNode _document = _i4.document;
 
   _i2.GheroNameData? parseData(Map<String, dynamic> json) =>
       _i2.GheroNameData.fromJson(json);
 
-  Map<String, dynamic> varsToJson() => vars.toJson();
+  Map<String, dynamic> varsToJson() => const <String, dynamic>{};
 
   Map<String, dynamic> dataToJson(_i2.GheroNameData data) => data.toJson();
 }
 
-class GheroIdReq
-    implements _i1.FragmentRequest<_i2.GheroIdData, _i5.GheroIdVars> {
+class GheroIdReq implements _i1.FragmentRequest<_i2.GheroIdData, Null> {
   GheroIdReq({
-    required this.vars,
-    _i6.DocumentNode? document,
+    _i5.DocumentNode? document,
     this.fragmentName = 'heroId',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
-  final _i5.GheroIdVars vars;
+  final Null vars = null;
 
-  final _i6.DocumentNode document;
+  final _i5.DocumentNode document;
 
   final String? fragmentName;
 
   final Map<String, dynamic> idFields;
 
-  static final _i6.DocumentNode _document = _i4.document;
+  static final _i5.DocumentNode _document = _i4.document;
 
   _i2.GheroIdData? parseData(Map<String, dynamic> json) =>
       _i2.GheroIdData.fromJson(json);
 
-  Map<String, dynamic> varsToJson() => vars.toJson();
+  Map<String, dynamic> varsToJson() => const <String, dynamic>{};
 
   Map<String, dynamic> dataToJson(_i2.GheroIdData data) => data.toJson();
 }

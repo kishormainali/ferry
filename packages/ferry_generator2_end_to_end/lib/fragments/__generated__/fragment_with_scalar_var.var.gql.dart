@@ -27,16 +27,3 @@ class GPostsWithFixedVariableVars {
     return result;
   }
 }
-
-class GPostFragmentForUser1Vars {
-  const GPostFragmentForUser1Vars();
-
-  factory GPostFragmentForUser1Vars.fromJson(Map<String, dynamic> json) {
-    return GPostFragmentForUser1Vars();
-  }
-
-  Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    return result;
-  }
-}

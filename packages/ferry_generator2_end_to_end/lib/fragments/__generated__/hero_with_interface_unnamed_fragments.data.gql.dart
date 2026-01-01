@@ -1,6 +1,10 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
 
+// ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
+    as _gqlUtils;
+
 class GHeroWithInterfaceUnnamedFragmentsData {
   const GHeroWithInterfaceUnnamedFragmentsData({
     this.hero,
@@ -51,7 +55,7 @@ class GHeroWithInterfaceUnnamedFragmentsData {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, hero, G__typename]);
+    return Object.hash(runtimeType, hero, G__typename);
   }
 
   @override
@@ -215,13 +219,13 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman
             name == other.name &&
             G__typename == other.G__typename &&
             homePlanet == other.homePlanet &&
-            friends == other.friends);
+            _gqlUtils.listEquals(friends, other.friends));
   }
 
   @override
   int get hashCode {
-    return Object.hashAll(
-        [runtimeType, id, name, G__typename, homePlanet, friends]);
+    return Object.hash(runtimeType, id, name, G__typename, homePlanet,
+        _gqlUtils.listHash(friends));
   }
 
   @override
@@ -371,7 +375,7 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asHuman
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, G__typename, id, name, homePlanet]);
+    return Object.hash(runtimeType, G__typename, id, name, homePlanet);
   }
 
   @override
@@ -447,8 +451,7 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asDroid
 
   @override
   int get hashCode {
-    return Object.hashAll(
-        [runtimeType, G__typename, id, name, primaryFunction]);
+    return Object.hash(runtimeType, G__typename, id, name, primaryFunction);
   }
 
   @override
@@ -490,7 +493,7 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__unknown
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, G__typename]);
+    return Object.hash(runtimeType, G__typename);
   }
 
   @override
@@ -561,8 +564,7 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asDroid
 
   @override
   int get hashCode {
-    return Object.hashAll(
-        [runtimeType, id, name, G__typename, primaryFunction]);
+    return Object.hash(runtimeType, id, name, G__typename, primaryFunction);
   }
 
   @override
@@ -619,7 +621,7 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__unknown
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, id, name, G__typename]);
+    return Object.hash(runtimeType, id, name, G__typename);
   }
 
   @override

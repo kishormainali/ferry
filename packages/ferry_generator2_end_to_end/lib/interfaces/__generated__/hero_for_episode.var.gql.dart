@@ -22,16 +22,3 @@ class GHeroForEpisodeVars {
     return result;
   }
 }
-
-class GDroidFragmentVars {
-  const GDroidFragmentVars();
-
-  factory GDroidFragmentVars.fromJson(Map<String, dynamic> json) {
-    return GDroidFragmentVars();
-  }
-
-  Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    return result;
-  }
-}

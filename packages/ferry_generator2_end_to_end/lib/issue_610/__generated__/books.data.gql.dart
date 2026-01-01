@@ -1,6 +1,10 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
 
+// ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
+    as _gqlUtils;
+
 abstract class GAuthorFragment {
   String get displayName;
   String get G__typename;
@@ -139,8 +143,8 @@ class GAuthorFragmentData__asPerson extends GAuthorFragmentData
 
   @override
   int get hashCode {
-    return Object.hashAll(
-        [runtimeType, displayName, G__typename, firstName, lastName]);
+    return Object.hash(
+        runtimeType, displayName, G__typename, firstName, lastName);
   }
 
   @override
@@ -198,7 +202,7 @@ class GAuthorFragmentData__asCompany extends GAuthorFragmentData
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, displayName, G__typename, name]);
+    return Object.hash(runtimeType, displayName, G__typename, name);
   }
 
   @override
@@ -248,7 +252,7 @@ class GAuthorFragmentData__unknown extends GAuthorFragmentData
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, displayName, G__typename]);
+    return Object.hash(runtimeType, displayName, G__typename);
   }
 
   @override
@@ -357,8 +361,7 @@ class GBookFragmentData__asTextbook extends GBookFragmentData
           (json['author'] as Map<String, dynamic>)),
       title: (json['title'] as String),
       G__typename: (json['__typename'] as String),
-      courses:
-          (json['courses'] as List<dynamic>).map((e) => (e as String)).toList(),
+      courses: List<String>.from((json['courses'] as List<dynamic>)),
     );
   }
 
@@ -394,12 +397,13 @@ class GBookFragmentData__asTextbook extends GBookFragmentData
             author == other.author &&
             title == other.title &&
             G__typename == other.G__typename &&
-            courses == other.courses);
+            _gqlUtils.listEquals(courses, other.courses));
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, author, title, G__typename, courses]);
+    return Object.hash(
+        runtimeType, author, title, G__typename, _gqlUtils.listHash(courses));
   }
 
   @override
@@ -424,8 +428,7 @@ class GBookFragmentData__asColoringBook extends GBookFragmentData
           (json['author'] as Map<String, dynamic>)),
       title: (json['title'] as String),
       G__typename: (json['__typename'] as String),
-      colors:
-          (json['colors'] as List<dynamic>).map((e) => (e as String)).toList(),
+      colors: List<String>.from((json['colors'] as List<dynamic>)),
     );
   }
 
@@ -461,12 +464,13 @@ class GBookFragmentData__asColoringBook extends GBookFragmentData
             author == other.author &&
             title == other.title &&
             G__typename == other.G__typename &&
-            colors == other.colors);
+            _gqlUtils.listEquals(colors, other.colors));
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, author, title, G__typename, colors]);
+    return Object.hash(
+        runtimeType, author, title, G__typename, _gqlUtils.listHash(colors));
   }
 
   @override
@@ -523,7 +527,7 @@ class GBookFragmentData__unknown extends GBookFragmentData
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, author, title, G__typename]);
+    return Object.hash(runtimeType, author, title, G__typename);
   }
 
   @override
@@ -572,13 +576,13 @@ class GGetBooksData {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GGetBooksData &&
-            books == other.books &&
+            _gqlUtils.listEquals(books, other.books) &&
             G__typename == other.G__typename);
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, books, G__typename]);
+    return Object.hash(runtimeType, _gqlUtils.listHash(books), G__typename);
   }
 
   @override

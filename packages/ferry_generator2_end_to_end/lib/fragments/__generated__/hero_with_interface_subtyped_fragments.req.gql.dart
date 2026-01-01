@@ -92,17 +92,14 @@ class GHeroWithInterfaceSubTypedFragmentsReq
 }
 
 class GheroFieldsFragmentReq
-    implements
-        _i1.FragmentRequest<_i2.GheroFieldsFragmentData,
-            _i3.GheroFieldsFragmentVars> {
+    implements _i1.FragmentRequest<_i2.GheroFieldsFragmentData, Null> {
   GheroFieldsFragmentReq({
-    required this.vars,
     _i6.DocumentNode? document,
     this.fragmentName = 'heroFieldsFragment',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
-  final _i3.GheroFieldsFragmentVars vars;
+  final Null vars = null;
 
   final _i6.DocumentNode document;
 
@@ -115,24 +112,21 @@ class GheroFieldsFragmentReq
   _i2.GheroFieldsFragmentData? parseData(Map<String, dynamic> json) =>
       _i2.GheroFieldsFragmentData.fromJson(json);
 
-  Map<String, dynamic> varsToJson() => vars.toJson();
+  Map<String, dynamic> varsToJson() => const <String, dynamic>{};
 
   Map<String, dynamic> dataToJson(_i2.GheroFieldsFragmentData data) =>
       data.toJson();
 }
 
 class GhumanFieldsFragmentReq
-    implements
-        _i1.FragmentRequest<_i2.GhumanFieldsFragmentData,
-            _i3.GhumanFieldsFragmentVars> {
+    implements _i1.FragmentRequest<_i2.GhumanFieldsFragmentData, Null> {
   GhumanFieldsFragmentReq({
-    required this.vars,
     _i6.DocumentNode? document,
     this.fragmentName = 'humanFieldsFragment',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
-  final _i3.GhumanFieldsFragmentVars vars;
+  final Null vars = null;
 
   final _i6.DocumentNode document;
 
@@ -145,24 +139,21 @@ class GhumanFieldsFragmentReq
   _i2.GhumanFieldsFragmentData? parseData(Map<String, dynamic> json) =>
       _i2.GhumanFieldsFragmentData.fromJson(json);
 
-  Map<String, dynamic> varsToJson() => vars.toJson();
+  Map<String, dynamic> varsToJson() => const <String, dynamic>{};
 
   Map<String, dynamic> dataToJson(_i2.GhumanFieldsFragmentData data) =>
       data.toJson();
 }
 
 class GdroidFieldsFragmentReq
-    implements
-        _i1.FragmentRequest<_i2.GdroidFieldsFragmentData,
-            _i3.GdroidFieldsFragmentVars> {
+    implements _i1.FragmentRequest<_i2.GdroidFieldsFragmentData, Null> {
   GdroidFieldsFragmentReq({
-    required this.vars,
     _i6.DocumentNode? document,
     this.fragmentName = 'droidFieldsFragment',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
-  final _i3.GdroidFieldsFragmentVars vars;
+  final Null vars = null;
 
   final _i6.DocumentNode document;
 
@@ -175,7 +166,7 @@ class GdroidFieldsFragmentReq
   _i2.GdroidFieldsFragmentData? parseData(Map<String, dynamic> json) =>
       _i2.GdroidFieldsFragmentData.fromJson(json);
 
-  Map<String, dynamic> varsToJson() => vars.toJson();
+  Map<String, dynamic> varsToJson() => const <String, dynamic>{};
 
   Map<String, dynamic> dataToJson(_i2.GdroidFieldsFragmentData data) =>
       data.toJson();

@@ -50,7 +50,7 @@ class GheroNameData implements GheroName {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, name, G__typename]);
+    return Object.hash(runtimeType, name, G__typename);
   }
 
   @override
@@ -108,7 +108,7 @@ class GheroIdData implements GheroId {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, id, G__typename]);
+    return Object.hash(runtimeType, id, G__typename);
   }
 
   @override
@@ -166,7 +166,7 @@ class GHeroWith2FragmentsData {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, hero, G__typename]);
+    return Object.hash(runtimeType, hero, G__typename);
   }
 
   @override
@@ -227,7 +227,7 @@ class GHeroWith2FragmentsData_hero implements GheroName, GheroId {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, name, G__typename, id]);
+    return Object.hash(runtimeType, name, G__typename, id);
   }
 
   @override

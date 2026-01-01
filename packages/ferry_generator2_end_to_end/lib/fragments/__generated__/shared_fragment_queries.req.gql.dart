@@ -7,9 +7,7 @@ import 'package:ferry_generator2_end_to_end/fragments/__generated__/shared_fragm
     as _i4;
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/shared_fragment_queries.data.gql.dart'
     as _i2;
-import 'package:ferry_generator2_end_to_end/fragments/__generated__/shared_fragment_queries.var.gql.dart'
-    as _i5;
-import 'package:gql/ast.dart' as _i6;
+import 'package:gql/ast.dart' as _i5;
 import 'package:gql_exec/gql_exec.dart' as _i3;
 
 class GSharedBooksAReq
@@ -155,60 +153,54 @@ class GSharedBooksBReq
 }
 
 class GSharedAuthorFragmentReq
-    implements
-        _i1.FragmentRequest<_i2.GSharedAuthorFragmentData,
-            _i5.GSharedAuthorFragmentVars> {
+    implements _i1.FragmentRequest<_i2.GSharedAuthorFragmentData, Null> {
   GSharedAuthorFragmentReq({
-    required this.vars,
-    _i6.DocumentNode? document,
+    _i5.DocumentNode? document,
     this.fragmentName = 'SharedAuthorFragment',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
-  final _i5.GSharedAuthorFragmentVars vars;
+  final Null vars = null;
 
-  final _i6.DocumentNode document;
+  final _i5.DocumentNode document;
 
   final String? fragmentName;
 
   final Map<String, dynamic> idFields;
 
-  static final _i6.DocumentNode _document = _i4.document;
+  static final _i5.DocumentNode _document = _i4.document;
 
   _i2.GSharedAuthorFragmentData? parseData(Map<String, dynamic> json) =>
       _i2.GSharedAuthorFragmentData.fromJson(json);
 
-  Map<String, dynamic> varsToJson() => vars.toJson();
+  Map<String, dynamic> varsToJson() => const <String, dynamic>{};
 
   Map<String, dynamic> dataToJson(_i2.GSharedAuthorFragmentData data) =>
       data.toJson();
 }
 
 class GSharedBookFragmentReq
-    implements
-        _i1.FragmentRequest<_i2.GSharedBookFragmentData,
-            _i5.GSharedBookFragmentVars> {
+    implements _i1.FragmentRequest<_i2.GSharedBookFragmentData, Null> {
   GSharedBookFragmentReq({
-    required this.vars,
-    _i6.DocumentNode? document,
+    _i5.DocumentNode? document,
     this.fragmentName = 'SharedBookFragment',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
-  final _i5.GSharedBookFragmentVars vars;
+  final Null vars = null;
 
-  final _i6.DocumentNode document;
+  final _i5.DocumentNode document;
 
   final String? fragmentName;
 
   final Map<String, dynamic> idFields;
 
-  static final _i6.DocumentNode _document = _i4.document;
+  static final _i5.DocumentNode _document = _i4.document;
 
   _i2.GSharedBookFragmentData? parseData(Map<String, dynamic> json) =>
       _i2.GSharedBookFragmentData.fromJson(json);
 
-  Map<String, dynamic> varsToJson() => vars.toJson();
+  Map<String, dynamic> varsToJson() => const <String, dynamic>{};
 
   Map<String, dynamic> dataToJson(_i2.GSharedBookFragmentData data) =>
       data.toJson();

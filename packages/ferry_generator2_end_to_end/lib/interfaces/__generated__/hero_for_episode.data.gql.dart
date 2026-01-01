@@ -1,6 +1,10 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
 
+// ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
+    as _gqlUtils;
+
 abstract class GDroidFragment {
   String? get primaryFunction;
   String get G__typename;
@@ -56,7 +60,7 @@ class GDroidFragmentData implements GDroidFragment {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, primaryFunction, G__typename]);
+    return Object.hash(runtimeType, primaryFunction, G__typename);
   }
 
   @override
@@ -114,7 +118,7 @@ class GHeroForEpisodeData {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, hero, G__typename]);
+    return Object.hash(runtimeType, hero, G__typename);
   }
 
   @override
@@ -229,7 +233,7 @@ class GHeroForEpisodeData_hero_friends {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, name, G__typename]);
+    return Object.hash(runtimeType, name, G__typename);
   }
 
   @override
@@ -304,15 +308,15 @@ class GHeroForEpisodeData_hero__asDroid extends GHeroForEpisodeData_hero
     return identical(this, other) ||
         (other is GHeroForEpisodeData_hero__asDroid &&
             name == other.name &&
-            friends == other.friends &&
+            _gqlUtils.listEquals(friends, other.friends) &&
             G__typename == other.G__typename &&
             primaryFunction == other.primaryFunction);
   }
 
   @override
   int get hashCode {
-    return Object.hashAll(
-        [runtimeType, name, friends, G__typename, primaryFunction]);
+    return Object.hash(runtimeType, name, _gqlUtils.listHash(friends),
+        G__typename, primaryFunction);
   }
 
   @override
@@ -373,13 +377,14 @@ class GHeroForEpisodeData_hero__unknown extends GHeroForEpisodeData_hero {
     return identical(this, other) ||
         (other is GHeroForEpisodeData_hero__unknown &&
             name == other.name &&
-            friends == other.friends &&
+            _gqlUtils.listEquals(friends, other.friends) &&
             G__typename == other.G__typename);
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, name, friends, G__typename]);
+    return Object.hash(
+        runtimeType, name, _gqlUtils.listHash(friends), G__typename);
   }
 
   @override

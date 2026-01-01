@@ -4,6 +4,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.schema.gql.dart'
     as _i1;
+import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
+    as _gqlUtils;
 
 class GAliasedHeroData {
   const GAliasedHeroData({
@@ -68,7 +70,7 @@ class GAliasedHeroData {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, empireHero, jediHero, G__typename]);
+    return Object.hash(runtimeType, empireHero, jediHero, G__typename);
   }
 
   @override
@@ -133,13 +135,14 @@ class GAliasedHeroData_empireHero {
         (other is GAliasedHeroData_empireHero &&
             id == other.id &&
             name == other.name &&
-            from == other.from &&
+            _gqlUtils.listEquals(from, other.from) &&
             G__typename == other.G__typename);
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, id, name, from, G__typename]);
+    return Object.hash(
+        runtimeType, id, name, _gqlUtils.listHash(from), G__typename);
   }
 
   @override
@@ -204,13 +207,14 @@ class GAliasedHeroData_jediHero {
         (other is GAliasedHeroData_jediHero &&
             id == other.id &&
             name == other.name &&
-            from == other.from &&
+            _gqlUtils.listEquals(from, other.from) &&
             G__typename == other.G__typename);
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, id, name, from, G__typename]);
+    return Object.hash(
+        runtimeType, id, name, _gqlUtils.listHash(from), G__typename);
   }
 
   @override

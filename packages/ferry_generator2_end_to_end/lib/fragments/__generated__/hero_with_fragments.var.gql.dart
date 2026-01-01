@@ -27,19 +27,6 @@ class GHeroWithFragmentsVars {
   }
 }
 
-class GheroDataVars {
-  const GheroDataVars();
-
-  factory GheroDataVars.fromJson(Map<String, dynamic> json) {
-    return GheroDataVars();
-  }
-
-  Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    return result;
-  }
-}
-
 class GcomparisonFieldsVars {
   const GcomparisonFieldsVars({this.first = const Value.absent()});
 

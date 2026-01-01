@@ -18,9 +18,7 @@ class GreviewsWithListArgumentVars {
       stars: json.containsKey('stars')
           ? Value.present(json['stars'] == null
               ? null
-              : (json['stars'] as List<dynamic>)
-                  .map((e) => (e as int))
-                  .toList())
+              : List<int>.from((json['stars'] as List<dynamic>)))
           : Value.absent(),
     );
   }

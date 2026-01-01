@@ -180,8 +180,8 @@ void main() {
     );
 
     expect(_countOccurrences(vars, 'Value<int> first'), 2);
-    expect(vars, contains('class GheroDataVars'));
-    expect(vars, contains('const GheroDataVars('));
+    expect(vars, contains('class GcomparisonFieldsVars'));
+    expect(vars, isNot(contains('class GheroDataVars')));
 
     final data = await _readOutput(
       readerWriter,

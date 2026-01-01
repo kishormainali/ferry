@@ -50,7 +50,7 @@ class GHeroNoVarsData {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, hero, G__typename]);
+    return Object.hash(runtimeType, hero, G__typename);
   }
 
   @override
@@ -111,7 +111,7 @@ class GHeroNoVarsData_hero {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, id, name, G__typename]);
+    return Object.hash(runtimeType, id, name, G__typename);
   }
 
   @override

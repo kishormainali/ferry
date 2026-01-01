@@ -55,7 +55,7 @@ class GReviewAddedData {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, reviewAdded, G__typename]);
+    return Object.hash(runtimeType, reviewAdded, G__typename);
   }
 
   @override
@@ -131,8 +131,7 @@ class GReviewAddedData_reviewAdded {
 
   @override
   int get hashCode {
-    return Object.hashAll(
-        [runtimeType, episode, stars, commentary, G__typename]);
+    return Object.hash(runtimeType, episode, stars, commentary, G__typename);
   }
 
   @override

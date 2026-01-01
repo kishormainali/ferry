@@ -4,6 +4,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.schema.gql.dart'
     as _i1;
+import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
+    as _gqlUtils;
 
 abstract class GCharacterDetails {
   String get id;
@@ -87,15 +89,15 @@ class GCharacterDetailsData implements GCharacterDetails {
         (other is GCharacterDetailsData &&
             id == other.id &&
             name == other.name &&
-            friends == other.friends &&
-            appearsIn == other.appearsIn &&
+            _gqlUtils.listEquals(friends, other.friends) &&
+            _gqlUtils.listEquals(appearsIn, other.appearsIn) &&
             G__typename == other.G__typename);
   }
 
   @override
   int get hashCode {
-    return Object.hashAll(
-        [runtimeType, id, name, friends, appearsIn, G__typename]);
+    return Object.hash(runtimeType, id, name, _gqlUtils.listHash(friends),
+        _gqlUtils.listHash(appearsIn), G__typename);
   }
 
   @override
@@ -177,8 +179,7 @@ class GFriendInfoData implements GFriendInfo {
 
   @override
   int get hashCode {
-    return Object.hashAll(
-        [runtimeType, id, name, friendsConnection, G__typename]);
+    return Object.hash(runtimeType, id, name, friendsConnection, G__typename);
   }
 
   @override
@@ -237,13 +238,13 @@ class GFriendInfoData_friendsConnection
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GFriendInfoData_friendsConnection &&
-            friends == other.friends &&
+            _gqlUtils.listEquals(friends, other.friends) &&
             G__typename == other.G__typename);
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, friends, G__typename]);
+    return Object.hash(runtimeType, _gqlUtils.listHash(friends), G__typename);
   }
 
   @override
@@ -310,7 +311,7 @@ class GCharacterBasicData implements GCharacterBasic {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, id, name, G__typename]);
+    return Object.hash(runtimeType, id, name, G__typename);
   }
 
   @override
@@ -368,13 +369,13 @@ class GSearchResultsQueryData {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GSearchResultsQueryData &&
-            search == other.search &&
+            _gqlUtils.listEquals(search, other.search) &&
             G__typename == other.G__typename);
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, search, G__typename]);
+    return Object.hash(runtimeType, _gqlUtils.listHash(search), G__typename);
   }
 
   @override
@@ -518,14 +519,14 @@ class GSearchResultsQueryData_search__asHuman
             G__typename == other.G__typename &&
             id == other.id &&
             name == other.name &&
-            friends == other.friends &&
-            appearsIn == other.appearsIn);
+            _gqlUtils.listEquals(friends, other.friends) &&
+            _gqlUtils.listEquals(appearsIn, other.appearsIn));
   }
 
   @override
   int get hashCode {
-    return Object.hashAll(
-        [runtimeType, G__typename, id, name, friends, appearsIn]);
+    return Object.hash(runtimeType, G__typename, id, name,
+        _gqlUtils.listHash(friends), _gqlUtils.listHash(appearsIn));
   }
 
   @override
@@ -609,14 +610,14 @@ class GSearchResultsQueryData_search__asDroid
             G__typename == other.G__typename &&
             id == other.id &&
             name == other.name &&
-            friends == other.friends &&
-            appearsIn == other.appearsIn);
+            _gqlUtils.listEquals(friends, other.friends) &&
+            _gqlUtils.listEquals(appearsIn, other.appearsIn));
   }
 
   @override
   int get hashCode {
-    return Object.hashAll(
-        [runtimeType, G__typename, id, name, friends, appearsIn]);
+    return Object.hash(runtimeType, G__typename, id, name,
+        _gqlUtils.listHash(friends), _gqlUtils.listHash(appearsIn));
   }
 
   @override
@@ -656,7 +657,7 @@ class GSearchResultsQueryData_search__unknown
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, G__typename]);
+    return Object.hash(runtimeType, G__typename);
   }
 
   @override

@@ -1,6 +1,10 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
 
+// ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
+    as _gqlUtils;
+
 abstract class GPostFragmentForUser1 {
   String get id;
   GPostFragmentForUser1_favoritedUsers? get favoritedUsers;
@@ -71,7 +75,7 @@ class GPostFragmentForUser1Data implements GPostFragmentForUser1 {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, id, favoritedUsers, G__typename]);
+    return Object.hash(runtimeType, id, favoritedUsers, G__typename);
   }
 
   @override
@@ -126,7 +130,7 @@ class GPostFragmentForUser1Data_favoritedUsers
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, totalCount, G__typename]);
+    return Object.hash(runtimeType, totalCount, G__typename);
   }
 
   @override
@@ -184,13 +188,13 @@ class GPostsWithFixedVariableData {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GPostsWithFixedVariableData &&
-            posts == other.posts &&
+            _gqlUtils.listEquals(posts, other.posts) &&
             G__typename == other.G__typename);
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, posts, G__typename]);
+    return Object.hash(runtimeType, _gqlUtils.listHash(posts), G__typename);
   }
 
   @override

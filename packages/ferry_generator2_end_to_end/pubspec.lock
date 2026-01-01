@@ -161,12 +161,13 @@ packages:
     source: path
     version: "0.16.2-dev.4"
   ferry_cache:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
-      path: "../ferry_cache"
-      relative: true
-    source: path
-    version: "0.10.1-dev.0+1"
+      name: ferry_cache
+      sha256: "6716f5a81371d2f3a67ad7ec592af3747365a8616b63e48631690f0673a58bbc"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.10.1"
   ferry_exec:
     dependency: "direct main"
     description:
@@ -182,11 +183,12 @@ packages:
     source: path
     version: "0.1.0-dev.0"
   ferry_store:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
-      path: "../ferry_store"
-      relative: true
-    source: path
+      name: ferry_store
+      sha256: "04edad00113cf209407f66cbe61938301fc807667d6d814871785120017fba51"
+      url: "https://pub.dev"
+    source: hosted
     version: "0.6.1"
   file:
     dependency: transitive
@@ -341,11 +343,12 @@ packages:
     source: hosted
     version: "2.0.2"
   normalize:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
-      path: "../normalize"
-      relative: true
-    source: path
+      name: normalize
+      sha256: "703f0af9e6f43a5a71536e977b945238bc89f1a941347e7ba467865a20cc1a9f"
+      url: "https://pub.dev"
+    source: hosted
     version: "0.10.0"
   package_config:
     dependency: transitive

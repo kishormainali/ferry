@@ -8,6 +8,7 @@ const dataExtension = ".data.gql.dart";
 const varExtension = ".var.gql.dart";
 const reqExtension = ".req.gql.dart";
 const schemaExtension = ".schema.gql.dart";
+const utilsExtension = ".utils.gql.dart";
 
 class BuilderConfig {
   final AssetId? schemaId;

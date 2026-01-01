@@ -51,7 +51,7 @@ class GCreateCustomFieldData {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, createCustomField, G__typename]);
+    return Object.hash(runtimeType, createCustomField, G__typename);
   }
 
   @override

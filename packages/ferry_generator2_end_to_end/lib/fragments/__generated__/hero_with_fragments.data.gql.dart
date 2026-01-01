@@ -1,6 +1,10 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
 
+// ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
+    as _gqlUtils;
+
 abstract class GheroData {
   String get name;
   String get G__typename;
@@ -50,7 +54,7 @@ class GheroDataData implements GheroData {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, name, G__typename]);
+    return Object.hash(runtimeType, name, G__typename);
   }
 
   @override
@@ -138,8 +142,7 @@ class GcomparisonFieldsData implements GcomparisonFields, GheroData {
 
   @override
   int get hashCode {
-    return Object.hashAll(
-        [runtimeType, id, name, G__typename, friendsConnection]);
+    return Object.hash(runtimeType, id, name, G__typename, friendsConnection);
   }
 
   @override
@@ -210,13 +213,14 @@ class GcomparisonFieldsData_friendsConnection
     return identical(this, other) ||
         (other is GcomparisonFieldsData_friendsConnection &&
             totalCount == other.totalCount &&
-            edges == other.edges &&
+            _gqlUtils.listEquals(edges, other.edges) &&
             G__typename == other.G__typename);
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, totalCount, edges, G__typename]);
+    return Object.hash(
+        runtimeType, totalCount, _gqlUtils.listHash(edges), G__typename);
   }
 
   @override
@@ -275,7 +279,7 @@ class GcomparisonFieldsData_friendsConnection_edges
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, node, G__typename]);
+    return Object.hash(runtimeType, node, G__typename);
   }
 
   @override
@@ -333,7 +337,7 @@ class GHeroWithFragmentsData {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, hero, G__typename]);
+    return Object.hash(runtimeType, hero, G__typename);
   }
 
   @override

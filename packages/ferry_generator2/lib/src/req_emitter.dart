@@ -6,8 +6,9 @@ import "naming.dart";
 
 class ReqEmitter {
   final BuilderConfig config;
+  final Set<String> fragmentsWithVars;
 
-  ReqEmitter({required this.config});
+  ReqEmitter({required this.config, required this.fragmentsWithVars});
 
   Library buildLibrary({
     required Iterable<OperationDefinitionNode> ownedOperations,
@@ -354,15 +355,18 @@ ${hasVars ? "  vars: vars," : ""}
 
   Class _buildFragmentReq(FragmentDefinitionNode fragment) {
     final fragmentName = fragment.name.value;
+    final hasVars = fragmentsWithVars.contains(fragmentName);
     final className = builtClassName("${fragmentName}Req");
     final dataTypeRef = Reference(
       builtClassName("${fragmentName}Data"),
       "#data",
     );
-    final varsTypeRef = Reference(
-      builtClassName("${fragmentName}Vars"),
-      "#var",
-    );
+    final varsTypeRef = hasVars
+        ? Reference(
+            builtClassName("${fragmentName}Vars"),
+            "#var",
+          )
+        : refer("Null");
     final reqTypeRef = TypeReference(
       (b) => b
         ..symbol = "FragmentRequest"
@@ -380,7 +384,8 @@ ${hasVars ? "  vars: vars," : ""}
             (b) => b
               ..name = "vars"
               ..modifier = FieldModifier.final$
-              ..type = varsTypeRef,
+              ..type = varsTypeRef
+              ..assignment = hasVars ? null : const Code("null"),
           ),
           Field(
             (b) => b
@@ -424,13 +429,14 @@ ${hasVars ? "  vars: vars," : ""}
           Constructor(
             (b) => b
               ..optionalParameters.addAll([
-                Parameter(
-                  (b) => b
-                    ..name = "vars"
-                    ..named = true
-                    ..required = true
-                    ..toThis = true,
-                ),
+                if (hasVars)
+                  Parameter(
+                    (b) => b
+                      ..name = "vars"
+                      ..named = true
+                      ..required = true
+                      ..toThis = true,
+                  ),
                 Parameter(
                   (b) => b
                     ..name = "document"
@@ -480,7 +486,9 @@ ${hasVars ? "  vars: vars," : ""}
               ..name = "varsToJson"
               ..returns = refer("Map<String, dynamic>")
               ..lambda = true
-              ..body = refer("vars").property("toJson").call([]).code,
+              ..body = hasVars
+                  ? refer("vars").property("toJson").call([]).code
+                  : const Code("const <String, dynamic>{}"),
           ),
           Method(
             (b) => b

@@ -5,6 +5,8 @@
 import 'package:ferry_generator2_end_to_end/custom/date.dart';
 import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.schema.gql.dart'
     as _i1;
+import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
+    as _gqlUtils;
 
 class GReviewWithDateData {
   const GReviewWithDateData({
@@ -56,7 +58,7 @@ class GReviewWithDateData {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, createReview, G__typename]);
+    return Object.hash(runtimeType, createReview, G__typename);
   }
 
   @override
@@ -90,8 +92,7 @@ class GReviewWithDateData_createReview {
       seenOn: (json['seenOn'] as List<dynamic>)
           .map((e) => customDateFromJson(e))
           .toList(),
-      custom:
-          (json['custom'] as List<dynamic>).map((e) => (e as String)).toList(),
+      custom: List<String>.from((json['custom'] as List<dynamic>)),
       G__typename: (json['__typename'] as String),
     );
   }
@@ -157,23 +158,15 @@ class GReviewWithDateData_createReview {
             stars == other.stars &&
             commentary == other.commentary &&
             createdAt == other.createdAt &&
-            seenOn == other.seenOn &&
-            custom == other.custom &&
+            _gqlUtils.listEquals(seenOn, other.seenOn) &&
+            _gqlUtils.listEquals(custom, other.custom) &&
             G__typename == other.G__typename);
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([
-      runtimeType,
-      episode,
-      stars,
-      commentary,
-      createdAt,
-      seenOn,
-      custom,
-      G__typename
-    ]);
+    return Object.hash(runtimeType, episode, stars, commentary, createdAt,
+        _gqlUtils.listHash(seenOn), _gqlUtils.listHash(custom), G__typename);
   }
 
   @override

@@ -55,7 +55,7 @@ class GCreateReviewWithDirectivesData {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, createReview, G__typename]);
+    return Object.hash(runtimeType, createReview, G__typename);
   }
 
   @override
@@ -132,8 +132,7 @@ class GCreateReviewWithDirectivesData_createReview {
 
   @override
   int get hashCode {
-    return Object.hashAll(
-        [runtimeType, episode, stars, commentary, G__typename]);
+    return Object.hash(runtimeType, episode, stars, commentary, G__typename);
   }
 
   @override

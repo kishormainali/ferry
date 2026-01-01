@@ -252,6 +252,51 @@ void main() {
     expect(second.toJson(), equals(input));
   });
 
+  test('data equality deep-compares lists', () {
+    final input = {
+      '__typename': 'Query',
+      'books': [
+        {
+          '__typename': 'Textbook',
+          'title': 'GraphQL 101',
+          'courses': ['Intro', 'Advanced'],
+          'author': {
+            '__typename': 'Person',
+            'displayName': 'Ada Lovelace',
+            'firstName': 'Ada',
+            'lastName': 'Lovelace',
+          },
+        },
+      ],
+    };
+
+    final first = GGetBooksData.fromJson(input);
+    final second = GGetBooksData.fromJson(input);
+
+    expect(identical(first, second), isFalse);
+    expect(first, equals(second));
+    expect(first.hashCode, equals(second.hashCode));
+
+    final different = GGetBooksData.fromJson({
+      '__typename': 'Query',
+      'books': [
+        {
+          '__typename': 'Textbook',
+          'title': 'GraphQL 101',
+          'courses': ['Intro'],
+          'author': {
+            '__typename': 'Person',
+            'displayName': 'Ada Lovelace',
+            'firstName': 'Ada',
+            'lastName': 'Lovelace',
+          },
+        },
+      ],
+    });
+
+    expect(first, isNot(equals(different)));
+  });
+
   test('create review mutation round-trips and vars serialize', () {
     final input = {
       '__typename': 'Mutation',

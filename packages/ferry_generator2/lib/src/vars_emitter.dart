@@ -49,6 +49,9 @@ class VarsEmitter {
 
     for (final fragment in ownedFragments) {
       final varTypes = _fragmentVarTypes(fragment);
+      if (varTypes.isEmpty) {
+        continue;
+      }
       specs.addAll(
         _buildVarsClass(
           "${fragment.name.value}Vars",
@@ -81,6 +84,10 @@ class VarsEmitter {
         )
         ..body.addAll(specs),
     );
+  }
+
+  Map<String, TypeNode> fragmentVarTypes(FragmentDefinitionNode fragment) {
+    return _fragmentVarTypes(fragment);
   }
 
   List<Spec> _buildVarsClass(String name, List<InputFieldSpec> fields) {
@@ -264,6 +271,49 @@ class VarsEmitter {
     };
   }
 
+  bool _canUseListFrom({
+    required String typeName,
+    required TypeDefinitionNode? typeDef,
+    required TypeOverrideConfig? override,
+  }) {
+    if (typeDef is! ScalarTypeDefinitionNode) return false;
+    if (override?.fromJsonFunctionName != null) return false;
+    if (_isBuiltinScalarName(typeName)) return true;
+    final overrideType = override?.type;
+    if (overrideType == null) return false;
+    final normalized = overrideType.replaceAll(" ", "");
+    if (normalized == "Object" ||
+        normalized == "Object?" ||
+        normalized == "dynamic") {
+      return false;
+    }
+    return true;
+  }
+
+  bool _isBuiltinScalarName(String typeName) => switch (typeName) {
+        "Int" => true,
+        "Float" => true,
+        "Boolean" => true,
+        "ID" => true,
+        "String" => true,
+        _ => false,
+      };
+
+  Reference _typeReferenceWithNullability(
+    Reference typeRef, {
+    required bool isNullable,
+  }) {
+    if (typeRef is TypeReference) {
+      return typeRef.rebuild((b) => b..isNullable = isNullable);
+    }
+    return TypeReference(
+      (b) => b
+        ..symbol = typeRef.symbol
+        ..url = typeRef.url
+        ..isNullable = isNullable,
+    );
+  }
+
   Reference _typeReferenceForTypeNode(
     TypeNode typeNode,
     Reference namedTypeRef, {
@@ -336,6 +386,34 @@ class VarsEmitter {
     Expression valueExpr,
   ) {
     if (node is ListTypeNode) {
+      if (node.type is NamedTypeNode) {
+        final innerNode = node.type as NamedTypeNode;
+        final typeName = innerNode.name.value;
+        final typeDef = schema.lookupType(NameNode(value: typeName));
+        final override = config.typeOverrides[typeName];
+        if (_canUseListFrom(
+          typeName: typeName,
+          typeDef: typeDef,
+          override: override,
+        )) {
+          final scalarRef = _scalarReference(typeName);
+          final innerTypeRef = _typeReferenceWithNullability(
+            scalarRef,
+            isNullable: !innerNode.isNonNull,
+          );
+          final listTypeRef = TypeReference(
+            (b) => b
+              ..symbol = "List"
+              ..types.add(innerTypeRef),
+          );
+          final castExpr = valueExpr.asA(_listDynamicType());
+          final fromExpr = listTypeRef.property("from").call([castExpr]);
+          if (node.isNonNull) {
+            return fromExpr;
+          }
+          return _nullGuard(valueExpr, fromExpr);
+        }
+      }
       final innerExpr = _fromJsonForTypeNode(node.type, field, refer("e"));
       final castExpr = valueExpr.asA(_listDynamicType());
       final mapped = castExpr

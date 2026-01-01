@@ -88,16 +88,14 @@ class GHeroForEpisodeReq
 }
 
 class GDroidFragmentReq
-    implements
-        _i1.FragmentRequest<_i2.GDroidFragmentData, _i3.GDroidFragmentVars> {
+    implements _i1.FragmentRequest<_i2.GDroidFragmentData, Null> {
   GDroidFragmentReq({
-    required this.vars,
     _i6.DocumentNode? document,
     this.fragmentName = 'DroidFragment',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
-  final _i3.GDroidFragmentVars vars;
+  final Null vars = null;
 
   final _i6.DocumentNode document;
 
@@ -110,7 +108,7 @@ class GDroidFragmentReq
   _i2.GDroidFragmentData? parseData(Map<String, dynamic> json) =>
       _i2.GDroidFragmentData.fromJson(json);
 
-  Map<String, dynamic> varsToJson() => vars.toJson();
+  Map<String, dynamic> varsToJson() => const <String, dynamic>{};
 
   Map<String, dynamic> dataToJson(_i2.GDroidFragmentData data) => data.toJson();
 }

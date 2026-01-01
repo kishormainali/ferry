@@ -90,17 +90,14 @@ class GPostsWithFixedVariableReq
 }
 
 class GPostFragmentForUser1Req
-    implements
-        _i1.FragmentRequest<_i2.GPostFragmentForUser1Data,
-            _i3.GPostFragmentForUser1Vars> {
+    implements _i1.FragmentRequest<_i2.GPostFragmentForUser1Data, Null> {
   GPostFragmentForUser1Req({
-    required this.vars,
     _i6.DocumentNode? document,
     this.fragmentName = 'PostFragmentForUser1',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
-  final _i3.GPostFragmentForUser1Vars vars;
+  final Null vars = null;
 
   final _i6.DocumentNode document;
 
@@ -113,7 +110,7 @@ class GPostFragmentForUser1Req
   _i2.GPostFragmentForUser1Data? parseData(Map<String, dynamic> json) =>
       _i2.GPostFragmentForUser1Data.fromJson(json);
 
-  Map<String, dynamic> varsToJson() => vars.toJson();
+  Map<String, dynamic> varsToJson() => const <String, dynamic>{};
 
   Map<String, dynamic> dataToJson(_i2.GPostFragmentForUser1Data data) =>
       data.toJson();

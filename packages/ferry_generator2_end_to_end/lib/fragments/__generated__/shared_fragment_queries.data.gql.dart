@@ -1,6 +1,10 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
 
+// ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
+    as _gqlUtils;
+
 abstract class GSharedAuthorFragment {
   String get displayName;
   String get G__typename;
@@ -142,8 +146,8 @@ class GSharedAuthorFragmentData__asPerson extends GSharedAuthorFragmentData
 
   @override
   int get hashCode {
-    return Object.hashAll(
-        [runtimeType, displayName, G__typename, firstName, lastName]);
+    return Object.hash(
+        runtimeType, displayName, G__typename, firstName, lastName);
   }
 
   @override
@@ -202,7 +206,7 @@ class GSharedAuthorFragmentData__asCompany extends GSharedAuthorFragmentData
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, displayName, G__typename, name]);
+    return Object.hash(runtimeType, displayName, G__typename, name);
   }
 
   @override
@@ -253,7 +257,7 @@ class GSharedAuthorFragmentData__unknown extends GSharedAuthorFragmentData
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, displayName, G__typename]);
+    return Object.hash(runtimeType, displayName, G__typename);
   }
 
   @override
@@ -364,8 +368,7 @@ class GSharedBookFragmentData__asTextbook extends GSharedBookFragmentData
       author: GSharedAuthorFragmentData.fromJson(
           (json['author'] as Map<String, dynamic>)),
       G__typename: (json['__typename'] as String),
-      courses:
-          (json['courses'] as List<dynamic>).map((e) => (e as String)).toList(),
+      courses: List<String>.from((json['courses'] as List<dynamic>)),
     );
   }
 
@@ -401,12 +404,13 @@ class GSharedBookFragmentData__asTextbook extends GSharedBookFragmentData
             title == other.title &&
             author == other.author &&
             G__typename == other.G__typename &&
-            courses == other.courses);
+            _gqlUtils.listEquals(courses, other.courses));
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, title, author, G__typename, courses]);
+    return Object.hash(
+        runtimeType, title, author, G__typename, _gqlUtils.listHash(courses));
   }
 
   @override
@@ -431,8 +435,7 @@ class GSharedBookFragmentData__asColoringBook extends GSharedBookFragmentData
       author: GSharedAuthorFragmentData.fromJson(
           (json['author'] as Map<String, dynamic>)),
       G__typename: (json['__typename'] as String),
-      colors:
-          (json['colors'] as List<dynamic>).map((e) => (e as String)).toList(),
+      colors: List<String>.from((json['colors'] as List<dynamic>)),
     );
   }
 
@@ -468,12 +471,13 @@ class GSharedBookFragmentData__asColoringBook extends GSharedBookFragmentData
             title == other.title &&
             author == other.author &&
             G__typename == other.G__typename &&
-            colors == other.colors);
+            _gqlUtils.listEquals(colors, other.colors));
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, title, author, G__typename, colors]);
+    return Object.hash(
+        runtimeType, title, author, G__typename, _gqlUtils.listHash(colors));
   }
 
   @override
@@ -530,7 +534,7 @@ class GSharedBookFragmentData__unknown extends GSharedBookFragmentData
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, title, author, G__typename]);
+    return Object.hash(runtimeType, title, author, G__typename);
   }
 
   @override
@@ -580,13 +584,13 @@ class GSharedBooksAData {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GSharedBooksAData &&
-            books == other.books &&
+            _gqlUtils.listEquals(books, other.books) &&
             G__typename == other.G__typename);
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, books, G__typename]);
+    return Object.hash(runtimeType, _gqlUtils.listHash(books), G__typename);
   }
 
   @override
@@ -636,13 +640,13 @@ class GSharedBooksBData {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GSharedBooksBData &&
-            books == other.books &&
+            _gqlUtils.listEquals(books, other.books) &&
             G__typename == other.G__typename);
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, books, G__typename]);
+    return Object.hash(runtimeType, _gqlUtils.listHash(books), G__typename);
   }
 
   @override

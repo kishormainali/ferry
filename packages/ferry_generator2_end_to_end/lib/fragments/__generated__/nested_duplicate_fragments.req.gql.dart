@@ -7,9 +7,7 @@ import 'package:ferry_generator2_end_to_end/fragments/__generated__/nested_dupli
     as _i4;
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/nested_duplicate_fragments.data.gql.dart'
     as _i2;
-import 'package:ferry_generator2_end_to_end/fragments/__generated__/nested_duplicate_fragments.var.gql.dart'
-    as _i5;
-import 'package:gql/ast.dart' as _i6;
+import 'package:gql/ast.dart' as _i5;
 import 'package:gql_exec/gql_exec.dart' as _i3;
 
 class GSearchResultsQueryReq
@@ -85,86 +83,79 @@ class GSearchResultsQueryReq
 }
 
 class GCharacterDetailsReq
-    implements
-        _i1
-        .FragmentRequest<_i2.GCharacterDetailsData, _i5.GCharacterDetailsVars> {
+    implements _i1.FragmentRequest<_i2.GCharacterDetailsData, Null> {
   GCharacterDetailsReq({
-    required this.vars,
-    _i6.DocumentNode? document,
+    _i5.DocumentNode? document,
     this.fragmentName = 'CharacterDetails',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
-  final _i5.GCharacterDetailsVars vars;
+  final Null vars = null;
 
-  final _i6.DocumentNode document;
+  final _i5.DocumentNode document;
 
   final String? fragmentName;
 
   final Map<String, dynamic> idFields;
 
-  static final _i6.DocumentNode _document = _i4.document;
+  static final _i5.DocumentNode _document = _i4.document;
 
   _i2.GCharacterDetailsData? parseData(Map<String, dynamic> json) =>
       _i2.GCharacterDetailsData.fromJson(json);
 
-  Map<String, dynamic> varsToJson() => vars.toJson();
+  Map<String, dynamic> varsToJson() => const <String, dynamic>{};
 
   Map<String, dynamic> dataToJson(_i2.GCharacterDetailsData data) =>
       data.toJson();
 }
 
-class GFriendInfoReq
-    implements _i1.FragmentRequest<_i2.GFriendInfoData, _i5.GFriendInfoVars> {
+class GFriendInfoReq implements _i1.FragmentRequest<_i2.GFriendInfoData, Null> {
   GFriendInfoReq({
-    required this.vars,
-    _i6.DocumentNode? document,
+    _i5.DocumentNode? document,
     this.fragmentName = 'FriendInfo',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
-  final _i5.GFriendInfoVars vars;
+  final Null vars = null;
 
-  final _i6.DocumentNode document;
+  final _i5.DocumentNode document;
 
   final String? fragmentName;
 
   final Map<String, dynamic> idFields;
 
-  static final _i6.DocumentNode _document = _i4.document;
+  static final _i5.DocumentNode _document = _i4.document;
 
   _i2.GFriendInfoData? parseData(Map<String, dynamic> json) =>
       _i2.GFriendInfoData.fromJson(json);
 
-  Map<String, dynamic> varsToJson() => vars.toJson();
+  Map<String, dynamic> varsToJson() => const <String, dynamic>{};
 
   Map<String, dynamic> dataToJson(_i2.GFriendInfoData data) => data.toJson();
 }
 
 class GCharacterBasicReq
-    implements
-        _i1.FragmentRequest<_i2.GCharacterBasicData, _i5.GCharacterBasicVars> {
+    implements _i1.FragmentRequest<_i2.GCharacterBasicData, Null> {
   GCharacterBasicReq({
-    required this.vars,
-    _i6.DocumentNode? document,
+    _i5.DocumentNode? document,
     this.fragmentName = 'CharacterBasic',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
-  final _i5.GCharacterBasicVars vars;
+  final Null vars = null;
 
-  final _i6.DocumentNode document;
+  final _i5.DocumentNode document;
 
   final String? fragmentName;
 
   final Map<String, dynamic> idFields;
 
-  static final _i6.DocumentNode _document = _i4.document;
+  static final _i5.DocumentNode _document = _i4.document;
 
   _i2.GCharacterBasicData? parseData(Map<String, dynamic> json) =>
       _i2.GCharacterBasicData.fromJson(json);
 
-  Map<String, dynamic> varsToJson() => vars.toJson();
+  Map<String, dynamic> varsToJson() => const <String, dynamic>{};
 
   Map<String, dynamic> dataToJson(_i2.GCharacterBasicData data) =>
       data.toJson();

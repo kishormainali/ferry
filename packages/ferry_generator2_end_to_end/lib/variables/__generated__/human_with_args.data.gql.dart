@@ -50,7 +50,7 @@ class GHumanWithArgsData {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, human, G__typename]);
+    return Object.hash(runtimeType, human, G__typename);
   }
 
   @override
@@ -113,7 +113,7 @@ class GHumanWithArgsData_human {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, name, height, G__typename]);
+    return Object.hash(runtimeType, name, height, G__typename);
   }
 
   @override

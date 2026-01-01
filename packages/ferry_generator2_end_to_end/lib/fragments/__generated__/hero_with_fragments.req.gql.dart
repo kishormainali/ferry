@@ -88,16 +88,14 @@ class GHeroWithFragmentsReq
   }
 }
 
-class GheroDataReq
-    implements _i1.FragmentRequest<_i2.GheroDataData, _i3.GheroDataVars> {
+class GheroDataReq implements _i1.FragmentRequest<_i2.GheroDataData, Null> {
   GheroDataReq({
-    required this.vars,
     _i6.DocumentNode? document,
     this.fragmentName = 'heroData',
     this.idFields = const <String, dynamic>{},
   }) : document = document ?? _document;
 
-  final _i3.GheroDataVars vars;
+  final Null vars = null;
 
   final _i6.DocumentNode document;
 
@@ -110,7 +108,7 @@ class GheroDataReq
   _i2.GheroDataData? parseData(Map<String, dynamic> json) =>
       _i2.GheroDataData.fromJson(json);
 
-  Map<String, dynamic> varsToJson() => vars.toJson();
+  Map<String, dynamic> varsToJson() => const <String, dynamic>{};
 
   Map<String, dynamic> dataToJson(_i2.GheroDataData data) => data.toJson();
 }

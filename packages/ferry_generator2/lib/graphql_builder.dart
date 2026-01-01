@@ -17,6 +17,7 @@ import "src/schema.dart";
 import "src/schema_emitter.dart";
 import "src/selection_resolver.dart";
 import "src/source.dart";
+import "src/utils_emitter.dart";
 import "src/vars_emitter.dart";
 import "src/writer.dart";
 import "src/validation.dart";
@@ -47,6 +48,9 @@ class GraphqlBuilder implements Builder {
     }
     if (config.outputs.schema) {
       outputs.add("{{dir}}/${config.outputDir}/{{file}}$schemaExtension");
+    }
+    if (config.generateEquals || config.generateHashCode) {
+      outputs.add("{{dir}}/${config.outputDir}/{{file}}$utilsExtension");
     }
 
     if (outputs.isEmpty) {
@@ -134,24 +138,39 @@ class GraphqlBuilder implements Builder {
 
     final fragmentSourceUrls = _fragmentSourceUrls(sourceWithTypenames);
 
+    final utilsUrl = (config.generateEquals || config.generateHashCode)
+        ? outputAssetId(schemaId, utilsExtension, config.outputDir)
+            .uri
+            .toString()
+        : null;
+    final ownedFragments = sourceWithTypenames.document.definitions
+        .whereType<FragmentDefinitionNode>();
+    final ownedOperations = sourceWithTypenames.document.definitions
+        .whereType<OperationDefinitionNode>();
+
     final dataEmitter = DataEmitter(
       schema: schemaIndex,
       config: config,
       documentIndex: documentIndex,
       resolver: resolver,
       fragmentSourceUrls: fragmentSourceUrls,
+      utilsUrl: utilsUrl,
     );
     final varsEmitter = VarsEmitter(
       schema: schemaIndex,
       config: config,
       documentIndex: documentIndex,
     );
-    final reqEmitter = ReqEmitter(config: config);
-
-    final ownedFragments = sourceWithTypenames.document.definitions
-        .whereType<FragmentDefinitionNode>();
-    final ownedOperations = sourceWithTypenames.document.definitions
-        .whereType<OperationDefinitionNode>();
+    final fragmentsWithVars = <String>{};
+    for (final fragment in ownedFragments) {
+      if (varsEmitter.fragmentVarTypes(fragment).isNotEmpty) {
+        fragmentsWithVars.add(fragment.name.value);
+      }
+    }
+    final reqEmitter = ReqEmitter(
+      config: config,
+      fragmentsWithVars: fragmentsWithVars,
+    );
 
     final sourceUrl = buildStep.inputId.uri.toString();
     final schemaUrl = schemaId.uri.toString();
@@ -253,6 +272,20 @@ class GraphqlBuilder implements Builder {
           schema: schemaIndex,
           config: config,
         ),
+        outputId,
+      );
+    }
+
+    if ((config.generateEquals || config.generateHashCode) &&
+        buildStep.inputId == schemaId) {
+      final outputId = outputAssetId(
+        buildStep.inputId,
+        utilsExtension,
+        config.outputDir,
+      );
+      await writeOutput(
+        utilsExtension,
+        buildUtilsLibrary(),
         outputId,
       );
     }

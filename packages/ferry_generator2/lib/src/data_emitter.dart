@@ -13,6 +13,7 @@ class DataEmitter {
   final DocumentIndex documentIndex;
   final SelectionResolver resolver;
   final Map<String, String> fragmentSourceUrls;
+  final String? utilsUrl;
   final Set<String> extraImports = {};
 
   final Map<String, FragmentInfo> _fragmentInfo = {};
@@ -20,6 +21,10 @@ class DataEmitter {
   final Set<String> _generatedInterfaces = {};
   final Map<String, ResolvedSelectionSet> _fragmentInterfaceSelections = {};
   final Map<String, String> _interfaceKeyToFragmentName = {};
+  bool _needsUtilsImport = false;
+
+  static const _utilsImportAlias = "_gqlUtils";
+  static const _utilsPrefix = "$_utilsImportAlias.";
 
   DataEmitter({
     required this.schema,
@@ -27,6 +32,7 @@ class DataEmitter {
     required this.documentIndex,
     required this.resolver,
     required this.fragmentSourceUrls,
+    required this.utilsUrl,
   }) {
     _indexFragments();
   }
@@ -36,6 +42,7 @@ class DataEmitter {
     required Iterable<OperationDefinitionNode> ownedOperations,
   }) {
     final specs = <Spec>[];
+    _needsUtilsImport = false;
 
     for (final fragment in ownedFragments) {
       specs.addAll(_buildFragmentInterfaces(fragment));
@@ -46,11 +53,14 @@ class DataEmitter {
       specs.addAll(_buildOperationData(operation));
     }
 
+    final directives = <Directive>[
+      if (_needsUtilsImport && utilsUrl != null)
+        Directive.import(utilsUrl!, as: _utilsImportAlias),
+      ...extraImports.map(Directive.import),
+    ];
     return Library(
       (b) => b
-        ..directives.addAll(
-          extraImports.map(Directive.import),
-        )
+        ..directives.addAll(directives)
         ..body.addAll(specs),
     );
   }
@@ -710,7 +720,13 @@ class DataEmitter {
 
   Method _buildEqualsMethod(String className, List<FieldSpec> fields) {
     final comparisons = fields
-        .map((field) => "${field.propertyName} == other.${field.propertyName}")
+        .map(
+          (field) => _equalsExpressionForTypeNode(
+            field.typeNode,
+            field.propertyName,
+            "other.${field.propertyName}",
+          ),
+        )
         .join(" && ");
     final body = fields.isEmpty
         ? "return identical(this, other) || other is $className;"
@@ -736,9 +752,18 @@ class DataEmitter {
   Method _buildHashCodeGetter(List<FieldSpec> fields) {
     final entries = [
       "runtimeType",
-      ...fields.map((field) => field.propertyName)
+      ...fields.map(
+        (field) => _hashExpressionForTypeNode(
+          field.typeNode,
+          field.propertyName,
+        ),
+      ),
     ];
-    final body = Code("return Object.hashAll([${entries.join(", ")}]);");
+    final body = entries.length == 1
+        ? const Code("return runtimeType.hashCode;")
+        : entries.length <= 20
+            ? Code("return Object.hash(${entries.join(", ")});")
+            : Code("return Object.hashAll([${entries.join(", ")}]);");
     return Method(
       (b) => b
         ..annotations.add(refer("override"))
@@ -794,6 +819,99 @@ class DataEmitter {
         ..returns = field.typeRef
         ..type = MethodType.getter
         ..name = field.propertyName,
+    );
+  }
+
+  bool _requiresDeepList(TypeNode node) {
+    if (node is ListTypeNode) return true;
+    if (node is NamedTypeNode) {
+      return _isMapOverride(node.name.value);
+    }
+    return false;
+  }
+
+  String _equalsExpressionForTypeNode(
+    TypeNode node,
+    String left,
+    String right,
+  ) {
+    if (node is ListTypeNode) {
+      _needsUtilsImport = true;
+      final helper =
+          _requiresDeepList(node.type) ? "listEqualsDeep" : "listEquals";
+      return "$_utilsPrefix$helper($left, $right)";
+    }
+    if (node is NamedTypeNode) {
+      final typeName = node.name.value;
+      if (_isMapOverride(typeName)) {
+        _needsUtilsImport = true;
+        return "${_utilsPrefix}deepEquals($left, $right)";
+      }
+      return "$left == $right";
+    }
+    throw StateError("Invalid type node");
+  }
+
+  String _hashExpressionForTypeNode(
+    TypeNode node,
+    String value,
+  ) {
+    if (node is ListTypeNode) {
+      _needsUtilsImport = true;
+      final helper = _requiresDeepList(node.type) ? "listHashDeep" : "listHash";
+      return "$_utilsPrefix$helper($value)";
+    }
+    if (node is NamedTypeNode) {
+      final typeName = node.name.value;
+      if (_isMapOverride(typeName)) {
+        _needsUtilsImport = true;
+        return "${_utilsPrefix}deepHash($value)";
+      }
+      return value;
+    }
+    throw StateError("Invalid type node");
+  }
+
+  bool _canUseListFrom({
+    required String typeName,
+    required TypeDefinitionNode? typeDef,
+    required TypeOverrideConfig? override,
+  }) {
+    if (typeDef is! ScalarTypeDefinitionNode) return false;
+    if (override?.fromJsonFunctionName != null) return false;
+    if (_isBuiltinScalarName(typeName)) return true;
+    final overrideType = override?.type;
+    if (overrideType == null) return false;
+    final normalized = overrideType.replaceAll(" ", "");
+    if (normalized == "Object" ||
+        normalized == "Object?" ||
+        normalized == "dynamic") {
+      return false;
+    }
+    return true;
+  }
+
+  bool _isBuiltinScalarName(String typeName) => switch (typeName) {
+        "Int" => true,
+        "Float" => true,
+        "Boolean" => true,
+        "ID" => true,
+        "String" => true,
+        _ => false,
+      };
+
+  Reference _typeReferenceWithNullability(
+    Reference typeRef, {
+    required bool isNullable,
+  }) {
+    if (typeRef is TypeReference) {
+      return typeRef.rebuild((b) => b..isNullable = isNullable);
+    }
+    return TypeReference(
+      (b) => b
+        ..symbol = typeRef.symbol
+        ..url = typeRef.url
+        ..isNullable = isNullable,
     );
   }
 
@@ -1071,6 +1189,14 @@ class DataEmitter {
     };
   }
 
+  bool _isMapOverride(String typeName) {
+    final override = config.typeOverrides[typeName];
+    final overrideType = override?.type;
+    if (overrideType == null) return false;
+    final normalized = overrideType.replaceAll(" ", "");
+    return RegExp(r'(^|\\.)Map(<|\\?|$)').hasMatch(normalized);
+  }
+
   Reference _typeReferenceForTypeNode(
     TypeNode typeNode,
     Reference namedTypeRef,
@@ -1112,6 +1238,34 @@ class DataEmitter {
     Expression valueExpr,
   ) {
     if (node is ListTypeNode) {
+      if (node.type is NamedTypeNode) {
+        final innerNode = node.type as NamedTypeNode;
+        final typeName = innerNode.name.value;
+        final typeDef = schema.lookupType(NameNode(value: typeName));
+        final override = config.typeOverrides[typeName];
+        if (_canUseListFrom(
+          typeName: typeName,
+          typeDef: typeDef,
+          override: override,
+        )) {
+          final scalarRef = _scalarReference(typeName);
+          final innerTypeRef = _typeReferenceWithNullability(
+            scalarRef,
+            isNullable: !innerNode.isNonNull,
+          );
+          final listTypeRef = TypeReference(
+            (b) => b
+              ..symbol = "List"
+              ..types.add(innerTypeRef),
+          );
+          final castExpr = valueExpr.asA(_listDynamicType());
+          final fromExpr = listTypeRef.property("from").call([castExpr]);
+          if (node.isNonNull) {
+            return fromExpr;
+          }
+          return _nullGuard(valueExpr, fromExpr);
+        }
+      }
       final innerExpr = _fromJsonForTypeNode(node.type, field, refer("e"));
       final castExpr = valueExpr.asA(_listDynamicType());
       final mapped = castExpr

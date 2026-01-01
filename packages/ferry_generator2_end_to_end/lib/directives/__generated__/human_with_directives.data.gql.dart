@@ -50,7 +50,7 @@ class GHumanWithDirectivesData {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, human, G__typename]);
+    return Object.hash(runtimeType, human, G__typename);
   }
 
   @override
@@ -115,7 +115,7 @@ class GHumanWithDirectivesData_human {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, id, name, G__typename]);
+    return Object.hash(runtimeType, id, name, G__typename);
   }
 
   @override

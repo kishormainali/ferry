@@ -1,6 +1,10 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
 
+// ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
+    as _gqlUtils;
+
 abstract class GheroFieldsFragment {
   String get id;
   String get name;
@@ -166,13 +170,13 @@ class GheroFieldsFragmentData__asHuman extends GheroFieldsFragmentData
             name == other.name &&
             G__typename == other.G__typename &&
             homePlanet == other.homePlanet &&
-            friends == other.friends);
+            _gqlUtils.listEquals(friends, other.friends));
   }
 
   @override
   int get hashCode {
-    return Object.hashAll(
-        [runtimeType, id, name, G__typename, homePlanet, friends]);
+    return Object.hash(runtimeType, id, name, G__typename, homePlanet,
+        _gqlUtils.listHash(friends));
   }
 
   @override
@@ -317,8 +321,7 @@ class GheroFieldsFragmentData__asHuman_friends__asDroid
 
   @override
   int get hashCode {
-    return Object.hashAll(
-        [runtimeType, G__typename, id, name, primaryFunction]);
+    return Object.hash(runtimeType, G__typename, id, name, primaryFunction);
   }
 
   @override
@@ -393,7 +396,7 @@ class GheroFieldsFragmentData__asHuman_friends__asHuman
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, G__typename, id, name, homePlanet]);
+    return Object.hash(runtimeType, G__typename, id, name, homePlanet);
   }
 
   @override
@@ -438,7 +441,7 @@ class GheroFieldsFragmentData__asHuman_friends__unknown
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, G__typename]);
+    return Object.hash(runtimeType, G__typename);
   }
 
   @override
@@ -511,8 +514,7 @@ class GheroFieldsFragmentData__asDroid extends GheroFieldsFragmentData
 
   @override
   int get hashCode {
-    return Object.hashAll(
-        [runtimeType, id, name, G__typename, primaryFunction]);
+    return Object.hash(runtimeType, id, name, G__typename, primaryFunction);
   }
 
   @override
@@ -568,7 +570,7 @@ class GheroFieldsFragmentData__unknown extends GheroFieldsFragmentData
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, id, name, G__typename]);
+    return Object.hash(runtimeType, id, name, G__typename);
   }
 
   @override
@@ -647,13 +649,14 @@ class GhumanFieldsFragmentData implements GhumanFieldsFragment {
     return identical(this, other) ||
         (other is GhumanFieldsFragmentData &&
             homePlanet == other.homePlanet &&
-            friends == other.friends &&
+            _gqlUtils.listEquals(friends, other.friends) &&
             G__typename == other.G__typename);
   }
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, homePlanet, friends, G__typename]);
+    return Object.hash(
+        runtimeType, homePlanet, _gqlUtils.listHash(friends), G__typename);
   }
 
   @override
@@ -790,8 +793,7 @@ class GhumanFieldsFragmentData_friends__asDroid
 
   @override
   int get hashCode {
-    return Object.hashAll(
-        [runtimeType, G__typename, id, name, primaryFunction]);
+    return Object.hash(runtimeType, G__typename, id, name, primaryFunction);
   }
 
   @override
@@ -864,7 +866,7 @@ class GhumanFieldsFragmentData_friends__asHuman
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, G__typename, id, name, homePlanet]);
+    return Object.hash(runtimeType, G__typename, id, name, homePlanet);
   }
 
   @override
@@ -905,7 +907,7 @@ class GhumanFieldsFragmentData_friends__unknown
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, G__typename]);
+    return Object.hash(runtimeType, G__typename);
   }
 
   @override
@@ -969,7 +971,7 @@ class GdroidFieldsFragmentData implements GdroidFieldsFragment {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, primaryFunction, G__typename]);
+    return Object.hash(runtimeType, primaryFunction, G__typename);
   }
 
   @override
@@ -1028,7 +1030,7 @@ class GHeroWithInterfaceSubTypedFragmentsData {
 
   @override
   int get hashCode {
-    return Object.hashAll([runtimeType, hero, G__typename]);
+    return Object.hash(runtimeType, hero, G__typename);
   }
 
   @override

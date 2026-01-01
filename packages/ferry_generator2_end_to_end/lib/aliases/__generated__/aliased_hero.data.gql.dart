@@ -42,6 +42,39 @@ class GAliasedHeroData {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GAliasedHeroData copyWith({
+    GAliasedHeroData_empireHero? empireHero,
+    bool empireHeroIsSet = false,
+    GAliasedHeroData_jediHero? jediHero,
+    bool jediHeroIsSet = false,
+    String? G__typename,
+  }) {
+    return GAliasedHeroData(
+      empireHero: empireHeroIsSet ? empireHero : this.empireHero,
+      jediHero: jediHeroIsSet ? jediHero : this.jediHero,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GAliasedHeroData &&
+            empireHero == other.empireHero &&
+            jediHero == other.jediHero &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, empireHero, jediHero, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GAliasedHeroData(empireHero: $empireHero, jediHero: $jediHero, G__typename: $G__typename)';
+  }
 }
 
 class GAliasedHeroData_empireHero {
@@ -79,6 +112,40 @@ class GAliasedHeroData_empireHero {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GAliasedHeroData_empireHero copyWith({
+    String? id,
+    String? name,
+    List<_i1.GEpisode?>? from,
+    String? G__typename,
+  }) {
+    return GAliasedHeroData_empireHero(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      from: from ?? this.from,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GAliasedHeroData_empireHero &&
+            id == other.id &&
+            name == other.name &&
+            from == other.from &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, id, name, from, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GAliasedHeroData_empireHero(id: $id, name: $name, from: $from, G__typename: $G__typename)';
+  }
 }
 
 class GAliasedHeroData_jediHero {
@@ -115,5 +182,39 @@ class GAliasedHeroData_jediHero {
     result['from'] = from.map((e) => e == null ? null : e.toJson()).toList();
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GAliasedHeroData_jediHero copyWith({
+    String? id,
+    String? name,
+    List<_i1.GEpisode?>? from,
+    String? G__typename,
+  }) {
+    return GAliasedHeroData_jediHero(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      from: from ?? this.from,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GAliasedHeroData_jediHero &&
+            id == other.id &&
+            name == other.name &&
+            from == other.from &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, id, name, from, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GAliasedHeroData_jediHero(id: $id, name: $name, from: $from, G__typename: $G__typename)';
   }
 }

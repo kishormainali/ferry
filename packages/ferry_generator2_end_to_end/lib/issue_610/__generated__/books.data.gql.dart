@@ -112,6 +112,41 @@ class GAuthorFragmentData__asPerson extends GAuthorFragmentData
     result['lastName'] = lastName;
     return result;
   }
+
+  GAuthorFragmentData__asPerson copyWith({
+    String? displayName,
+    String? G__typename,
+    String? firstName,
+    String? lastName,
+  }) {
+    return GAuthorFragmentData__asPerson(
+      displayName: displayName ?? this.displayName,
+      G__typename: G__typename ?? this.G__typename,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GAuthorFragmentData__asPerson &&
+            displayName == other.displayName &&
+            G__typename == other.G__typename &&
+            firstName == other.firstName &&
+            lastName == other.lastName);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll(
+        [runtimeType, displayName, G__typename, firstName, lastName]);
+  }
+
+  @override
+  String toString() {
+    return 'GAuthorFragmentData__asPerson(displayName: $displayName, G__typename: $G__typename, firstName: $firstName, lastName: $lastName)';
+  }
 }
 
 class GAuthorFragmentData__asCompany extends GAuthorFragmentData
@@ -139,6 +174,37 @@ class GAuthorFragmentData__asCompany extends GAuthorFragmentData
     result['name'] = name;
     return result;
   }
+
+  GAuthorFragmentData__asCompany copyWith({
+    String? displayName,
+    String? G__typename,
+    String? name,
+  }) {
+    return GAuthorFragmentData__asCompany(
+      displayName: displayName ?? this.displayName,
+      G__typename: G__typename ?? this.G__typename,
+      name: name ?? this.name,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GAuthorFragmentData__asCompany &&
+            displayName == other.displayName &&
+            G__typename == other.G__typename &&
+            name == other.name);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, displayName, G__typename, name]);
+  }
+
+  @override
+  String toString() {
+    return 'GAuthorFragmentData__asCompany(displayName: $displayName, G__typename: $G__typename, name: $name)';
+  }
 }
 
 class GAuthorFragmentData__unknown extends GAuthorFragmentData
@@ -160,6 +226,34 @@ class GAuthorFragmentData__unknown extends GAuthorFragmentData
     result['displayName'] = displayName;
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GAuthorFragmentData__unknown copyWith({
+    String? displayName,
+    String? G__typename,
+  }) {
+    return GAuthorFragmentData__unknown(
+      displayName: displayName ?? this.displayName,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GAuthorFragmentData__unknown &&
+            displayName == other.displayName &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, displayName, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GAuthorFragmentData__unknown(displayName: $displayName, G__typename: $G__typename)';
   }
 }
 
@@ -278,6 +372,40 @@ class GBookFragmentData__asTextbook extends GBookFragmentData
     result['courses'] = courses.map((e) => e).toList();
     return result;
   }
+
+  GBookFragmentData__asTextbook copyWith({
+    GAuthorFragmentData? author,
+    String? title,
+    String? G__typename,
+    List<String>? courses,
+  }) {
+    return GBookFragmentData__asTextbook(
+      author: author ?? this.author,
+      title: title ?? this.title,
+      G__typename: G__typename ?? this.G__typename,
+      courses: courses ?? this.courses,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GBookFragmentData__asTextbook &&
+            author == other.author &&
+            title == other.title &&
+            G__typename == other.G__typename &&
+            courses == other.courses);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, author, title, G__typename, courses]);
+  }
+
+  @override
+  String toString() {
+    return 'GBookFragmentData__asTextbook(author: $author, title: $title, G__typename: $G__typename, courses: $courses)';
+  }
 }
 
 class GBookFragmentData__asColoringBook extends GBookFragmentData
@@ -311,6 +439,40 @@ class GBookFragmentData__asColoringBook extends GBookFragmentData
     result['colors'] = colors.map((e) => e).toList();
     return result;
   }
+
+  GBookFragmentData__asColoringBook copyWith({
+    GAuthorFragmentData? author,
+    String? title,
+    String? G__typename,
+    List<String>? colors,
+  }) {
+    return GBookFragmentData__asColoringBook(
+      author: author ?? this.author,
+      title: title ?? this.title,
+      G__typename: G__typename ?? this.G__typename,
+      colors: colors ?? this.colors,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GBookFragmentData__asColoringBook &&
+            author == other.author &&
+            title == other.title &&
+            G__typename == other.G__typename &&
+            colors == other.colors);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, author, title, G__typename, colors]);
+  }
+
+  @override
+  String toString() {
+    return 'GBookFragmentData__asColoringBook(author: $author, title: $title, G__typename: $G__typename, colors: $colors)';
+  }
 }
 
 class GBookFragmentData__unknown extends GBookFragmentData
@@ -336,6 +498,37 @@ class GBookFragmentData__unknown extends GBookFragmentData
     result['title'] = title;
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GBookFragmentData__unknown copyWith({
+    GAuthorFragmentData? author,
+    String? title,
+    String? G__typename,
+  }) {
+    return GBookFragmentData__unknown(
+      author: author ?? this.author,
+      title: title ?? this.title,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GBookFragmentData__unknown &&
+            author == other.author &&
+            title == other.title &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, author, title, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GBookFragmentData__unknown(author: $author, title: $title, G__typename: $G__typename)';
   }
 }
 
@@ -363,5 +556,33 @@ class GGetBooksData {
     result['books'] = books.map((e) => e.toJson()).toList();
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GGetBooksData copyWith({
+    List<GBookFragmentData>? books,
+    String? G__typename,
+  }) {
+    return GGetBooksData(
+      books: books ?? this.books,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GGetBooksData &&
+            books == other.books &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, books, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GGetBooksData(books: $books, G__typename: $G__typename)';
   }
 }

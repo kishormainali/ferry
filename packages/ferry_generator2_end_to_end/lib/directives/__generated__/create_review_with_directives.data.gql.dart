@@ -33,6 +33,35 @@ class GCreateReviewWithDirectivesData {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GCreateReviewWithDirectivesData copyWith({
+    GCreateReviewWithDirectivesData_createReview? createReview,
+    bool createReviewIsSet = false,
+    String? G__typename,
+  }) {
+    return GCreateReviewWithDirectivesData(
+      createReview: createReviewIsSet ? createReview : this.createReview,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GCreateReviewWithDirectivesData &&
+            createReview == other.createReview &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, createReview, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GCreateReviewWithDirectivesData(createReview: $createReview, G__typename: $G__typename)';
+  }
 }
 
 class GCreateReviewWithDirectivesData_createReview {
@@ -73,5 +102,42 @@ class GCreateReviewWithDirectivesData_createReview {
     result['commentary'] = commentaryValue == null ? null : commentaryValue;
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GCreateReviewWithDirectivesData_createReview copyWith({
+    _i1.GEpisode? episode,
+    bool episodeIsSet = false,
+    int? stars,
+    String? commentary,
+    bool commentaryIsSet = false,
+    String? G__typename,
+  }) {
+    return GCreateReviewWithDirectivesData_createReview(
+      episode: episodeIsSet ? episode : this.episode,
+      stars: stars ?? this.stars,
+      commentary: commentaryIsSet ? commentary : this.commentary,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GCreateReviewWithDirectivesData_createReview &&
+            episode == other.episode &&
+            stars == other.stars &&
+            commentary == other.commentary &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll(
+        [runtimeType, episode, stars, commentary, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GCreateReviewWithDirectivesData_createReview(episode: $episode, stars: $stars, commentary: $commentary, G__typename: $G__typename)';
   }
 }

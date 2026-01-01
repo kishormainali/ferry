@@ -29,6 +29,35 @@ class GHeroWithInterfaceUnnamedFragmentsData {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GHeroWithInterfaceUnnamedFragmentsData copyWith({
+    GHeroWithInterfaceUnnamedFragmentsData_hero? hero,
+    bool heroIsSet = false,
+    String? G__typename,
+  }) {
+    return GHeroWithInterfaceUnnamedFragmentsData(
+      hero: heroIsSet ? hero : this.hero,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GHeroWithInterfaceUnnamedFragmentsData &&
+            hero == other.hero &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, hero, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GHeroWithInterfaceUnnamedFragmentsData(hero: $hero, G__typename: $G__typename)';
+  }
 }
 
 sealed class GHeroWithInterfaceUnnamedFragmentsData_hero {
@@ -158,6 +187,47 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman
         : friendsValue.map((e) => e == null ? null : e.toJson()).toList();
     return result;
   }
+
+  GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman copyWith({
+    String? id,
+    String? name,
+    String? G__typename,
+    String? homePlanet,
+    bool homePlanetIsSet = false,
+    List<GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends?>?
+        friends,
+    bool friendsIsSet = false,
+  }) {
+    return GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      G__typename: G__typename ?? this.G__typename,
+      homePlanet: homePlanetIsSet ? homePlanet : this.homePlanet,
+      friends: friendsIsSet ? friends : this.friends,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman &&
+            id == other.id &&
+            name == other.name &&
+            G__typename == other.G__typename &&
+            homePlanet == other.homePlanet &&
+            friends == other.friends);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll(
+        [runtimeType, id, name, G__typename, homePlanet, friends]);
+  }
+
+  @override
+  String toString() {
+    return 'GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman(id: $id, name: $name, G__typename: $G__typename, homePlanet: $homePlanet, friends: $friends)';
+  }
 }
 
 sealed class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends {
@@ -272,6 +342,42 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asHuman
     result['homePlanet'] = homePlanetValue == null ? null : homePlanetValue;
     return result;
   }
+
+  GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asHuman
+      copyWith({
+    String? G__typename,
+    String? id,
+    String? name,
+    String? homePlanet,
+    bool homePlanetIsSet = false,
+  }) {
+    return GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asHuman(
+      G__typename: G__typename ?? this.G__typename,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      homePlanet: homePlanetIsSet ? homePlanet : this.homePlanet,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asHuman &&
+            G__typename == other.G__typename &&
+            id == other.id &&
+            name == other.name &&
+            homePlanet == other.homePlanet);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, G__typename, id, name, homePlanet]);
+  }
+
+  @override
+  String toString() {
+    return 'GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asHuman(G__typename: $G__typename, id: $id, name: $name, homePlanet: $homePlanet)';
+  }
 }
 
 class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asDroid
@@ -311,6 +417,44 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asDroid
         primaryFunctionValue == null ? null : primaryFunctionValue;
     return result;
   }
+
+  GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asDroid
+      copyWith({
+    String? G__typename,
+    String? id,
+    String? name,
+    String? primaryFunction,
+    bool primaryFunctionIsSet = false,
+  }) {
+    return GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asDroid(
+      G__typename: G__typename ?? this.G__typename,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      primaryFunction:
+          primaryFunctionIsSet ? primaryFunction : this.primaryFunction,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asDroid &&
+            G__typename == other.G__typename &&
+            id == other.id &&
+            name == other.name &&
+            primaryFunction == other.primaryFunction);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll(
+        [runtimeType, G__typename, id, name, primaryFunction]);
+  }
+
+  @override
+  String toString() {
+    return 'GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asDroid(G__typename: $G__typename, id: $id, name: $name, primaryFunction: $primaryFunction)';
+  }
 }
 
 class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__unknown
@@ -329,6 +473,29 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__unknown
     final result = super.toJson();
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__unknown
+      copyWith({String? G__typename}) {
+    return GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__unknown(
+        G__typename: G__typename ?? this.G__typename);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__unknown &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__unknown(G__typename: $G__typename)';
   }
 }
 
@@ -365,6 +532,43 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asDroid
         primaryFunctionValue == null ? null : primaryFunctionValue;
     return result;
   }
+
+  GHeroWithInterfaceUnnamedFragmentsData_hero__asDroid copyWith({
+    String? id,
+    String? name,
+    String? G__typename,
+    String? primaryFunction,
+    bool primaryFunctionIsSet = false,
+  }) {
+    return GHeroWithInterfaceUnnamedFragmentsData_hero__asDroid(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      G__typename: G__typename ?? this.G__typename,
+      primaryFunction:
+          primaryFunctionIsSet ? primaryFunction : this.primaryFunction,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GHeroWithInterfaceUnnamedFragmentsData_hero__asDroid &&
+            id == other.id &&
+            name == other.name &&
+            G__typename == other.G__typename &&
+            primaryFunction == other.primaryFunction);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll(
+        [runtimeType, id, name, G__typename, primaryFunction]);
+  }
+
+  @override
+  String toString() {
+    return 'GHeroWithInterfaceUnnamedFragmentsData_hero__asDroid(id: $id, name: $name, G__typename: $G__typename, primaryFunction: $primaryFunction)';
+  }
 }
 
 class GHeroWithInterfaceUnnamedFragmentsData_hero__unknown
@@ -390,5 +594,36 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__unknown
     result['name'] = name;
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GHeroWithInterfaceUnnamedFragmentsData_hero__unknown copyWith({
+    String? id,
+    String? name,
+    String? G__typename,
+  }) {
+    return GHeroWithInterfaceUnnamedFragmentsData_hero__unknown(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GHeroWithInterfaceUnnamedFragmentsData_hero__unknown &&
+            id == other.id &&
+            name == other.name &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, id, name, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GHeroWithInterfaceUnnamedFragmentsData_hero__unknown(id: $id, name: $name, G__typename: $G__typename)';
   }
 }

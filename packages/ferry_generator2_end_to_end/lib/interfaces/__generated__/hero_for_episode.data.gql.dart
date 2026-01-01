@@ -33,6 +33,36 @@ class GDroidFragmentData implements GDroidFragment {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GDroidFragmentData copyWith({
+    String? primaryFunction,
+    bool primaryFunctionIsSet = false,
+    String? G__typename,
+  }) {
+    return GDroidFragmentData(
+      primaryFunction:
+          primaryFunctionIsSet ? primaryFunction : this.primaryFunction,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GDroidFragmentData &&
+            primaryFunction == other.primaryFunction &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, primaryFunction, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GDroidFragmentData(primaryFunction: $primaryFunction, G__typename: $G__typename)';
+  }
 }
 
 class GHeroForEpisodeData {
@@ -61,6 +91,35 @@ class GHeroForEpisodeData {
     result['hero'] = heroValue == null ? null : heroValue.toJson();
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GHeroForEpisodeData copyWith({
+    GHeroForEpisodeData_hero? hero,
+    bool heroIsSet = false,
+    String? G__typename,
+  }) {
+    return GHeroForEpisodeData(
+      hero: heroIsSet ? hero : this.hero,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GHeroForEpisodeData &&
+            hero == other.hero &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, hero, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GHeroForEpisodeData(hero: $hero, G__typename: $G__typename)';
   }
 }
 
@@ -149,6 +208,34 @@ class GHeroForEpisodeData_hero_friends {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GHeroForEpisodeData_hero_friends copyWith({
+    String? name,
+    String? G__typename,
+  }) {
+    return GHeroForEpisodeData_hero_friends(
+      name: name ?? this.name,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GHeroForEpisodeData_hero_friends &&
+            name == other.name &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, name, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GHeroForEpisodeData_hero_friends(name: $name, G__typename: $G__typename)';
+  }
 }
 
 class GHeroForEpisodeData_hero__asDroid extends GHeroForEpisodeData_hero
@@ -194,6 +281,44 @@ class GHeroForEpisodeData_hero__asDroid extends GHeroForEpisodeData_hero
         primaryFunctionValue == null ? null : primaryFunctionValue;
     return result;
   }
+
+  GHeroForEpisodeData_hero__asDroid copyWith({
+    String? name,
+    List<GHeroForEpisodeData_hero_friends?>? friends,
+    bool friendsIsSet = false,
+    String? G__typename,
+    String? primaryFunction,
+    bool primaryFunctionIsSet = false,
+  }) {
+    return GHeroForEpisodeData_hero__asDroid(
+      name: name ?? this.name,
+      friends: friendsIsSet ? friends : this.friends,
+      G__typename: G__typename ?? this.G__typename,
+      primaryFunction:
+          primaryFunctionIsSet ? primaryFunction : this.primaryFunction,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GHeroForEpisodeData_hero__asDroid &&
+            name == other.name &&
+            friends == other.friends &&
+            G__typename == other.G__typename &&
+            primaryFunction == other.primaryFunction);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll(
+        [runtimeType, name, friends, G__typename, primaryFunction]);
+  }
+
+  @override
+  String toString() {
+    return 'GHeroForEpisodeData_hero__asDroid(name: $name, friends: $friends, G__typename: $G__typename, primaryFunction: $primaryFunction)';
+  }
 }
 
 class GHeroForEpisodeData_hero__unknown extends GHeroForEpisodeData_hero {
@@ -228,5 +353,37 @@ class GHeroForEpisodeData_hero__unknown extends GHeroForEpisodeData_hero {
         : friendsValue.map((e) => e == null ? null : e.toJson()).toList();
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GHeroForEpisodeData_hero__unknown copyWith({
+    String? name,
+    List<GHeroForEpisodeData_hero_friends?>? friends,
+    bool friendsIsSet = false,
+    String? G__typename,
+  }) {
+    return GHeroForEpisodeData_hero__unknown(
+      name: name ?? this.name,
+      friends: friendsIsSet ? friends : this.friends,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GHeroForEpisodeData_hero__unknown &&
+            name == other.name &&
+            friends == other.friends &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, name, friends, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GHeroForEpisodeData_hero__unknown(name: $name, friends: $friends, G__typename: $G__typename)';
   }
 }

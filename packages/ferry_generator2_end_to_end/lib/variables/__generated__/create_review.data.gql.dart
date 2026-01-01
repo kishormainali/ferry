@@ -33,6 +33,35 @@ class GCreateReviewData {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GCreateReviewData copyWith({
+    GCreateReviewData_createReview? createReview,
+    bool createReviewIsSet = false,
+    String? G__typename,
+  }) {
+    return GCreateReviewData(
+      createReview: createReviewIsSet ? createReview : this.createReview,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GCreateReviewData &&
+            createReview == other.createReview &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, createReview, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GCreateReviewData(createReview: $createReview, G__typename: $G__typename)';
+  }
 }
 
 class GCreateReviewData_createReview {
@@ -72,5 +101,42 @@ class GCreateReviewData_createReview {
     result['commentary'] = commentaryValue == null ? null : commentaryValue;
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GCreateReviewData_createReview copyWith({
+    _i1.GEpisode? episode,
+    bool episodeIsSet = false,
+    int? stars,
+    String? commentary,
+    bool commentaryIsSet = false,
+    String? G__typename,
+  }) {
+    return GCreateReviewData_createReview(
+      episode: episodeIsSet ? episode : this.episode,
+      stars: stars ?? this.stars,
+      commentary: commentaryIsSet ? commentary : this.commentary,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GCreateReviewData_createReview &&
+            episode == other.episode &&
+            stars == other.stars &&
+            commentary == other.commentary &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll(
+        [runtimeType, episode, stars, commentary, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GCreateReviewData_createReview(episode: $episode, stars: $stars, commentary: $commentary, G__typename: $G__typename)';
   }
 }

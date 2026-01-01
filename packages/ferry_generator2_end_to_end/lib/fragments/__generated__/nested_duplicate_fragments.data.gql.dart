@@ -63,6 +63,45 @@ class GCharacterDetailsData implements GCharacterDetails {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GCharacterDetailsData copyWith({
+    String? id,
+    String? name,
+    List<GFriendInfoData?>? friends,
+    bool friendsIsSet = false,
+    List<_i1.GEpisode?>? appearsIn,
+    String? G__typename,
+  }) {
+    return GCharacterDetailsData(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      friends: friendsIsSet ? friends : this.friends,
+      appearsIn: appearsIn ?? this.appearsIn,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GCharacterDetailsData &&
+            id == other.id &&
+            name == other.name &&
+            friends == other.friends &&
+            appearsIn == other.appearsIn &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll(
+        [runtimeType, id, name, friends, appearsIn, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GCharacterDetailsData(id: $id, name: $name, friends: $friends, appearsIn: $appearsIn, G__typename: $G__typename)';
+  }
 }
 
 abstract class GFriendInfo {
@@ -111,6 +150,41 @@ class GFriendInfoData implements GFriendInfo {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GFriendInfoData copyWith({
+    String? id,
+    String? name,
+    GFriendInfoData_friendsConnection? friendsConnection,
+    String? G__typename,
+  }) {
+    return GFriendInfoData(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      friendsConnection: friendsConnection ?? this.friendsConnection,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GFriendInfoData &&
+            id == other.id &&
+            name == other.name &&
+            friendsConnection == other.friendsConnection &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll(
+        [runtimeType, id, name, friendsConnection, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GFriendInfoData(id: $id, name: $name, friendsConnection: $friendsConnection, G__typename: $G__typename)';
+  }
 }
 
 class GFriendInfoData_friendsConnection
@@ -146,6 +220,35 @@ class GFriendInfoData_friendsConnection
         : friendsValue.map((e) => e == null ? null : e.toJson()).toList();
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GFriendInfoData_friendsConnection copyWith({
+    List<GCharacterBasicData?>? friends,
+    bool friendsIsSet = false,
+    String? G__typename,
+  }) {
+    return GFriendInfoData_friendsConnection(
+      friends: friendsIsSet ? friends : this.friends,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GFriendInfoData_friendsConnection &&
+            friends == other.friends &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, friends, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GFriendInfoData_friendsConnection(friends: $friends, G__typename: $G__typename)';
   }
 }
 
@@ -183,6 +286,37 @@ class GCharacterBasicData implements GCharacterBasic {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GCharacterBasicData copyWith({
+    String? id,
+    String? name,
+    String? G__typename,
+  }) {
+    return GCharacterBasicData(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GCharacterBasicData &&
+            id == other.id &&
+            name == other.name &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, id, name, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GCharacterBasicData(id: $id, name: $name, G__typename: $G__typename)';
+  }
 }
 
 class GSearchResultsQueryData {
@@ -217,6 +351,35 @@ class GSearchResultsQueryData {
         : searchValue.map((e) => e == null ? null : e.toJson()).toList();
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GSearchResultsQueryData copyWith({
+    List<GSearchResultsQueryData_search?>? search,
+    bool searchIsSet = false,
+    String? G__typename,
+  }) {
+    return GSearchResultsQueryData(
+      search: searchIsSet ? search : this.search,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GSearchResultsQueryData &&
+            search == other.search &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, search, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GSearchResultsQueryData(search: $search, G__typename: $G__typename)';
   }
 }
 
@@ -330,6 +493,45 @@ class GSearchResultsQueryData_search__asHuman
         appearsIn.map((e) => e == null ? null : e.toJson()).toList();
     return result;
   }
+
+  GSearchResultsQueryData_search__asHuman copyWith({
+    String? G__typename,
+    String? id,
+    String? name,
+    List<GFriendInfoData?>? friends,
+    bool friendsIsSet = false,
+    List<_i1.GEpisode?>? appearsIn,
+  }) {
+    return GSearchResultsQueryData_search__asHuman(
+      G__typename: G__typename ?? this.G__typename,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      friends: friendsIsSet ? friends : this.friends,
+      appearsIn: appearsIn ?? this.appearsIn,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GSearchResultsQueryData_search__asHuman &&
+            G__typename == other.G__typename &&
+            id == other.id &&
+            name == other.name &&
+            friends == other.friends &&
+            appearsIn == other.appearsIn);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll(
+        [runtimeType, G__typename, id, name, friends, appearsIn]);
+  }
+
+  @override
+  String toString() {
+    return 'GSearchResultsQueryData_search__asHuman(G__typename: $G__typename, id: $id, name: $name, friends: $friends, appearsIn: $appearsIn)';
+  }
 }
 
 class GSearchResultsQueryData_search__asDroid
@@ -382,6 +584,45 @@ class GSearchResultsQueryData_search__asDroid
         appearsIn.map((e) => e == null ? null : e.toJson()).toList();
     return result;
   }
+
+  GSearchResultsQueryData_search__asDroid copyWith({
+    String? G__typename,
+    String? id,
+    String? name,
+    List<GFriendInfoData?>? friends,
+    bool friendsIsSet = false,
+    List<_i1.GEpisode?>? appearsIn,
+  }) {
+    return GSearchResultsQueryData_search__asDroid(
+      G__typename: G__typename ?? this.G__typename,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      friends: friendsIsSet ? friends : this.friends,
+      appearsIn: appearsIn ?? this.appearsIn,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GSearchResultsQueryData_search__asDroid &&
+            G__typename == other.G__typename &&
+            id == other.id &&
+            name == other.name &&
+            friends == other.friends &&
+            appearsIn == other.appearsIn);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll(
+        [runtimeType, G__typename, id, name, friends, appearsIn]);
+  }
+
+  @override
+  String toString() {
+    return 'GSearchResultsQueryData_search__asDroid(G__typename: $G__typename, id: $id, name: $name, friends: $friends, appearsIn: $appearsIn)';
+  }
 }
 
 class GSearchResultsQueryData_search__unknown
@@ -399,5 +640,27 @@ class GSearchResultsQueryData_search__unknown
     final result = super.toJson();
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GSearchResultsQueryData_search__unknown copyWith({String? G__typename}) {
+    return GSearchResultsQueryData_search__unknown(
+        G__typename: G__typename ?? this.G__typename);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GSearchResultsQueryData_search__unknown &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GSearchResultsQueryData_search__unknown(G__typename: $G__typename)';
   }
 }

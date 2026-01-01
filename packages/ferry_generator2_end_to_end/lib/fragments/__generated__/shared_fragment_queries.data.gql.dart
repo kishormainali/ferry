@@ -115,6 +115,41 @@ class GSharedAuthorFragmentData__asPerson extends GSharedAuthorFragmentData
     result['lastName'] = lastName;
     return result;
   }
+
+  GSharedAuthorFragmentData__asPerson copyWith({
+    String? displayName,
+    String? G__typename,
+    String? firstName,
+    String? lastName,
+  }) {
+    return GSharedAuthorFragmentData__asPerson(
+      displayName: displayName ?? this.displayName,
+      G__typename: G__typename ?? this.G__typename,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GSharedAuthorFragmentData__asPerson &&
+            displayName == other.displayName &&
+            G__typename == other.G__typename &&
+            firstName == other.firstName &&
+            lastName == other.lastName);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll(
+        [runtimeType, displayName, G__typename, firstName, lastName]);
+  }
+
+  @override
+  String toString() {
+    return 'GSharedAuthorFragmentData__asPerson(displayName: $displayName, G__typename: $G__typename, firstName: $firstName, lastName: $lastName)';
+  }
 }
 
 class GSharedAuthorFragmentData__asCompany extends GSharedAuthorFragmentData
@@ -143,6 +178,37 @@ class GSharedAuthorFragmentData__asCompany extends GSharedAuthorFragmentData
     result['name'] = name;
     return result;
   }
+
+  GSharedAuthorFragmentData__asCompany copyWith({
+    String? displayName,
+    String? G__typename,
+    String? name,
+  }) {
+    return GSharedAuthorFragmentData__asCompany(
+      displayName: displayName ?? this.displayName,
+      G__typename: G__typename ?? this.G__typename,
+      name: name ?? this.name,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GSharedAuthorFragmentData__asCompany &&
+            displayName == other.displayName &&
+            G__typename == other.G__typename &&
+            name == other.name);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, displayName, G__typename, name]);
+  }
+
+  @override
+  String toString() {
+    return 'GSharedAuthorFragmentData__asCompany(displayName: $displayName, G__typename: $G__typename, name: $name)';
+  }
 }
 
 class GSharedAuthorFragmentData__unknown extends GSharedAuthorFragmentData
@@ -165,6 +231,34 @@ class GSharedAuthorFragmentData__unknown extends GSharedAuthorFragmentData
     result['displayName'] = displayName;
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GSharedAuthorFragmentData__unknown copyWith({
+    String? displayName,
+    String? G__typename,
+  }) {
+    return GSharedAuthorFragmentData__unknown(
+      displayName: displayName ?? this.displayName,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GSharedAuthorFragmentData__unknown &&
+            displayName == other.displayName &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, displayName, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GSharedAuthorFragmentData__unknown(displayName: $displayName, G__typename: $G__typename)';
   }
 }
 
@@ -285,6 +379,40 @@ class GSharedBookFragmentData__asTextbook extends GSharedBookFragmentData
     result['courses'] = courses.map((e) => e).toList();
     return result;
   }
+
+  GSharedBookFragmentData__asTextbook copyWith({
+    String? title,
+    GSharedAuthorFragmentData? author,
+    String? G__typename,
+    List<String>? courses,
+  }) {
+    return GSharedBookFragmentData__asTextbook(
+      title: title ?? this.title,
+      author: author ?? this.author,
+      G__typename: G__typename ?? this.G__typename,
+      courses: courses ?? this.courses,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GSharedBookFragmentData__asTextbook &&
+            title == other.title &&
+            author == other.author &&
+            G__typename == other.G__typename &&
+            courses == other.courses);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, title, author, G__typename, courses]);
+  }
+
+  @override
+  String toString() {
+    return 'GSharedBookFragmentData__asTextbook(title: $title, author: $author, G__typename: $G__typename, courses: $courses)';
+  }
 }
 
 class GSharedBookFragmentData__asColoringBook extends GSharedBookFragmentData
@@ -318,6 +446,40 @@ class GSharedBookFragmentData__asColoringBook extends GSharedBookFragmentData
     result['colors'] = colors.map((e) => e).toList();
     return result;
   }
+
+  GSharedBookFragmentData__asColoringBook copyWith({
+    String? title,
+    GSharedAuthorFragmentData? author,
+    String? G__typename,
+    List<String>? colors,
+  }) {
+    return GSharedBookFragmentData__asColoringBook(
+      title: title ?? this.title,
+      author: author ?? this.author,
+      G__typename: G__typename ?? this.G__typename,
+      colors: colors ?? this.colors,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GSharedBookFragmentData__asColoringBook &&
+            title == other.title &&
+            author == other.author &&
+            G__typename == other.G__typename &&
+            colors == other.colors);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, title, author, G__typename, colors]);
+  }
+
+  @override
+  String toString() {
+    return 'GSharedBookFragmentData__asColoringBook(title: $title, author: $author, G__typename: $G__typename, colors: $colors)';
+  }
 }
 
 class GSharedBookFragmentData__unknown extends GSharedBookFragmentData
@@ -343,6 +505,37 @@ class GSharedBookFragmentData__unknown extends GSharedBookFragmentData
     result['author'] = author.toJson();
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GSharedBookFragmentData__unknown copyWith({
+    String? title,
+    GSharedAuthorFragmentData? author,
+    String? G__typename,
+  }) {
+    return GSharedBookFragmentData__unknown(
+      title: title ?? this.title,
+      author: author ?? this.author,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GSharedBookFragmentData__unknown &&
+            title == other.title &&
+            author == other.author &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, title, author, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GSharedBookFragmentData__unknown(title: $title, author: $author, G__typename: $G__typename)';
   }
 }
 
@@ -372,6 +565,34 @@ class GSharedBooksAData {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GSharedBooksAData copyWith({
+    List<GSharedBookFragmentData>? books,
+    String? G__typename,
+  }) {
+    return GSharedBooksAData(
+      books: books ?? this.books,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GSharedBooksAData &&
+            books == other.books &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, books, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GSharedBooksAData(books: $books, G__typename: $G__typename)';
+  }
 }
 
 class GSharedBooksBData {
@@ -399,5 +620,33 @@ class GSharedBooksBData {
     result['books'] = books.map((e) => e.toJson()).toList();
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GSharedBooksBData copyWith({
+    List<GSharedBookFragmentData>? books,
+    String? G__typename,
+  }) {
+    return GSharedBooksBData(
+      books: books ?? this.books,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GSharedBooksBData &&
+            books == other.books &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, books, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GSharedBooksBData(books: $books, G__typename: $G__typename)';
   }
 }

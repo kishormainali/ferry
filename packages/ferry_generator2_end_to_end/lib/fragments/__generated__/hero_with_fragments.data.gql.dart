@@ -29,6 +29,34 @@ class GheroDataData implements GheroData {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GheroDataData copyWith({
+    String? name,
+    String? G__typename,
+  }) {
+    return GheroDataData(
+      name: name ?? this.name,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GheroDataData &&
+            name == other.name &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, name, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GheroDataData(name: $name, G__typename: $G__typename)';
+  }
 }
 
 abstract class GcomparisonFields {
@@ -83,6 +111,41 @@ class GcomparisonFieldsData implements GcomparisonFields, GheroData {
     result['friendsConnection'] = friendsConnection.toJson();
     return result;
   }
+
+  GcomparisonFieldsData copyWith({
+    String? id,
+    String? name,
+    String? G__typename,
+    GcomparisonFieldsData_friendsConnection? friendsConnection,
+  }) {
+    return GcomparisonFieldsData(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      G__typename: G__typename ?? this.G__typename,
+      friendsConnection: friendsConnection ?? this.friendsConnection,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GcomparisonFieldsData &&
+            id == other.id &&
+            name == other.name &&
+            G__typename == other.G__typename &&
+            friendsConnection == other.friendsConnection);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll(
+        [runtimeType, id, name, G__typename, friendsConnection]);
+  }
+
+  @override
+  String toString() {
+    return 'GcomparisonFieldsData(id: $id, name: $name, G__typename: $G__typename, friendsConnection: $friendsConnection)';
+  }
 }
 
 class GcomparisonFieldsData_friendsConnection
@@ -127,6 +190,39 @@ class GcomparisonFieldsData_friendsConnection
     result['__typename'] = G__typename;
     return result;
   }
+
+  GcomparisonFieldsData_friendsConnection copyWith({
+    int? totalCount,
+    bool totalCountIsSet = false,
+    List<GcomparisonFieldsData_friendsConnection_edges?>? edges,
+    bool edgesIsSet = false,
+    String? G__typename,
+  }) {
+    return GcomparisonFieldsData_friendsConnection(
+      totalCount: totalCountIsSet ? totalCount : this.totalCount,
+      edges: edgesIsSet ? edges : this.edges,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GcomparisonFieldsData_friendsConnection &&
+            totalCount == other.totalCount &&
+            edges == other.edges &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, totalCount, edges, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GcomparisonFieldsData_friendsConnection(totalCount: $totalCount, edges: $edges, G__typename: $G__typename)';
+  }
 }
 
 class GcomparisonFieldsData_friendsConnection_edges
@@ -157,6 +253,35 @@ class GcomparisonFieldsData_friendsConnection_edges
     result['__typename'] = G__typename;
     return result;
   }
+
+  GcomparisonFieldsData_friendsConnection_edges copyWith({
+    GheroDataData? node,
+    bool nodeIsSet = false,
+    String? G__typename,
+  }) {
+    return GcomparisonFieldsData_friendsConnection_edges(
+      node: nodeIsSet ? node : this.node,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GcomparisonFieldsData_friendsConnection_edges &&
+            node == other.node &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, node, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GcomparisonFieldsData_friendsConnection_edges(node: $node, G__typename: $G__typename)';
+  }
 }
 
 class GHeroWithFragmentsData {
@@ -185,5 +310,34 @@ class GHeroWithFragmentsData {
     result['hero'] = heroValue == null ? null : heroValue.toJson();
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GHeroWithFragmentsData copyWith({
+    GcomparisonFieldsData? hero,
+    bool heroIsSet = false,
+    String? G__typename,
+  }) {
+    return GHeroWithFragmentsData(
+      hero: heroIsSet ? hero : this.hero,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GHeroWithFragmentsData &&
+            hero == other.hero &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, hero, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GHeroWithFragmentsData(hero: $hero, G__typename: $G__typename)';
   }
 }

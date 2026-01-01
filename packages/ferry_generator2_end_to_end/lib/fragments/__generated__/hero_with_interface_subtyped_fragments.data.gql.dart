@@ -139,6 +139,46 @@ class GheroFieldsFragmentData__asHuman extends GheroFieldsFragmentData
         : friendsValue.map((e) => e == null ? null : e.toJson()).toList();
     return result;
   }
+
+  GheroFieldsFragmentData__asHuman copyWith({
+    String? id,
+    String? name,
+    String? G__typename,
+    String? homePlanet,
+    bool homePlanetIsSet = false,
+    List<GheroFieldsFragmentData__asHuman_friends?>? friends,
+    bool friendsIsSet = false,
+  }) {
+    return GheroFieldsFragmentData__asHuman(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      G__typename: G__typename ?? this.G__typename,
+      homePlanet: homePlanetIsSet ? homePlanet : this.homePlanet,
+      friends: friendsIsSet ? friends : this.friends,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GheroFieldsFragmentData__asHuman &&
+            id == other.id &&
+            name == other.name &&
+            G__typename == other.G__typename &&
+            homePlanet == other.homePlanet &&
+            friends == other.friends);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll(
+        [runtimeType, id, name, G__typename, homePlanet, friends]);
+  }
+
+  @override
+  String toString() {
+    return 'GheroFieldsFragmentData__asHuman(id: $id, name: $name, G__typename: $G__typename, homePlanet: $homePlanet, friends: $friends)';
+  }
 }
 
 sealed class GheroFieldsFragmentData__asHuman_friends
@@ -248,6 +288,43 @@ class GheroFieldsFragmentData__asHuman_friends__asDroid
         primaryFunctionValue == null ? null : primaryFunctionValue;
     return result;
   }
+
+  GheroFieldsFragmentData__asHuman_friends__asDroid copyWith({
+    String? G__typename,
+    String? id,
+    String? name,
+    String? primaryFunction,
+    bool primaryFunctionIsSet = false,
+  }) {
+    return GheroFieldsFragmentData__asHuman_friends__asDroid(
+      G__typename: G__typename ?? this.G__typename,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      primaryFunction:
+          primaryFunctionIsSet ? primaryFunction : this.primaryFunction,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GheroFieldsFragmentData__asHuman_friends__asDroid &&
+            G__typename == other.G__typename &&
+            id == other.id &&
+            name == other.name &&
+            primaryFunction == other.primaryFunction);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll(
+        [runtimeType, G__typename, id, name, primaryFunction]);
+  }
+
+  @override
+  String toString() {
+    return 'GheroFieldsFragmentData__asHuman_friends__asDroid(G__typename: $G__typename, id: $id, name: $name, primaryFunction: $primaryFunction)';
+  }
 }
 
 class GheroFieldsFragmentData__asHuman_friends__asHuman
@@ -288,6 +365,41 @@ class GheroFieldsFragmentData__asHuman_friends__asHuman
     result['homePlanet'] = homePlanetValue == null ? null : homePlanetValue;
     return result;
   }
+
+  GheroFieldsFragmentData__asHuman_friends__asHuman copyWith({
+    String? G__typename,
+    String? id,
+    String? name,
+    String? homePlanet,
+    bool homePlanetIsSet = false,
+  }) {
+    return GheroFieldsFragmentData__asHuman_friends__asHuman(
+      G__typename: G__typename ?? this.G__typename,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      homePlanet: homePlanetIsSet ? homePlanet : this.homePlanet,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GheroFieldsFragmentData__asHuman_friends__asHuman &&
+            G__typename == other.G__typename &&
+            id == other.id &&
+            name == other.name &&
+            homePlanet == other.homePlanet);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, G__typename, id, name, homePlanet]);
+  }
+
+  @override
+  String toString() {
+    return 'GheroFieldsFragmentData__asHuman_friends__asHuman(G__typename: $G__typename, id: $id, name: $name, homePlanet: $homePlanet)';
+  }
 }
 
 class GheroFieldsFragmentData__asHuman_friends__unknown
@@ -309,6 +421,29 @@ class GheroFieldsFragmentData__asHuman_friends__unknown
     final result = super.toJson();
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GheroFieldsFragmentData__asHuman_friends__unknown copyWith(
+      {String? G__typename}) {
+    return GheroFieldsFragmentData__asHuman_friends__unknown(
+        G__typename: G__typename ?? this.G__typename);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GheroFieldsFragmentData__asHuman_friends__unknown &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GheroFieldsFragmentData__asHuman_friends__unknown(G__typename: $G__typename)';
   }
 }
 
@@ -347,6 +482,43 @@ class GheroFieldsFragmentData__asDroid extends GheroFieldsFragmentData
         primaryFunctionValue == null ? null : primaryFunctionValue;
     return result;
   }
+
+  GheroFieldsFragmentData__asDroid copyWith({
+    String? id,
+    String? name,
+    String? G__typename,
+    String? primaryFunction,
+    bool primaryFunctionIsSet = false,
+  }) {
+    return GheroFieldsFragmentData__asDroid(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      G__typename: G__typename ?? this.G__typename,
+      primaryFunction:
+          primaryFunctionIsSet ? primaryFunction : this.primaryFunction,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GheroFieldsFragmentData__asDroid &&
+            id == other.id &&
+            name == other.name &&
+            G__typename == other.G__typename &&
+            primaryFunction == other.primaryFunction);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll(
+        [runtimeType, id, name, G__typename, primaryFunction]);
+  }
+
+  @override
+  String toString() {
+    return 'GheroFieldsFragmentData__asDroid(id: $id, name: $name, G__typename: $G__typename, primaryFunction: $primaryFunction)';
+  }
 }
 
 class GheroFieldsFragmentData__unknown extends GheroFieldsFragmentData
@@ -371,6 +543,37 @@ class GheroFieldsFragmentData__unknown extends GheroFieldsFragmentData
     result['name'] = name;
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GheroFieldsFragmentData__unknown copyWith({
+    String? id,
+    String? name,
+    String? G__typename,
+  }) {
+    return GheroFieldsFragmentData__unknown(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GheroFieldsFragmentData__unknown &&
+            id == other.id &&
+            name == other.name &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, id, name, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GheroFieldsFragmentData__unknown(id: $id, name: $name, G__typename: $G__typename)';
   }
 }
 
@@ -423,6 +626,39 @@ class GhumanFieldsFragmentData implements GhumanFieldsFragment {
         : friendsValue.map((e) => e == null ? null : e.toJson()).toList();
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GhumanFieldsFragmentData copyWith({
+    String? homePlanet,
+    bool homePlanetIsSet = false,
+    List<GhumanFieldsFragmentData_friends?>? friends,
+    bool friendsIsSet = false,
+    String? G__typename,
+  }) {
+    return GhumanFieldsFragmentData(
+      homePlanet: homePlanetIsSet ? homePlanet : this.homePlanet,
+      friends: friendsIsSet ? friends : this.friends,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GhumanFieldsFragmentData &&
+            homePlanet == other.homePlanet &&
+            friends == other.friends &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, homePlanet, friends, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GhumanFieldsFragmentData(homePlanet: $homePlanet, friends: $friends, G__typename: $G__typename)';
   }
 }
 
@@ -525,6 +761,43 @@ class GhumanFieldsFragmentData_friends__asDroid
         primaryFunctionValue == null ? null : primaryFunctionValue;
     return result;
   }
+
+  GhumanFieldsFragmentData_friends__asDroid copyWith({
+    String? G__typename,
+    String? id,
+    String? name,
+    String? primaryFunction,
+    bool primaryFunctionIsSet = false,
+  }) {
+    return GhumanFieldsFragmentData_friends__asDroid(
+      G__typename: G__typename ?? this.G__typename,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      primaryFunction:
+          primaryFunctionIsSet ? primaryFunction : this.primaryFunction,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GhumanFieldsFragmentData_friends__asDroid &&
+            G__typename == other.G__typename &&
+            id == other.id &&
+            name == other.name &&
+            primaryFunction == other.primaryFunction);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll(
+        [runtimeType, G__typename, id, name, primaryFunction]);
+  }
+
+  @override
+  String toString() {
+    return 'GhumanFieldsFragmentData_friends__asDroid(G__typename: $G__typename, id: $id, name: $name, primaryFunction: $primaryFunction)';
+  }
 }
 
 class GhumanFieldsFragmentData_friends__asHuman
@@ -563,6 +836,41 @@ class GhumanFieldsFragmentData_friends__asHuman
     result['homePlanet'] = homePlanetValue == null ? null : homePlanetValue;
     return result;
   }
+
+  GhumanFieldsFragmentData_friends__asHuman copyWith({
+    String? G__typename,
+    String? id,
+    String? name,
+    String? homePlanet,
+    bool homePlanetIsSet = false,
+  }) {
+    return GhumanFieldsFragmentData_friends__asHuman(
+      G__typename: G__typename ?? this.G__typename,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      homePlanet: homePlanetIsSet ? homePlanet : this.homePlanet,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GhumanFieldsFragmentData_friends__asHuman &&
+            G__typename == other.G__typename &&
+            id == other.id &&
+            name == other.name &&
+            homePlanet == other.homePlanet);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, G__typename, id, name, homePlanet]);
+  }
+
+  @override
+  String toString() {
+    return 'GhumanFieldsFragmentData_friends__asHuman(G__typename: $G__typename, id: $id, name: $name, homePlanet: $homePlanet)';
+  }
 }
 
 class GhumanFieldsFragmentData_friends__unknown
@@ -581,6 +889,28 @@ class GhumanFieldsFragmentData_friends__unknown
     final result = super.toJson();
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GhumanFieldsFragmentData_friends__unknown copyWith({String? G__typename}) {
+    return GhumanFieldsFragmentData_friends__unknown(
+        G__typename: G__typename ?? this.G__typename);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GhumanFieldsFragmentData_friends__unknown &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GhumanFieldsFragmentData_friends__unknown(G__typename: $G__typename)';
   }
 }
 
@@ -616,6 +946,36 @@ class GdroidFieldsFragmentData implements GdroidFieldsFragment {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GdroidFieldsFragmentData copyWith({
+    String? primaryFunction,
+    bool primaryFunctionIsSet = false,
+    String? G__typename,
+  }) {
+    return GdroidFieldsFragmentData(
+      primaryFunction:
+          primaryFunctionIsSet ? primaryFunction : this.primaryFunction,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GdroidFieldsFragmentData &&
+            primaryFunction == other.primaryFunction &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, primaryFunction, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GdroidFieldsFragmentData(primaryFunction: $primaryFunction, G__typename: $G__typename)';
+  }
 }
 
 class GHeroWithInterfaceSubTypedFragmentsData {
@@ -645,5 +1005,34 @@ class GHeroWithInterfaceSubTypedFragmentsData {
     result['hero'] = heroValue == null ? null : heroValue.toJson();
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GHeroWithInterfaceSubTypedFragmentsData copyWith({
+    GheroFieldsFragmentData? hero,
+    bool heroIsSet = false,
+    String? G__typename,
+  }) {
+    return GHeroWithInterfaceSubTypedFragmentsData(
+      hero: heroIsSet ? hero : this.hero,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GHeroWithInterfaceSubTypedFragmentsData &&
+            hero == other.hero &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, hero, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GHeroWithInterfaceSubTypedFragmentsData(hero: $hero, G__typename: $G__typename)';
   }
 }

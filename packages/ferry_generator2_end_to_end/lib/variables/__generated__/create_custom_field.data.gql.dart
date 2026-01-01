@@ -28,4 +28,34 @@ class GCreateCustomFieldData {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GCreateCustomFieldData copyWith({
+    String? createCustomField,
+    bool createCustomFieldIsSet = false,
+    String? G__typename,
+  }) {
+    return GCreateCustomFieldData(
+      createCustomField:
+          createCustomFieldIsSet ? createCustomField : this.createCustomField,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GCreateCustomFieldData &&
+            createCustomField == other.createCustomField &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, createCustomField, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GCreateCustomFieldData(createCustomField: $createCustomField, G__typename: $G__typename)';
+  }
 }

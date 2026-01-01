@@ -38,6 +38,35 @@ class GreviewsWithListArgumentData {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GreviewsWithListArgumentData copyWith({
+    List<GreviewsWithListArgumentData_reviews?>? reviews,
+    bool reviewsIsSet = false,
+    String? G__typename,
+  }) {
+    return GreviewsWithListArgumentData(
+      reviews: reviewsIsSet ? reviews : this.reviews,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GreviewsWithListArgumentData &&
+            reviews == other.reviews &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, reviews, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GreviewsWithListArgumentData(reviews: $reviews, G__typename: $G__typename)';
+  }
 }
 
 class GreviewsWithListArgumentData_reviews {
@@ -66,5 +95,34 @@ class GreviewsWithListArgumentData_reviews {
     result['episode'] = episodeValue == null ? null : episodeValue.toJson();
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GreviewsWithListArgumentData_reviews copyWith({
+    _i1.GEpisode? episode,
+    bool episodeIsSet = false,
+    String? G__typename,
+  }) {
+    return GreviewsWithListArgumentData_reviews(
+      episode: episodeIsSet ? episode : this.episode,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GreviewsWithListArgumentData_reviews &&
+            episode == other.episode &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, episode, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GreviewsWithListArgumentData_reviews(episode: $episode, G__typename: $G__typename)';
   }
 }

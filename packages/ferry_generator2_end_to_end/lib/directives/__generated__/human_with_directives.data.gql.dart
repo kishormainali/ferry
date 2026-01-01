@@ -28,6 +28,35 @@ class GHumanWithDirectivesData {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GHumanWithDirectivesData copyWith({
+    GHumanWithDirectivesData_human? human,
+    bool humanIsSet = false,
+    String? G__typename,
+  }) {
+    return GHumanWithDirectivesData(
+      human: humanIsSet ? human : this.human,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GHumanWithDirectivesData &&
+            human == other.human &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, human, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GHumanWithDirectivesData(human: $human, G__typename: $G__typename)';
+  }
 }
 
 class GHumanWithDirectivesData_human {
@@ -59,5 +88,38 @@ class GHumanWithDirectivesData_human {
     result['name'] = nameValue == null ? null : nameValue;
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GHumanWithDirectivesData_human copyWith({
+    String? id,
+    bool idIsSet = false,
+    String? name,
+    bool nameIsSet = false,
+    String? G__typename,
+  }) {
+    return GHumanWithDirectivesData_human(
+      id: idIsSet ? id : this.id,
+      name: nameIsSet ? name : this.name,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GHumanWithDirectivesData_human &&
+            id == other.id &&
+            name == other.name &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, id, name, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GHumanWithDirectivesData_human(id: $id, name: $name, G__typename: $G__typename)';
   }
 }

@@ -15,6 +15,10 @@ targets:
           when_extensions:
             when: true
             maybeWhen: true
+          generate_copy_with: true
+          generate_equals: true
+          generate_hash_code: true
+          generate_to_string: true
           type_overrides:
             Date:
               type: CustomDate

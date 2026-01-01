@@ -28,6 +28,35 @@ class GHeroNoVarsData {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GHeroNoVarsData copyWith({
+    GHeroNoVarsData_hero? hero,
+    bool heroIsSet = false,
+    String? G__typename,
+  }) {
+    return GHeroNoVarsData(
+      hero: heroIsSet ? hero : this.hero,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GHeroNoVarsData &&
+            hero == other.hero &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, hero, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GHeroNoVarsData(hero: $hero, G__typename: $G__typename)';
+  }
 }
 
 class GHeroNoVarsData_hero {
@@ -57,5 +86,36 @@ class GHeroNoVarsData_hero {
     result['name'] = name;
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GHeroNoVarsData_hero copyWith({
+    String? id,
+    String? name,
+    String? G__typename,
+  }) {
+    return GHeroNoVarsData_hero(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GHeroNoVarsData_hero &&
+            id == other.id &&
+            name == other.name &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, id, name, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GHeroNoVarsData_hero(id: $id, name: $name, G__typename: $G__typename)';
   }
 }

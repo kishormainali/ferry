@@ -45,6 +45,39 @@ class GPostFragmentForUser1Data implements GPostFragmentForUser1 {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GPostFragmentForUser1Data copyWith({
+    String? id,
+    GPostFragmentForUser1Data_favoritedUsers? favoritedUsers,
+    bool favoritedUsersIsSet = false,
+    String? G__typename,
+  }) {
+    return GPostFragmentForUser1Data(
+      id: id ?? this.id,
+      favoritedUsers:
+          favoritedUsersIsSet ? favoritedUsers : this.favoritedUsers,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GPostFragmentForUser1Data &&
+            id == other.id &&
+            favoritedUsers == other.favoritedUsers &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, id, favoritedUsers, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GPostFragmentForUser1Data(id: $id, favoritedUsers: $favoritedUsers, G__typename: $G__typename)';
+  }
 }
 
 class GPostFragmentForUser1Data_favoritedUsers
@@ -71,6 +104,34 @@ class GPostFragmentForUser1Data_favoritedUsers
     result['totalCount'] = totalCount;
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GPostFragmentForUser1Data_favoritedUsers copyWith({
+    int? totalCount,
+    String? G__typename,
+  }) {
+    return GPostFragmentForUser1Data_favoritedUsers(
+      totalCount: totalCount ?? this.totalCount,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GPostFragmentForUser1Data_favoritedUsers &&
+            totalCount == other.totalCount &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, totalCount, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GPostFragmentForUser1Data_favoritedUsers(totalCount: $totalCount, G__typename: $G__typename)';
   }
 }
 
@@ -106,5 +167,34 @@ class GPostsWithFixedVariableData {
         : postsValue.map((e) => e == null ? null : e.toJson()).toList();
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GPostsWithFixedVariableData copyWith({
+    List<GPostFragmentForUser1Data?>? posts,
+    bool postsIsSet = false,
+    String? G__typename,
+  }) {
+    return GPostsWithFixedVariableData(
+      posts: postsIsSet ? posts : this.posts,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GPostsWithFixedVariableData &&
+            posts == other.posts &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, posts, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GPostsWithFixedVariableData(posts: $posts, G__typename: $G__typename)';
   }
 }

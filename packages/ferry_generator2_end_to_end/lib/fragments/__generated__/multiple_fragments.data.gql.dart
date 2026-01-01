@@ -29,6 +29,34 @@ class GheroNameData implements GheroName {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GheroNameData copyWith({
+    String? name,
+    String? G__typename,
+  }) {
+    return GheroNameData(
+      name: name ?? this.name,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GheroNameData &&
+            name == other.name &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, name, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GheroNameData(name: $name, G__typename: $G__typename)';
+  }
 }
 
 abstract class GheroId {
@@ -59,6 +87,34 @@ class GheroIdData implements GheroId {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GheroIdData copyWith({
+    String? id,
+    String? G__typename,
+  }) {
+    return GheroIdData(
+      id: id ?? this.id,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GheroIdData &&
+            id == other.id &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, id, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GheroIdData(id: $id, G__typename: $G__typename)';
+  }
 }
 
 class GHeroWith2FragmentsData {
@@ -87,6 +143,35 @@ class GHeroWith2FragmentsData {
     result['hero'] = heroValue == null ? null : heroValue.toJson();
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GHeroWith2FragmentsData copyWith({
+    GHeroWith2FragmentsData_hero? hero,
+    bool heroIsSet = false,
+    String? G__typename,
+  }) {
+    return GHeroWith2FragmentsData(
+      hero: heroIsSet ? hero : this.hero,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GHeroWith2FragmentsData &&
+            hero == other.hero &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, hero, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GHeroWith2FragmentsData(hero: $hero, G__typename: $G__typename)';
   }
 }
 
@@ -117,5 +202,36 @@ class GHeroWith2FragmentsData_hero implements GheroName, GheroId {
     result['__typename'] = G__typename;
     result['id'] = id;
     return result;
+  }
+
+  GHeroWith2FragmentsData_hero copyWith({
+    String? name,
+    String? G__typename,
+    String? id,
+  }) {
+    return GHeroWith2FragmentsData_hero(
+      name: name ?? this.name,
+      G__typename: G__typename ?? this.G__typename,
+      id: id ?? this.id,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GHeroWith2FragmentsData_hero &&
+            name == other.name &&
+            G__typename == other.G__typename &&
+            id == other.id);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, name, G__typename, id]);
+  }
+
+  @override
+  String toString() {
+    return 'GHeroWith2FragmentsData_hero(name: $name, G__typename: $G__typename, id: $id)';
   }
 }

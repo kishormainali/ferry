@@ -33,6 +33,35 @@ class GReviewAddedData {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GReviewAddedData copyWith({
+    GReviewAddedData_reviewAdded? reviewAdded,
+    bool reviewAddedIsSet = false,
+    String? G__typename,
+  }) {
+    return GReviewAddedData(
+      reviewAdded: reviewAddedIsSet ? reviewAdded : this.reviewAdded,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GReviewAddedData &&
+            reviewAdded == other.reviewAdded &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, reviewAdded, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GReviewAddedData(reviewAdded: $reviewAdded, G__typename: $G__typename)';
+  }
 }
 
 class GReviewAddedData_reviewAdded {
@@ -72,5 +101,42 @@ class GReviewAddedData_reviewAdded {
     result['commentary'] = commentaryValue == null ? null : commentaryValue;
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GReviewAddedData_reviewAdded copyWith({
+    _i1.GEpisode? episode,
+    bool episodeIsSet = false,
+    int? stars,
+    String? commentary,
+    bool commentaryIsSet = false,
+    String? G__typename,
+  }) {
+    return GReviewAddedData_reviewAdded(
+      episode: episodeIsSet ? episode : this.episode,
+      stars: stars ?? this.stars,
+      commentary: commentaryIsSet ? commentary : this.commentary,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GReviewAddedData_reviewAdded &&
+            episode == other.episode &&
+            stars == other.stars &&
+            commentary == other.commentary &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll(
+        [runtimeType, episode, stars, commentary, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GReviewAddedData_reviewAdded(episode: $episode, stars: $stars, commentary: $commentary, G__typename: $G__typename)';
   }
 }

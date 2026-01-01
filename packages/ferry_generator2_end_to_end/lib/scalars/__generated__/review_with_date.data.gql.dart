@@ -34,6 +34,35 @@ class GReviewWithDateData {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GReviewWithDateData copyWith({
+    GReviewWithDateData_createReview? createReview,
+    bool createReviewIsSet = false,
+    String? G__typename,
+  }) {
+    return GReviewWithDateData(
+      createReview: createReviewIsSet ? createReview : this.createReview,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GReviewWithDateData &&
+            createReview == other.createReview &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, createReview, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GReviewWithDateData(createReview: $createReview, G__typename: $G__typename)';
+  }
 }
 
 class GReviewWithDateData_createReview {
@@ -95,5 +124,60 @@ class GReviewWithDateData_createReview {
     result['custom'] = custom.map((e) => e).toList();
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GReviewWithDateData_createReview copyWith({
+    _i1.GEpisode? episode,
+    bool episodeIsSet = false,
+    int? stars,
+    String? commentary,
+    bool commentaryIsSet = false,
+    CustomDate? createdAt,
+    bool createdAtIsSet = false,
+    List<CustomDate>? seenOn,
+    List<String>? custom,
+    String? G__typename,
+  }) {
+    return GReviewWithDateData_createReview(
+      episode: episodeIsSet ? episode : this.episode,
+      stars: stars ?? this.stars,
+      commentary: commentaryIsSet ? commentary : this.commentary,
+      createdAt: createdAtIsSet ? createdAt : this.createdAt,
+      seenOn: seenOn ?? this.seenOn,
+      custom: custom ?? this.custom,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GReviewWithDateData_createReview &&
+            episode == other.episode &&
+            stars == other.stars &&
+            commentary == other.commentary &&
+            createdAt == other.createdAt &&
+            seenOn == other.seenOn &&
+            custom == other.custom &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([
+      runtimeType,
+      episode,
+      stars,
+      commentary,
+      createdAt,
+      seenOn,
+      custom,
+      G__typename
+    ]);
+  }
+
+  @override
+  String toString() {
+    return 'GReviewWithDateData_createReview(episode: $episode, stars: $stars, commentary: $commentary, createdAt: $createdAt, seenOn: $seenOn, custom: $custom, G__typename: $G__typename)';
   }
 }

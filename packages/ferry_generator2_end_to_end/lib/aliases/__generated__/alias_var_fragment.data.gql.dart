@@ -60,6 +60,42 @@ class GPostFragmentData implements GPostFragment {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GPostFragmentData copyWith({
+    String? id,
+    GPostFragmentData_isFavorited? isFavorited,
+    bool isFavoritedIsSet = false,
+    GPostFragmentData_isLiked? isLiked,
+    bool isLikedIsSet = false,
+    String? G__typename,
+  }) {
+    return GPostFragmentData(
+      id: id ?? this.id,
+      isFavorited: isFavoritedIsSet ? isFavorited : this.isFavorited,
+      isLiked: isLikedIsSet ? isLiked : this.isLiked,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GPostFragmentData &&
+            id == other.id &&
+            isFavorited == other.isFavorited &&
+            isLiked == other.isLiked &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, id, isFavorited, isLiked, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GPostFragmentData(id: $id, isFavorited: $isFavorited, isLiked: $isLiked, G__typename: $G__typename)';
+  }
 }
 
 class GPostFragmentData_isFavorited implements GPostFragment_isFavorited {
@@ -85,6 +121,34 @@ class GPostFragmentData_isFavorited implements GPostFragment_isFavorited {
     result['__typename'] = G__typename;
     return result;
   }
+
+  GPostFragmentData_isFavorited copyWith({
+    int? totalCount,
+    String? G__typename,
+  }) {
+    return GPostFragmentData_isFavorited(
+      totalCount: totalCount ?? this.totalCount,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GPostFragmentData_isFavorited &&
+            totalCount == other.totalCount &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, totalCount, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GPostFragmentData_isFavorited(totalCount: $totalCount, G__typename: $G__typename)';
+  }
 }
 
 class GPostFragmentData_isLiked implements GPostFragment_isLiked {
@@ -109,6 +173,34 @@ class GPostFragmentData_isLiked implements GPostFragment_isLiked {
     result['totalCount'] = totalCount;
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GPostFragmentData_isLiked copyWith({
+    int? totalCount,
+    String? G__typename,
+  }) {
+    return GPostFragmentData_isLiked(
+      totalCount: totalCount ?? this.totalCount,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GPostFragmentData_isLiked &&
+            totalCount == other.totalCount &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, totalCount, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GPostFragmentData_isLiked(totalCount: $totalCount, G__typename: $G__typename)';
   }
 }
 
@@ -143,5 +235,34 @@ class GPostsData {
         : postsValue.map((e) => e == null ? null : e.toJson()).toList();
     result['__typename'] = G__typename;
     return result;
+  }
+
+  GPostsData copyWith({
+    List<GPostFragmentData?>? posts,
+    bool postsIsSet = false,
+    String? G__typename,
+  }) {
+    return GPostsData(
+      posts: postsIsSet ? posts : this.posts,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GPostsData &&
+            posts == other.posts &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hashAll([runtimeType, posts, G__typename]);
+  }
+
+  @override
+  String toString() {
+    return 'GPostsData(posts: $posts, G__typename: $G__typename)';
   }
 }

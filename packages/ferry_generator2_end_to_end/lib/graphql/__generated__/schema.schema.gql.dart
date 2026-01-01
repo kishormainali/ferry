@@ -91,7 +91,7 @@ class GReviewInput {
           ? Value.present(json['seenOn'] == null
               ? null
               : (json['seenOn'] as List<dynamic>)
-                  .map((e) => e == null ? null : customDateFromJson(e))
+                  .map((_$e) => _$e == null ? null : customDateFromJson(_$e))
                   .toList())
           : Value.absent(),
     );
@@ -106,32 +106,32 @@ class GReviewInput {
   final Value<List<CustomDate?>> seenOn;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final starsValue = stars;
-    result['stars'] = starsValue;
-    final commentaryValue = commentary;
-    if (commentaryValue.isPresent) {
-      final commentaryRequired = commentaryValue.requireValue;
-      result['commentary'] =
-          commentaryRequired == null ? null : commentaryRequired;
+    final _$result = <String, dynamic>{};
+    final _$starsValue = this.stars;
+    _$result['stars'] = _$starsValue;
+    final _$commentaryValue = this.commentary;
+    if (_$commentaryValue.isPresent) {
+      final _$commentaryRequired = _$commentaryValue.requireValue;
+      _$result['commentary'] =
+          _$commentaryRequired == null ? null : _$commentaryRequired;
     }
-    final favorite_colorValue = favorite_color;
-    if (favorite_colorValue.isPresent) {
-      final favorite_colorRequired = favorite_colorValue.requireValue;
-      result['favorite_color'] = favorite_colorRequired == null
+    final _$favorite_colorValue = this.favorite_color;
+    if (_$favorite_colorValue.isPresent) {
+      final _$favorite_colorRequired = _$favorite_colorValue.requireValue;
+      _$result['favorite_color'] = _$favorite_colorRequired == null
           ? null
-          : favorite_colorRequired.toJson();
+          : _$favorite_colorRequired.toJson();
     }
-    final seenOnValue = seenOn;
-    if (seenOnValue.isPresent) {
-      final seenOnRequired = seenOnValue.requireValue;
-      result['seenOn'] = seenOnRequired == null
+    final _$seenOnValue = this.seenOn;
+    if (_$seenOnValue.isPresent) {
+      final _$seenOnRequired = _$seenOnValue.requireValue;
+      _$result['seenOn'] = _$seenOnRequired == null
           ? null
-          : seenOnRequired
-              .map((e) => e == null ? null : customDateToJson(e))
+          : _$seenOnRequired
+              .map((_$e) => _$e == null ? null : customDateToJson(_$e))
               .toList();
     }
-    return result;
+    return _$result;
   }
 }
 
@@ -157,16 +157,16 @@ class GCustomFieldInput {
   final Value<String> customField;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final idValue = id;
-    result['id'] = idValue;
-    final customFieldValue = customField;
-    if (customFieldValue.isPresent) {
-      final customFieldRequired = customFieldValue.requireValue;
-      result['customField'] =
-          customFieldRequired == null ? null : customFieldRequired;
+    final _$result = <String, dynamic>{};
+    final _$idValue = this.id;
+    _$result['id'] = _$idValue;
+    final _$customFieldValue = this.customField;
+    if (_$customFieldValue.isPresent) {
+      final _$customFieldRequired = _$customFieldValue.requireValue;
+      _$result['customField'] =
+          _$customFieldRequired == null ? null : _$customFieldRequired;
     }
-    return result;
+    return _$result;
   }
 }
 
@@ -192,14 +192,14 @@ class GColorInput {
   final int blue;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final redValue = red;
-    result['red'] = redValue;
-    final greenValue = green;
-    result['green'] = greenValue;
-    final blueValue = blue;
-    result['blue'] = blueValue;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$redValue = this.red;
+    _$result['red'] = _$redValue;
+    final _$greenValue = this.green;
+    _$result['green'] = _$greenValue;
+    final _$blueValue = this.blue;
+    _$result['blue'] = _$blueValue;
+    return _$result;
   }
 }
 
@@ -213,10 +213,10 @@ class GPostLikesInput {
   final String id;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final idValue = id;
-    result['id'] = idValue;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$idValue = this.id;
+    _$result['id'] = _$idValue;
+    return _$result;
   }
 }
 
@@ -230,10 +230,10 @@ class GPostFavoritesInput {
   final String id;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final idValue = id;
-    result['id'] = idValue;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$idValue = this.id;
+    _$result['id'] = _$idValue;
+    return _$result;
   }
 }
 

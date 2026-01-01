@@ -24,10 +24,10 @@ class GheroNameData implements GheroName {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['name'] = name;
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['name'] = this.name;
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GheroNameData copyWith({
@@ -82,10 +82,10 @@ class GheroIdData implements GheroId {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['id'] = id;
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['id'] = this.id;
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GheroIdData copyWith({
@@ -138,11 +138,11 @@ class GHeroWith2FragmentsData {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final heroValue = hero;
-    result['hero'] = heroValue == null ? null : heroValue.toJson();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$heroValue = this.hero;
+    _$result['hero'] = _$heroValue == null ? null : _$heroValue.toJson();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GHeroWith2FragmentsData copyWith({
@@ -197,11 +197,11 @@ class GHeroWith2FragmentsData_hero implements GheroName, GheroId {
   final String id;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['name'] = name;
-    result['__typename'] = G__typename;
-    result['id'] = id;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['name'] = this.name;
+    _$result['__typename'] = this.G__typename;
+    _$result['id'] = this.id;
+    return _$result;
   }
 
   GHeroWith2FragmentsData_hero copyWith({

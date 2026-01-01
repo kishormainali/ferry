@@ -31,12 +31,13 @@ class GCharacterDetailsData implements GCharacterDetails {
       friends: json['friends'] == null
           ? null
           : (json['friends'] as List<dynamic>)
-              .map((e) => e == null
+              .map((_$e) => _$e == null
                   ? null
-                  : GFriendInfoData.fromJson((e as Map<String, dynamic>)))
+                  : GFriendInfoData.fromJson((_$e as Map<String, dynamic>)))
               .toList(),
       appearsIn: (json['appearsIn'] as List<dynamic>)
-          .map((e) => e == null ? null : _i1.GEpisode.fromJson((e as String)))
+          .map((_$e) =>
+              _$e == null ? null : _i1.GEpisode.fromJson((_$e as String)))
           .toList(),
       G__typename: (json['__typename'] as String),
     );
@@ -53,17 +54,19 @@ class GCharacterDetailsData implements GCharacterDetails {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['id'] = id;
-    result['name'] = name;
-    final friendsValue = friends;
-    result['friends'] = friendsValue == null
+    final _$result = <String, dynamic>{};
+    _$result['id'] = this.id;
+    _$result['name'] = this.name;
+    final _$friendsValue = this.friends;
+    _$result['friends'] = _$friendsValue == null
         ? null
-        : friendsValue.map((e) => e == null ? null : e.toJson()).toList();
-    result['appearsIn'] =
-        appearsIn.map((e) => e == null ? null : e.toJson()).toList();
-    result['__typename'] = G__typename;
-    return result;
+        : _$friendsValue
+            .map((_$e) => _$e == null ? null : _$e.toJson())
+            .toList();
+    _$result['appearsIn'] =
+        this.appearsIn.map((_$e) => _$e == null ? null : _$e.toJson()).toList();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GCharacterDetailsData copyWith({
@@ -145,12 +148,12 @@ class GFriendInfoData implements GFriendInfo {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['id'] = id;
-    result['name'] = name;
-    result['friendsConnection'] = friendsConnection.toJson();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['id'] = this.id;
+    _$result['name'] = this.name;
+    _$result['friendsConnection'] = this.friendsConnection.toJson();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GFriendInfoData copyWith({
@@ -201,9 +204,9 @@ class GFriendInfoData_friendsConnection
       friends: json['friends'] == null
           ? null
           : (json['friends'] as List<dynamic>)
-              .map((e) => e == null
+              .map((_$e) => _$e == null
                   ? null
-                  : GCharacterBasicData.fromJson((e as Map<String, dynamic>)))
+                  : GCharacterBasicData.fromJson((_$e as Map<String, dynamic>)))
               .toList(),
       G__typename: (json['__typename'] as String),
     );
@@ -214,13 +217,15 @@ class GFriendInfoData_friendsConnection
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final friendsValue = friends;
-    result['friends'] = friendsValue == null
+    final _$result = <String, dynamic>{};
+    final _$friendsValue = this.friends;
+    _$result['friends'] = _$friendsValue == null
         ? null
-        : friendsValue.map((e) => e == null ? null : e.toJson()).toList();
-    result['__typename'] = G__typename;
-    return result;
+        : _$friendsValue
+            .map((_$e) => _$e == null ? null : _$e.toJson())
+            .toList();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GFriendInfoData_friendsConnection copyWith({
@@ -281,11 +286,11 @@ class GCharacterBasicData implements GCharacterBasic {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['id'] = id;
-    result['name'] = name;
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['id'] = this.id;
+    _$result['name'] = this.name;
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GCharacterBasicData copyWith({
@@ -331,10 +336,10 @@ class GSearchResultsQueryData {
       search: json['search'] == null
           ? null
           : (json['search'] as List<dynamic>)
-              .map((e) => e == null
+              .map((_$e) => _$e == null
                   ? null
                   : GSearchResultsQueryData_search.fromJson(
-                      (e as Map<String, dynamic>)))
+                      (_$e as Map<String, dynamic>)))
               .toList(),
       G__typename: (json['__typename'] as String),
     );
@@ -345,13 +350,15 @@ class GSearchResultsQueryData {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final searchValue = search;
-    result['search'] = searchValue == null
+    final _$result = <String, dynamic>{};
+    final _$searchValue = this.search;
+    _$result['search'] = _$searchValue == null
         ? null
-        : searchValue.map((e) => e == null ? null : e.toJson()).toList();
-    result['__typename'] = G__typename;
-    return result;
+        : _$searchValue
+            .map((_$e) => _$e == null ? null : _$e.toJson())
+            .toList();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GSearchResultsQueryData copyWith({
@@ -401,9 +408,9 @@ sealed class GSearchResultsQueryData_search {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 }
 
@@ -463,12 +470,13 @@ class GSearchResultsQueryData_search__asHuman
       friends: json['friends'] == null
           ? null
           : (json['friends'] as List<dynamic>)
-              .map((e) => e == null
+              .map((_$e) => _$e == null
                   ? null
-                  : GFriendInfoData.fromJson((e as Map<String, dynamic>)))
+                  : GFriendInfoData.fromJson((_$e as Map<String, dynamic>)))
               .toList(),
       appearsIn: (json['appearsIn'] as List<dynamic>)
-          .map((e) => e == null ? null : _i1.GEpisode.fromJson((e as String)))
+          .map((_$e) =>
+              _$e == null ? null : _i1.GEpisode.fromJson((_$e as String)))
           .toList(),
     );
   }
@@ -482,17 +490,18 @@ class GSearchResultsQueryData_search__asHuman
   final List<_i1.GEpisode?> appearsIn;
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['__typename'] = G__typename;
-    result['id'] = id;
-    result['name'] = name;
-    final friendsValue = friends;
-    result['friends'] = friendsValue == null
+    final _$result = super.toJson();
+    _$result['id'] = this.id;
+    _$result['name'] = this.name;
+    final _$friendsValue = this.friends;
+    _$result['friends'] = _$friendsValue == null
         ? null
-        : friendsValue.map((e) => e == null ? null : e.toJson()).toList();
-    result['appearsIn'] =
-        appearsIn.map((e) => e == null ? null : e.toJson()).toList();
-    return result;
+        : _$friendsValue
+            .map((_$e) => _$e == null ? null : _$e.toJson())
+            .toList();
+    _$result['appearsIn'] =
+        this.appearsIn.map((_$e) => _$e == null ? null : _$e.toJson()).toList();
+    return _$result;
   }
 
   GSearchResultsQueryData_search__asHuman copyWith({
@@ -554,12 +563,13 @@ class GSearchResultsQueryData_search__asDroid
       friends: json['friends'] == null
           ? null
           : (json['friends'] as List<dynamic>)
-              .map((e) => e == null
+              .map((_$e) => _$e == null
                   ? null
-                  : GFriendInfoData.fromJson((e as Map<String, dynamic>)))
+                  : GFriendInfoData.fromJson((_$e as Map<String, dynamic>)))
               .toList(),
       appearsIn: (json['appearsIn'] as List<dynamic>)
-          .map((e) => e == null ? null : _i1.GEpisode.fromJson((e as String)))
+          .map((_$e) =>
+              _$e == null ? null : _i1.GEpisode.fromJson((_$e as String)))
           .toList(),
     );
   }
@@ -573,17 +583,18 @@ class GSearchResultsQueryData_search__asDroid
   final List<_i1.GEpisode?> appearsIn;
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['__typename'] = G__typename;
-    result['id'] = id;
-    result['name'] = name;
-    final friendsValue = friends;
-    result['friends'] = friendsValue == null
+    final _$result = super.toJson();
+    _$result['id'] = this.id;
+    _$result['name'] = this.name;
+    final _$friendsValue = this.friends;
+    _$result['friends'] = _$friendsValue == null
         ? null
-        : friendsValue.map((e) => e == null ? null : e.toJson()).toList();
-    result['appearsIn'] =
-        appearsIn.map((e) => e == null ? null : e.toJson()).toList();
-    return result;
+        : _$friendsValue
+            .map((_$e) => _$e == null ? null : _$e.toJson())
+            .toList();
+    _$result['appearsIn'] =
+        this.appearsIn.map((_$e) => _$e == null ? null : _$e.toJson()).toList();
+    return _$result;
   }
 
   GSearchResultsQueryData_search__asDroid copyWith({
@@ -638,9 +649,8 @@ class GSearchResultsQueryData_search__unknown
   }
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = super.toJson();
+    return _$result;
   }
 
   GSearchResultsQueryData_search__unknown copyWith({String? G__typename}) {

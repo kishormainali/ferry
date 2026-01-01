@@ -152,15 +152,15 @@ class VarsEmitter {
 
   Method _buildToJsonMethod(List<InputFieldSpec> fields) {
     final statements = <Code>[
-      const Code("final result = <String, dynamic>{};"),
+      const Code(r"final _$result = <String, dynamic>{};"),
     ];
     for (final field in fields) {
-      final localName = "${field.propertyName}Value";
-      statements.add(Code("final $localName = ${field.propertyName};"));
+      final localName = "_\$${field.propertyName}Value";
+      statements.add(Code("final $localName = this.${field.propertyName};"));
       final localRef = refer(localName);
       if (field.isTriState) {
         statements.add(Code("if ($localName.isPresent) {"));
-        final requiredName = "${field.propertyName}Required";
+        final requiredName = "_\$${field.propertyName}Required";
         statements.add(
           Code("final $requiredName = $localName.requireValue;"),
         );
@@ -169,7 +169,7 @@ class VarsEmitter {
           valueExpr: refer(requiredName),
         );
         statements.add(
-          refer("result")
+          refer(r"_$result")
               .index(literalString(field.responseKey))
               .assign(valueExpr)
               .statement,
@@ -178,7 +178,7 @@ class VarsEmitter {
       } else if (field.isRequired) {
         final valueExpr = _toJsonExpression(field, valueExpr: localRef);
         statements.add(
-          refer("result")
+          refer(r"_$result")
               .index(literalString(field.responseKey))
               .assign(valueExpr)
               .statement,
@@ -187,7 +187,7 @@ class VarsEmitter {
         final valueExpr = _toJsonExpression(field, valueExpr: localRef);
         statements.add(Code("if ($localName != null) {"));
         statements.add(
-          refer("result")
+          refer(r"_$result")
               .index(literalString(field.responseKey))
               .assign(valueExpr)
               .statement,
@@ -195,7 +195,7 @@ class VarsEmitter {
         statements.add(const Code("}"));
       }
     }
-    statements.add(refer("result").returned.statement);
+    statements.add(refer(r"_$result").returned.statement);
 
     return Method(
       (b) => b
@@ -414,7 +414,7 @@ class VarsEmitter {
           return _nullGuard(valueExpr, fromExpr);
         }
       }
-      final innerExpr = _fromJsonForTypeNode(node.type, field, refer("e"));
+      final innerExpr = _fromJsonForTypeNode(node.type, field, refer(r"_$e"));
       final castExpr = valueExpr.asA(_listDynamicType());
       final mapped = castExpr
           .property("map")
@@ -422,7 +422,7 @@ class VarsEmitter {
             Method(
               (b) => b
                 ..requiredParameters.add(
-                  Parameter((b) => b..name = "e"),
+                  Parameter((b) => b..name = r"_$e"),
                 )
                 ..lambda = true
                 ..body = innerExpr.code,
@@ -496,14 +496,14 @@ class VarsEmitter {
     Expression valueExpr,
   ) {
     if (node is ListTypeNode) {
-      final innerExpr = _toJsonForTypeNode(node.type, field, refer("e"));
+      final innerExpr = _toJsonForTypeNode(node.type, field, refer(r"_$e"));
       final mapped = valueExpr
           .property("map")
           .call([
             Method(
               (b) => b
                 ..requiredParameters.add(
-                  Parameter((b) => b..name = "e"),
+                  Parameter((b) => b..name = r"_$e"),
                 )
                 ..lambda = true
                 ..body = innerExpr.code,

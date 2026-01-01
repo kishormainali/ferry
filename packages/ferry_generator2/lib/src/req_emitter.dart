@@ -302,8 +302,7 @@ class ReqEmitter {
                 Parameter(
                   (b) => b
                     ..name = "data"
-                    ..type = config.dataToJsonMode
-                        .getDataToJsonParamType(dataTypeRef),
+                    ..type = dataTypeRef,
                 ),
               )
               ..lambda = true
@@ -498,8 +497,7 @@ ${hasVars ? "  vars: vars," : ""}
                 Parameter(
                   (b) => b
                     ..name = "data"
-                    ..type = config.dataToJsonMode
-                        .getDataToJsonParamType(dataTypeRef),
+                    ..type = dataTypeRef,
                 ),
               )
               ..lambda = true

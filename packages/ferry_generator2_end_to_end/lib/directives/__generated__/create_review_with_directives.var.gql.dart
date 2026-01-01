@@ -37,19 +37,19 @@ class GCreateReviewWithDirectivesVars {
   final bool skipCommentary;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final episodeValue = episode;
-    if (episodeValue.isPresent) {
-      final episodeRequired = episodeValue.requireValue;
-      result['episode'] =
-          episodeRequired == null ? null : episodeRequired.toJson();
+    final _$result = <String, dynamic>{};
+    final _$episodeValue = this.episode;
+    if (_$episodeValue.isPresent) {
+      final _$episodeRequired = _$episodeValue.requireValue;
+      _$result['episode'] =
+          _$episodeRequired == null ? null : _$episodeRequired.toJson();
     }
-    final reviewValue = review;
-    result['review'] = reviewValue.toJson();
-    final includeReviewValue = includeReview;
-    result['includeReview'] = includeReviewValue;
-    final skipCommentaryValue = skipCommentary;
-    result['skipCommentary'] = skipCommentaryValue;
-    return result;
+    final _$reviewValue = this.review;
+    _$result['review'] = _$reviewValue.toJson();
+    final _$includeReviewValue = this.includeReview;
+    _$result['includeReview'] = _$includeReviewValue;
+    final _$skipCommentaryValue = this.skipCommentary;
+    _$result['skipCommentary'] = _$skipCommentaryValue;
+    return _$result;
   }
 }

@@ -22,11 +22,11 @@ class GHumanWithDirectivesData {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final humanValue = human;
-    result['human'] = humanValue == null ? null : humanValue.toJson();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$humanValue = this.human;
+    _$result['human'] = _$humanValue == null ? null : _$humanValue.toJson();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GHumanWithDirectivesData copyWith({
@@ -81,13 +81,13 @@ class GHumanWithDirectivesData_human {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final idValue = id;
-    result['id'] = idValue == null ? null : idValue;
-    final nameValue = name;
-    result['name'] = nameValue == null ? null : nameValue;
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$idValue = this.id;
+    _$result['id'] = _$idValue == null ? null : _$idValue;
+    final _$nameValue = this.name;
+    _$result['name'] = _$nameValue == null ? null : _$nameValue;
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GHumanWithDirectivesData_human copyWith({

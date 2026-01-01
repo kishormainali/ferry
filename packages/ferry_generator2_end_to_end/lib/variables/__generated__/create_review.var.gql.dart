@@ -29,15 +29,15 @@ class GCreateReviewVars {
   final _i1.GReviewInput review;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final episodeValue = episode;
-    if (episodeValue.isPresent) {
-      final episodeRequired = episodeValue.requireValue;
-      result['episode'] =
-          episodeRequired == null ? null : episodeRequired.toJson();
+    final _$result = <String, dynamic>{};
+    final _$episodeValue = this.episode;
+    if (_$episodeValue.isPresent) {
+      final _$episodeRequired = _$episodeValue.requireValue;
+      _$result['episode'] =
+          _$episodeRequired == null ? null : _$episodeRequired.toJson();
     }
-    final reviewValue = review;
-    result['review'] = reviewValue.toJson();
-    return result;
+    final _$reviewValue = this.review;
+    _$result['review'] = _$reviewValue.toJson();
+    return _$result;
   }
 }

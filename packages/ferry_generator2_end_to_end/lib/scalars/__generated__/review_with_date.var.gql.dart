@@ -38,22 +38,22 @@ class GReviewWithDateVars {
   final Value<CustomDate> createdAt;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final episodeValue = episode;
-    if (episodeValue.isPresent) {
-      final episodeRequired = episodeValue.requireValue;
-      result['episode'] =
-          episodeRequired == null ? null : episodeRequired.toJson();
+    final _$result = <String, dynamic>{};
+    final _$episodeValue = this.episode;
+    if (_$episodeValue.isPresent) {
+      final _$episodeRequired = _$episodeValue.requireValue;
+      _$result['episode'] =
+          _$episodeRequired == null ? null : _$episodeRequired.toJson();
     }
-    final reviewValue = review;
-    result['review'] = reviewValue.toJson();
-    final createdAtValue = createdAt;
-    if (createdAtValue.isPresent) {
-      final createdAtRequired = createdAtValue.requireValue;
-      result['createdAt'] = createdAtRequired == null
+    final _$reviewValue = this.review;
+    _$result['review'] = _$reviewValue.toJson();
+    final _$createdAtValue = this.createdAt;
+    if (_$createdAtValue.isPresent) {
+      final _$createdAtRequired = _$createdAtValue.requireValue;
+      _$result['createdAt'] = _$createdAtRequired == null
           ? null
-          : customDateToJson(createdAtRequired);
+          : customDateToJson(_$createdAtRequired);
     }
-    return result;
+    return _$result;
   }
 }

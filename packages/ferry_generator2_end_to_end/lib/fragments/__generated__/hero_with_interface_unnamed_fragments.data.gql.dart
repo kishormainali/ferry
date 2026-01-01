@@ -27,11 +27,11 @@ class GHeroWithInterfaceUnnamedFragmentsData {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final heroValue = hero;
-    result['hero'] = heroValue == null ? null : heroValue.toJson();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$heroValue = this.hero;
+    _$result['hero'] = _$heroValue == null ? null : _$heroValue.toJson();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GHeroWithInterfaceUnnamedFragmentsData copyWith({
@@ -93,11 +93,11 @@ sealed class GHeroWithInterfaceUnnamedFragmentsData_hero {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['id'] = id;
-    result['name'] = name;
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['id'] = this.id;
+    _$result['name'] = this.name;
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 }
 
@@ -165,10 +165,10 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman
       friends: json['friends'] == null
           ? null
           : (json['friends'] as List<dynamic>)
-              .map((e) => e == null
+              .map((_$e) => _$e == null
                   ? null
                   : GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends
-                      .fromJson((e as Map<String, dynamic>)))
+                      .fromJson((_$e as Map<String, dynamic>)))
               .toList(),
     );
   }
@@ -179,17 +179,17 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman
       friends;
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['id'] = id;
-    result['name'] = name;
-    result['__typename'] = G__typename;
-    final homePlanetValue = homePlanet;
-    result['homePlanet'] = homePlanetValue == null ? null : homePlanetValue;
-    final friendsValue = friends;
-    result['friends'] = friendsValue == null
+    final _$result = super.toJson();
+    final _$homePlanetValue = this.homePlanet;
+    _$result['homePlanet'] =
+        _$homePlanetValue == null ? null : _$homePlanetValue;
+    final _$friendsValue = this.friends;
+    _$result['friends'] = _$friendsValue == null
         ? null
-        : friendsValue.map((e) => e == null ? null : e.toJson()).toList();
-    return result;
+        : _$friendsValue
+            .map((_$e) => _$e == null ? null : _$e.toJson())
+            .toList();
+    return _$result;
   }
 
   GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman copyWith({
@@ -256,9 +256,9 @@ sealed class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 }
 
@@ -338,13 +338,13 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asHuman
   final String? homePlanet;
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['__typename'] = G__typename;
-    result['id'] = id;
-    result['name'] = name;
-    final homePlanetValue = homePlanet;
-    result['homePlanet'] = homePlanetValue == null ? null : homePlanetValue;
-    return result;
+    final _$result = super.toJson();
+    _$result['id'] = this.id;
+    _$result['name'] = this.name;
+    final _$homePlanetValue = this.homePlanet;
+    _$result['homePlanet'] =
+        _$homePlanetValue == null ? null : _$homePlanetValue;
+    return _$result;
   }
 
   GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asHuman
@@ -412,14 +412,13 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asDroid
   final String? primaryFunction;
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['__typename'] = G__typename;
-    result['id'] = id;
-    result['name'] = name;
-    final primaryFunctionValue = primaryFunction;
-    result['primaryFunction'] =
-        primaryFunctionValue == null ? null : primaryFunctionValue;
-    return result;
+    final _$result = super.toJson();
+    _$result['id'] = this.id;
+    _$result['name'] = this.name;
+    final _$primaryFunctionValue = this.primaryFunction;
+    _$result['primaryFunction'] =
+        _$primaryFunctionValue == null ? null : _$primaryFunctionValue;
+    return _$result;
   }
 
   GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asDroid
@@ -473,9 +472,8 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__unknown
   }
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = super.toJson();
+    return _$result;
   }
 
   GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__unknown
@@ -526,14 +524,11 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asDroid
   final String? primaryFunction;
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['id'] = id;
-    result['name'] = name;
-    result['__typename'] = G__typename;
-    final primaryFunctionValue = primaryFunction;
-    result['primaryFunction'] =
-        primaryFunctionValue == null ? null : primaryFunctionValue;
-    return result;
+    final _$result = super.toJson();
+    final _$primaryFunctionValue = this.primaryFunction;
+    _$result['primaryFunction'] =
+        _$primaryFunctionValue == null ? null : _$primaryFunctionValue;
+    return _$result;
   }
 
   GHeroWithInterfaceUnnamedFragmentsData_hero__asDroid copyWith({
@@ -591,11 +586,8 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__unknown
   }
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['id'] = id;
-    result['name'] = name;
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = super.toJson();
+    return _$result;
   }
 
   GHeroWithInterfaceUnnamedFragmentsData_hero__unknown copyWith({

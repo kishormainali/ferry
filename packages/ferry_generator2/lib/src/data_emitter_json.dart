@@ -59,7 +59,7 @@ Expression _fromJsonForTypeNode({
       ctx: ctx,
       field: field,
       node: node.type,
-      valueExpr: refer("e"),
+      valueExpr: refer(r"_$e"),
     );
     final castExpr = valueExpr.asA(listDynamicType());
     final mapped = castExpr
@@ -68,7 +68,7 @@ Expression _fromJsonForTypeNode({
           Method(
             (b) => b
               ..requiredParameters.add(
-                Parameter((b) => b..name = "e"),
+                Parameter((b) => b..name = r"_$e"),
               )
               ..lambda = true
               ..body = innerExpr.code,
@@ -155,7 +155,7 @@ Expression _toJsonForTypeNode({
       ctx: ctx,
       field: field,
       node: node.type,
-      valueExpr: refer("e"),
+      valueExpr: refer(r"_$e"),
     );
     final mapped = valueExpr
         .property("map")
@@ -163,7 +163,7 @@ Expression _toJsonForTypeNode({
           Method(
             (b) => b
               ..requiredParameters.add(
-                Parameter((b) => b..name = "e"),
+                Parameter((b) => b..name = r"_$e"),
               )
               ..lambda = true
               ..body = innerExpr.code,

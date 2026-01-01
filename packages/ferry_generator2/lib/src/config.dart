@@ -1,5 +1,4 @@
 import "package:build/build.dart";
-import "package:code_builder/code_builder.dart";
 import "package:pub_semver/pub_semver.dart";
 import "package:yaml/yaml.dart";
 
@@ -22,7 +21,6 @@ class BuilderConfig {
   final InlineFragmentSpreadWhenExtensionConfig whenExtensionConfig;
   final DataClassConfig dataClassConfig;
   final TriStateValueConfig triStateOptionalsConfig;
-  final DataToJsonMode dataToJsonMode;
   final bool format;
   final Version? formatterLanguageVersion;
   final OutputsConfig outputs;
@@ -33,7 +31,9 @@ class BuilderConfig {
   final bool generateDocs;
 
   factory BuilderConfig(Map<String, dynamic> config) {
-    final schemaValue = config["schema"];
+    final root = _ConfigReader("options", config);
+
+    final schemaValue = root.raw("schema");
     final schemaConfig = _toMap(schemaValue);
     if (schemaValue != null && schemaConfig.isEmpty) {
       throw ArgumentError.value(
@@ -42,123 +42,113 @@ class BuilderConfig {
         "Expected a map with keys like file, files, add_typenames",
       );
     }
-    final schemaFile = schemaConfig["file"];
-    final schemaFiles = schemaConfig["files"];
 
-    final outputsConfig = _toMap(config["outputs"]);
-    final dataClassesConfig = _toMap(config["data_classes"]);
-    final whenExtensionsConfig = _toMap(dataClassesConfig["when_extensions"]);
-    final utilsConfig = _toMap(dataClassesConfig["utils"]);
-    final varsConfig = _toMap(config["vars"]);
-    final requestsConfig = _toMap(config["requests"]);
-    final formattingConfig = _toMap(config["formatting"]);
-    final enumsConfig = _toMap(config["enums"]);
-    final enumsFallbackConfig = _toMap(enumsConfig["fallback"]);
-    final scalarsConfig = _toMap(config["scalars"]);
+    final schemaReader = _ConfigReader("schema", schemaConfig);
+    final schemaFile = schemaReader.raw("file");
+    final schemaFiles = schemaReader.raw("files");
 
-    _warnUnknownKeys(config, _topLevelKeys, "options");
-    if (schemaConfig.isNotEmpty) {
-      _warnUnknownKeys(schemaConfig, _schemaKeys, "schema");
-    }
-    if (outputsConfig.isNotEmpty) {
-      _warnUnknownKeys(outputsConfig, _outputsKeys, "outputs");
-    }
-    if (formattingConfig.isNotEmpty) {
-      _warnUnknownKeys(formattingConfig, _formattingKeys, "formatting");
-    }
-    if (enumsConfig.isNotEmpty) {
-      _warnUnknownKeys(enumsConfig, _enumsKeys, "enums");
-    }
-    if (enumsFallbackConfig.isNotEmpty) {
-      _warnUnknownKeys(
-        enumsFallbackConfig,
-        _enumFallbackKeys,
-        "enums.fallback",
-      );
-    }
-    if (dataClassesConfig.isNotEmpty) {
-      _warnUnknownKeys(dataClassesConfig, _dataClassesKeys, "data_classes");
-    }
-    if (whenExtensionsConfig.isNotEmpty) {
-      _warnUnknownKeys(
-        whenExtensionsConfig,
-        _whenExtensionsKeys,
-        "data_classes.when_extensions",
-      );
-    }
-    if (utilsConfig.isNotEmpty) {
-      _warnUnknownKeys(utilsConfig, _dataClassUtilsKeys, "data_classes.utils");
-    }
-    if (varsConfig.isNotEmpty) {
-      _warnUnknownKeys(varsConfig, _varsKeys, "vars");
-    }
-    if (requestsConfig.isNotEmpty) {
-      _warnUnknownKeys(requestsConfig, _requestsKeys, "requests");
-    }
-    if (scalarsConfig.isNotEmpty) {
-      _warnUnknownScalarOverrides(scalarsConfig, "scalars");
-    }
+    final outputsReader = _ConfigReader("outputs", root.map("outputs"));
+    final dataClassesReader =
+        _ConfigReader("data_classes", root.map("data_classes"));
+    final whenExtensionsReader = _ConfigReader(
+      "data_classes.when_extensions",
+      dataClassesReader.map("when_extensions"),
+    );
+    final utilsReader = _ConfigReader(
+      "data_classes.utils",
+      dataClassesReader.map("utils"),
+    );
+    final varsReader = _ConfigReader("vars", root.map("vars"));
+    final requestsReader = _ConfigReader("requests", root.map("requests"));
+    final formattingReader =
+        _ConfigReader("formatting", root.map("formatting"));
+    final enumsReader = _ConfigReader("enums", root.map("enums"));
+    final enumsFallbackReader = _ConfigReader(
+      "enums.fallback",
+      enumsReader.map("fallback"),
+    );
+    final scalarsConfig = root.map("scalars");
 
-    final outputDirValue = schemaConfig["output_dir"];
+    final outputDirValue = schemaReader.raw("output_dir");
     final outputDir =
         outputDirValue is String ? outputDirValue : "__generated__";
-    final sourceExtensionValue = schemaConfig["source_extension"];
+    final sourceExtensionValue = schemaReader.raw("source_extension");
     final sourceExtension =
         sourceExtensionValue is String ? sourceExtensionValue : ".graphql";
 
-    final formatValue = formattingConfig["enabled"];
-    final formatterLanguageVersionValue = formattingConfig["language_version"];
+    final formatValue = formattingReader.raw("enabled");
+    final formatterLanguageVersionValue =
+        formattingReader.raw("language_version");
 
-    return BuilderConfig._(
+    final scalarWarnings = <String>[];
+    final builderConfig = BuilderConfig._(
       schemaId: _parseSchemaId(schemaFile),
       schemaIds: _parseSchemaIds(schemaFiles),
       shouldAddTypenames: _readBool(
-        schemaConfig["add_typenames"],
+        schemaReader.raw("add_typenames"),
         true,
       ),
       shouldGeneratePossibleTypes: _readBool(
-        schemaConfig["generate_possible_types_map"],
+        schemaReader.raw("generate_possible_types_map"),
         true,
       ),
-      typeOverrides: _getTypeOverrides(scalarsConfig),
-      enumFallbackConfig:
-          _getEnumFallbackConfig(fallbackConfig: enumsFallbackConfig),
+      typeOverrides: _getTypeOverrides(scalarsConfig, scalarWarnings),
+      enumFallbackConfig: _getEnumFallbackConfig(enumsFallbackReader),
       outputDir: outputDir,
       sourceExtension: sourceExtension,
-      whenExtensionConfig: _getWhenExtensionConfig(whenExtensionsConfig),
-      dataClassConfig: _getDataClassConfig(dataClassesConfig),
+      whenExtensionConfig: _getWhenExtensionConfig(whenExtensionsReader),
+      dataClassConfig: _getDataClassConfig(dataClassesReader),
       triStateOptionalsConfig: _getTriStateOptionalsConfig(
-        varsConfig["tristate_optionals"],
-      ),
-      dataToJsonMode: getDataToJsonModeFromConfig(
-        requestsConfig["data_to_json"],
+        varsReader.raw("tristate_optionals"),
       ),
       format: _readBool(formatValue, true),
       formatterLanguageVersion: _getFormatterLanguageVersion(
         formatterLanguageVersionValue,
       ),
-      outputs: _getOutputsConfig(outputsConfig),
+      outputs: _getOutputsConfig(outputsReader),
       generateCopyWith: _readBool(
-        utilsConfig["copy_with"],
+        utilsReader.raw("copy_with"),
         false,
       ),
       generateEquals: _readBool(
-        utilsConfig["equals"],
+        utilsReader.raw("equals"),
         false,
       ),
       generateHashCode: _readBool(
-        utilsConfig["hash_code"],
+        utilsReader.raw("hash_code"),
         false,
       ),
       generateToString: _readBool(
-        utilsConfig["to_string"],
+        utilsReader.raw("to_string"),
         false,
       ),
       generateDocs: _readBool(
-        dataClassesConfig["docs"],
+        dataClassesReader.raw("docs"),
         true,
       ),
     );
+
+    final warnings = _collectWarnings(
+      [
+        schemaReader,
+        outputsReader,
+        formattingReader,
+        enumsReader,
+        enumsFallbackReader,
+        dataClassesReader,
+        whenExtensionsReader,
+        utilsReader,
+        varsReader,
+        requestsReader,
+        root,
+      ],
+      extra: scalarWarnings,
+    );
+    for (final warning in warnings) {
+      log.warning(warning);
+    }
+
+    return builderConfig;
   }
 
   const BuilderConfig._({
@@ -173,7 +163,6 @@ class BuilderConfig {
     required this.whenExtensionConfig,
     required this.dataClassConfig,
     required this.triStateOptionalsConfig,
-    required this.dataToJsonMode,
     required this.format,
     required this.formatterLanguageVersion,
     required this.outputs,
@@ -247,16 +236,6 @@ class TypeOverrideConfig {
 
 enum TriStateValueConfig { onAllNullableFields, never }
 
-enum DataToJsonMode {
-  dynamicParam,
-  typeSafe;
-
-  Reference getDataToJsonParamType(Reference dataTypeRef) => switch (this) {
-        DataToJsonMode.dynamicParam => refer("dynamic"),
-        DataToJsonMode.typeSafe => dataTypeRef,
-      };
-}
-
 AssetId? _parseSchemaId(Object? value) {
   if (value == null) return null;
   return AssetId.parse(value as String);
@@ -272,14 +251,14 @@ List<AssetId>? _parseSchemaIds(Object? value) {
 bool _readBool(Object? value, bool defaultValue) =>
     value is bool ? value : defaultValue;
 
-OutputsConfig _getOutputsConfig(Map<String, dynamic> config) {
-  if (config.isEmpty) return const OutputsConfig();
+OutputsConfig _getOutputsConfig(_ConfigReader reader) {
+  if (reader.isEmpty) return const OutputsConfig();
   return OutputsConfig(
-    ast: _readBool(config["ast"], true),
-    data: _readBool(config["data"], true),
-    vars: _readBool(config["vars"], true),
-    req: _readBool(config["req"], true),
-    schema: _readBool(config["schema"], true),
+    ast: _readBool(reader.raw("ast"), true),
+    data: _readBool(reader.raw("data"), true),
+    vars: _readBool(reader.raw("vars"), true),
+    req: _readBool(reader.raw("req"), true),
+    schema: _readBool(reader.raw("schema"), true),
   );
 }
 
@@ -321,31 +300,30 @@ String _normalizeVersionString(String value) {
   return trimmed;
 }
 
-DataClassConfig _getDataClassConfig(Map<String, dynamic> config) {
+DataClassConfig _getDataClassConfig(_ConfigReader reader) {
   return DataClassConfig(
-    reuseFragments: _readBool(config["reuse_fragments"], true),
+    reuseFragments: _readBool(reader.raw("reuse_fragments"), true),
   );
 }
 
 InlineFragmentSpreadWhenExtensionConfig _getWhenExtensionConfig(
-  Map<String, dynamic> config,
+  _ConfigReader reader,
 ) {
-  if (config.isEmpty) {
+  if (reader.isEmpty) {
     return const InlineFragmentSpreadWhenExtensionConfig(
       generateMaybeWhenExtensionMethod: false,
       generateWhenExtensionMethod: false,
     );
   }
   return InlineFragmentSpreadWhenExtensionConfig(
-    generateMaybeWhenExtensionMethod: _readBool(config["maybe_when"], false),
-    generateWhenExtensionMethod: _readBool(config["when"], false),
+    generateMaybeWhenExtensionMethod:
+        _readBool(reader.raw("maybe_when"), false),
+    generateWhenExtensionMethod: _readBool(reader.raw("when"), false),
   );
 }
 
-EnumFallbackConfig _getEnumFallbackConfig({
-  required Map<String, dynamic> fallbackConfig,
-}) {
-  if (fallbackConfig.isEmpty) {
+EnumFallbackConfig _getEnumFallbackConfig(_ConfigReader reader) {
+  if (reader.isEmpty) {
     return const EnumFallbackConfig(
       fallbackValueMap: {},
       generateFallbackValuesGlobally: false,
@@ -355,9 +333,9 @@ EnumFallbackConfig _getEnumFallbackConfig({
 
   return EnumFallbackConfig(
     globalEnumFallbackName:
-        (fallbackConfig["name"] ?? "gUnknownEnumValue") as String,
-    generateFallbackValuesGlobally: fallbackConfig["global"] == true,
-    fallbackValueMap: _enumFallbackMap(fallbackConfig["per_enum"]),
+        (reader.raw("name") ?? "gUnknownEnumValue") as String,
+    generateFallbackValuesGlobally: reader.raw("global") == true,
+    fallbackValueMap: _enumFallbackMap(reader.raw("per_enum")),
   );
 }
 
@@ -380,37 +358,23 @@ TriStateValueConfig _getTriStateOptionalsConfig(Object? configValue) {
   return TriStateValueConfig.never;
 }
 
-DataToJsonMode getDataToJsonModeFromConfig(Object? configValue) {
-  const defaultMode = DataToJsonMode.typeSafe;
-
-  return switch (configValue) {
-    "type_safe" => DataToJsonMode.typeSafe,
-    "dynamic_param" => DataToJsonMode.dynamicParam,
-    null => defaultMode,
-    _ => throw ArgumentError.value(
-        configValue,
-        "data_to_json",
-        "Invalid value for data_to_json, expected one of: type_safe, dynamic_param",
-      ),
-  };
-}
-
-Map<String, TypeOverrideConfig> _getTypeOverrides(Object? overrides) {
-  final map = _toMap(overrides);
-  if (map.isEmpty) return {};
+Map<String, TypeOverrideConfig> _getTypeOverrides(
+  Map<String, dynamic> overrides,
+  List<String> warnings,
+) {
+  if (overrides.isEmpty) return {};
 
   return Map<String, TypeOverrideConfig>.fromEntries(
-    map.entries.map((entry) {
-      final overrideConfig = _toMap(entry.value);
-      return MapEntry(
-        entry.key,
-        TypeOverrideConfig(
-          type: overrideConfig["type"] as String?,
-          import: overrideConfig["import"] as String?,
-          fromJsonFunctionName: overrideConfig["from_json"] as String?,
-          toJsonFunctionName: overrideConfig["to_json"] as String?,
-        ),
+    overrides.entries.map((entry) {
+      final reader = _ConfigReader("scalars.${entry.key}", _toMap(entry.value));
+      final config = TypeOverrideConfig(
+        type: reader.raw("type") as String?,
+        import: reader.raw("import") as String?,
+        fromJsonFunctionName: reader.raw("from_json") as String?,
+        toJsonFunctionName: reader.raw("to_json") as String?,
       );
+      warnings.addAll(reader.unknownWarnings());
+      return MapEntry(entry.key, config);
     }),
   );
 }
@@ -422,82 +386,45 @@ Map<String, dynamic> _toMap(Object? value) {
   return {};
 }
 
-const _topLevelKeys = {
-  "schema",
-  "outputs",
-  "formatting",
-  "enums",
-  "data_classes",
-  "vars",
-  "requests",
-  "scalars",
-};
-
-const _schemaKeys = {
-  "file",
-  "files",
-  "add_typenames",
-  "generate_possible_types_map",
-  "output_dir",
-  "source_extension",
-};
-
-const _outputsKeys = {"ast", "data", "vars", "req", "schema"};
-
-const _formattingKeys = {"enabled", "language_version"};
-
-const _enumsKeys = {"fallback"};
-
-const _enumFallbackKeys = {"global", "name", "per_enum"};
-
-const _dataClassesKeys = {
-  "reuse_fragments",
-  "when_extensions",
-  "utils",
-  "docs"
-};
-
-const _whenExtensionsKeys = {"when", "maybe_when"};
-
-const _dataClassUtilsKeys = {"copy_with", "equals", "hash_code", "to_string"};
-
-const _varsKeys = {"tristate_optionals"};
-
-const _requestsKeys = {"data_to_json"};
-
-const _scalarOverrideKeys = {
-  "type",
-  "import",
-  "from_json",
-  "to_json",
-};
-
-void _warnUnknownKeys(
-  Map<String, dynamic> config,
-  Set<String> allowedKeys,
-  String context,
-) {
-  if (config.isEmpty) return;
-  final unknown = config.keys
-      .whereType<String>()
-      .where((key) => !allowedKeys.contains(key))
-      .toList()
-    ..sort();
-  if (unknown.isEmpty) return;
-  log.warning("Unknown config option(s) at $context: ${unknown.join(', ')}");
+List<String> _collectWarnings(
+  Iterable<_ConfigReader> readers, {
+  Iterable<String> extra = const [],
+}) {
+  return <String>[
+    for (final reader in readers) ...reader.unknownWarnings(),
+    ...extra,
+  ];
 }
 
-void _warnUnknownScalarOverrides(
-  Map<String, dynamic> overrides,
-  String context,
-) {
-  for (final entry in overrides.entries) {
-    final overrideConfig = _toMap(entry.value);
-    if (overrideConfig.isEmpty) continue;
-    _warnUnknownKeys(
-      overrideConfig,
-      _scalarOverrideKeys,
-      "$context.${entry.key}",
-    );
+class _ConfigReader {
+  final String _context;
+  final Map<String, dynamic> _map;
+  final Set<String> _usedKeys = {};
+
+  _ConfigReader(this._context, Map<String, dynamic> map) : _map = map;
+
+  bool get isEmpty => _map.isEmpty;
+
+  Object? raw(String key) {
+    _usedKeys.add(key);
+    return _map[key];
+  }
+
+  Map<String, dynamic> map(String key) {
+    _usedKeys.add(key);
+    return _toMap(_map[key]);
+  }
+
+  List<String> unknownWarnings() {
+    if (_map.isEmpty) return const [];
+    final unknown = _map.keys
+        .whereType<String>()
+        .where((key) => !_usedKeys.contains(key))
+        .toList()
+      ..sort();
+    if (unknown.isEmpty) return const [];
+    return [
+      "Unknown config option(s) at $_context: ${unknown.join(', ')}",
+    ];
   }
 }

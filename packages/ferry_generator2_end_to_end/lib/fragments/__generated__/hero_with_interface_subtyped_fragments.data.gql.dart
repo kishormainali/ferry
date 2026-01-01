@@ -51,11 +51,11 @@ sealed class GheroFieldsFragmentData implements GheroFieldsFragment {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['id'] = id;
-    result['name'] = name;
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['id'] = this.id;
+    _$result['name'] = this.name;
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 }
 
@@ -118,10 +118,10 @@ class GheroFieldsFragmentData__asHuman extends GheroFieldsFragmentData
       friends: json['friends'] == null
           ? null
           : (json['friends'] as List<dynamic>)
-              .map((e) => e == null
+              .map((_$e) => _$e == null
                   ? null
                   : GheroFieldsFragmentData__asHuman_friends.fromJson(
-                      (e as Map<String, dynamic>)))
+                      (_$e as Map<String, dynamic>)))
               .toList(),
     );
   }
@@ -131,17 +131,17 @@ class GheroFieldsFragmentData__asHuman extends GheroFieldsFragmentData
   final List<GheroFieldsFragmentData__asHuman_friends?>? friends;
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['id'] = id;
-    result['name'] = name;
-    result['__typename'] = G__typename;
-    final homePlanetValue = homePlanet;
-    result['homePlanet'] = homePlanetValue == null ? null : homePlanetValue;
-    final friendsValue = friends;
-    result['friends'] = friendsValue == null
+    final _$result = super.toJson();
+    final _$homePlanetValue = this.homePlanet;
+    _$result['homePlanet'] =
+        _$homePlanetValue == null ? null : _$homePlanetValue;
+    final _$friendsValue = this.friends;
+    _$result['friends'] = _$friendsValue == null
         ? null
-        : friendsValue.map((e) => e == null ? null : e.toJson()).toList();
-    return result;
+        : _$friendsValue
+            .map((_$e) => _$e == null ? null : _$e.toJson())
+            .toList();
+    return _$result;
   }
 
   GheroFieldsFragmentData__asHuman copyWith({
@@ -206,9 +206,9 @@ sealed class GheroFieldsFragmentData__asHuman_friends
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 }
 
@@ -283,14 +283,13 @@ class GheroFieldsFragmentData__asHuman_friends__asDroid
   final String? primaryFunction;
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['__typename'] = G__typename;
-    result['id'] = id;
-    result['name'] = name;
-    final primaryFunctionValue = primaryFunction;
-    result['primaryFunction'] =
-        primaryFunctionValue == null ? null : primaryFunctionValue;
-    return result;
+    final _$result = super.toJson();
+    _$result['id'] = this.id;
+    _$result['name'] = this.name;
+    final _$primaryFunctionValue = this.primaryFunction;
+    _$result['primaryFunction'] =
+        _$primaryFunctionValue == null ? null : _$primaryFunctionValue;
+    return _$result;
   }
 
   GheroFieldsFragmentData__asHuman_friends__asDroid copyWith({
@@ -360,13 +359,13 @@ class GheroFieldsFragmentData__asHuman_friends__asHuman
   final String? homePlanet;
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['__typename'] = G__typename;
-    result['id'] = id;
-    result['name'] = name;
-    final homePlanetValue = homePlanet;
-    result['homePlanet'] = homePlanetValue == null ? null : homePlanetValue;
-    return result;
+    final _$result = super.toJson();
+    _$result['id'] = this.id;
+    _$result['name'] = this.name;
+    final _$homePlanetValue = this.homePlanet;
+    _$result['homePlanet'] =
+        _$homePlanetValue == null ? null : _$homePlanetValue;
+    return _$result;
   }
 
   GheroFieldsFragmentData__asHuman_friends__asHuman copyWith({
@@ -421,9 +420,8 @@ class GheroFieldsFragmentData__asHuman_friends__unknown
   }
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = super.toJson();
+    return _$result;
   }
 
   GheroFieldsFragmentData__asHuman_friends__unknown copyWith(
@@ -476,14 +474,11 @@ class GheroFieldsFragmentData__asDroid extends GheroFieldsFragmentData
   final String? primaryFunction;
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['id'] = id;
-    result['name'] = name;
-    result['__typename'] = G__typename;
-    final primaryFunctionValue = primaryFunction;
-    result['primaryFunction'] =
-        primaryFunctionValue == null ? null : primaryFunctionValue;
-    return result;
+    final _$result = super.toJson();
+    final _$primaryFunctionValue = this.primaryFunction;
+    _$result['primaryFunction'] =
+        _$primaryFunctionValue == null ? null : _$primaryFunctionValue;
+    return _$result;
   }
 
   GheroFieldsFragmentData__asDroid copyWith({
@@ -540,11 +535,8 @@ class GheroFieldsFragmentData__unknown extends GheroFieldsFragmentData
   }
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['id'] = id;
-    result['name'] = name;
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = super.toJson();
+    return _$result;
   }
 
   GheroFieldsFragmentData__unknown copyWith({
@@ -603,10 +595,10 @@ class GhumanFieldsFragmentData implements GhumanFieldsFragment {
       friends: json['friends'] == null
           ? null
           : (json['friends'] as List<dynamic>)
-              .map((e) => e == null
+              .map((_$e) => _$e == null
                   ? null
                   : GhumanFieldsFragmentData_friends.fromJson(
-                      (e as Map<String, dynamic>)))
+                      (_$e as Map<String, dynamic>)))
               .toList(),
       G__typename: (json['__typename'] as String),
     );
@@ -619,15 +611,18 @@ class GhumanFieldsFragmentData implements GhumanFieldsFragment {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final homePlanetValue = homePlanet;
-    result['homePlanet'] = homePlanetValue == null ? null : homePlanetValue;
-    final friendsValue = friends;
-    result['friends'] = friendsValue == null
+    final _$result = <String, dynamic>{};
+    final _$homePlanetValue = this.homePlanet;
+    _$result['homePlanet'] =
+        _$homePlanetValue == null ? null : _$homePlanetValue;
+    final _$friendsValue = this.friends;
+    _$result['friends'] = _$friendsValue == null
         ? null
-        : friendsValue.map((e) => e == null ? null : e.toJson()).toList();
-    result['__typename'] = G__typename;
-    return result;
+        : _$friendsValue
+            .map((_$e) => _$e == null ? null : _$e.toJson())
+            .toList();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GhumanFieldsFragmentData copyWith({
@@ -683,9 +678,9 @@ sealed class GhumanFieldsFragmentData_friends
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 }
 
@@ -755,14 +750,13 @@ class GhumanFieldsFragmentData_friends__asDroid
   final String? primaryFunction;
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['__typename'] = G__typename;
-    result['id'] = id;
-    result['name'] = name;
-    final primaryFunctionValue = primaryFunction;
-    result['primaryFunction'] =
-        primaryFunctionValue == null ? null : primaryFunctionValue;
-    return result;
+    final _$result = super.toJson();
+    _$result['id'] = this.id;
+    _$result['name'] = this.name;
+    final _$primaryFunctionValue = this.primaryFunction;
+    _$result['primaryFunction'] =
+        _$primaryFunctionValue == null ? null : _$primaryFunctionValue;
+    return _$result;
   }
 
   GhumanFieldsFragmentData_friends__asDroid copyWith({
@@ -830,13 +824,13 @@ class GhumanFieldsFragmentData_friends__asHuman
   final String? homePlanet;
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['__typename'] = G__typename;
-    result['id'] = id;
-    result['name'] = name;
-    final homePlanetValue = homePlanet;
-    result['homePlanet'] = homePlanetValue == null ? null : homePlanetValue;
-    return result;
+    final _$result = super.toJson();
+    _$result['id'] = this.id;
+    _$result['name'] = this.name;
+    final _$homePlanetValue = this.homePlanet;
+    _$result['homePlanet'] =
+        _$homePlanetValue == null ? null : _$homePlanetValue;
+    return _$result;
   }
 
   GhumanFieldsFragmentData_friends__asHuman copyWith({
@@ -888,9 +882,8 @@ class GhumanFieldsFragmentData_friends__unknown
   }
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = super.toJson();
+    return _$result;
   }
 
   GhumanFieldsFragmentData_friends__unknown copyWith({String? G__typename}) {
@@ -941,12 +934,12 @@ class GdroidFieldsFragmentData implements GdroidFieldsFragment {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final primaryFunctionValue = primaryFunction;
-    result['primaryFunction'] =
-        primaryFunctionValue == null ? null : primaryFunctionValue;
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$primaryFunctionValue = this.primaryFunction;
+    _$result['primaryFunction'] =
+        _$primaryFunctionValue == null ? null : _$primaryFunctionValue;
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GdroidFieldsFragmentData copyWith({
@@ -1002,11 +995,11 @@ class GHeroWithInterfaceSubTypedFragmentsData {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final heroValue = hero;
-    result['hero'] = heroValue == null ? null : heroValue.toJson();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$heroValue = this.hero;
+    _$result['hero'] = _$heroValue == null ? null : _$heroValue.toJson();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GHeroWithInterfaceSubTypedFragmentsData copyWith({

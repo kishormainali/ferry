@@ -11,10 +11,10 @@ class GPostsVars {
   final String userId;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final userIdValue = userId;
-    result['userId'] = userIdValue;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$userIdValue = this.userId;
+    _$result['userId'] = _$userIdValue;
+    return _$result;
   }
 }
 
@@ -28,9 +28,9 @@ class GPostFragmentVars {
   final String userId;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final userIdValue = userId;
-    result['userId'] = userIdValue;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$userIdValue = this.userId;
+    _$result['userId'] = _$userIdValue;
+    return _$result;
   }
 }

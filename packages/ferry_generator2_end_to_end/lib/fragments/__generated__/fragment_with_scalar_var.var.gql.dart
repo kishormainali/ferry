@@ -18,12 +18,12 @@ class GPostsWithFixedVariableVars {
   final Value<Map<String, dynamic>> filter;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final filterValue = filter;
-    if (filterValue.isPresent) {
-      final filterRequired = filterValue.requireValue;
-      result['filter'] = filterRequired == null ? null : filterRequired;
+    final _$result = <String, dynamic>{};
+    final _$filterValue = this.filter;
+    if (_$filterValue.isPresent) {
+      final _$filterRequired = _$filterValue.requireValue;
+      _$result['filter'] = _$filterRequired == null ? null : _$filterRequired;
     }
-    return result;
+    return _$result;
   }
 }

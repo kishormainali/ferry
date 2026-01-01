@@ -22,11 +22,11 @@ class GHeroNoVarsData {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final heroValue = hero;
-    result['hero'] = heroValue == null ? null : heroValue.toJson();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$heroValue = this.hero;
+    _$result['hero'] = _$heroValue == null ? null : _$heroValue.toJson();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GHeroNoVarsData copyWith({
@@ -81,11 +81,11 @@ class GHeroNoVarsData_hero {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['id'] = id;
-    result['name'] = name;
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['id'] = this.id;
+    _$result['name'] = this.name;
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GHeroNoVarsData_hero copyWith({

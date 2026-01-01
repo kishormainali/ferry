@@ -28,15 +28,16 @@ class GreviewsWithListArgumentVars {
   final Value<List<int>> stars;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final episodeValue = episode;
-    result['episode'] = episodeValue.toJson();
-    final starsValue = stars;
-    if (starsValue.isPresent) {
-      final starsRequired = starsValue.requireValue;
-      result['stars'] =
-          starsRequired == null ? null : starsRequired.map((e) => e).toList();
+    final _$result = <String, dynamic>{};
+    final _$episodeValue = this.episode;
+    _$result['episode'] = _$episodeValue.toJson();
+    final _$starsValue = this.stars;
+    if (_$starsValue.isPresent) {
+      final _$starsRequired = _$starsValue.requireValue;
+      _$result['stars'] = _$starsRequired == null
+          ? null
+          : _$starsRequired.map((_$e) => _$e).toList();
     }
-    return result;
+    return _$result;
   }
 }

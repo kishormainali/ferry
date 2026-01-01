@@ -54,15 +54,16 @@ class GPostFragmentData implements GPostFragment {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['id'] = id;
-    final isFavoritedValue = isFavorited;
-    result['isFavorited'] =
-        isFavoritedValue == null ? null : isFavoritedValue.toJson();
-    final isLikedValue = isLiked;
-    result['isLiked'] = isLikedValue == null ? null : isLikedValue.toJson();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['id'] = this.id;
+    final _$isFavoritedValue = this.isFavorited;
+    _$result['isFavorited'] =
+        _$isFavoritedValue == null ? null : _$isFavoritedValue.toJson();
+    final _$isLikedValue = this.isLiked;
+    _$result['isLiked'] =
+        _$isLikedValue == null ? null : _$isLikedValue.toJson();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GPostFragmentData copyWith({
@@ -120,10 +121,10 @@ class GPostFragmentData_isFavorited implements GPostFragment_isFavorited {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['totalCount'] = totalCount;
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['totalCount'] = this.totalCount;
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GPostFragmentData_isFavorited copyWith({
@@ -173,10 +174,10 @@ class GPostFragmentData_isLiked implements GPostFragment_isLiked {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['totalCount'] = totalCount;
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['totalCount'] = this.totalCount;
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GPostFragmentData_isLiked copyWith({
@@ -219,9 +220,9 @@ class GPostsData {
       posts: json['posts'] == null
           ? null
           : (json['posts'] as List<dynamic>)
-              .map((e) => e == null
+              .map((_$e) => _$e == null
                   ? null
-                  : GPostFragmentData.fromJson((e as Map<String, dynamic>)))
+                  : GPostFragmentData.fromJson((_$e as Map<String, dynamic>)))
               .toList(),
       G__typename: (json['__typename'] as String),
     );
@@ -232,13 +233,13 @@ class GPostsData {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final postsValue = posts;
-    result['posts'] = postsValue == null
+    final _$result = <String, dynamic>{};
+    final _$postsValue = this.posts;
+    _$result['posts'] = _$postsValue == null
         ? null
-        : postsValue.map((e) => e == null ? null : e.toJson()).toList();
-    result['__typename'] = G__typename;
-    return result;
+        : _$postsValue.map((_$e) => _$e == null ? null : _$e.toJson()).toList();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GPostsData copyWith({

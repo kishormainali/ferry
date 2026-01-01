@@ -45,10 +45,10 @@ sealed class GSharedAuthorFragmentData implements GSharedAuthorFragment {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['displayName'] = displayName;
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['displayName'] = this.displayName;
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 }
 
@@ -112,12 +112,10 @@ class GSharedAuthorFragmentData__asPerson extends GSharedAuthorFragmentData
   final String lastName;
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['displayName'] = displayName;
-    result['__typename'] = G__typename;
-    result['firstName'] = firstName;
-    result['lastName'] = lastName;
-    return result;
+    final _$result = super.toJson();
+    _$result['firstName'] = this.firstName;
+    _$result['lastName'] = this.lastName;
+    return _$result;
   }
 
   GSharedAuthorFragmentData__asPerson copyWith({
@@ -176,11 +174,9 @@ class GSharedAuthorFragmentData__asCompany extends GSharedAuthorFragmentData
   final String name;
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['displayName'] = displayName;
-    result['__typename'] = G__typename;
-    result['name'] = name;
-    return result;
+    final _$result = super.toJson();
+    _$result['name'] = this.name;
+    return _$result;
   }
 
   GSharedAuthorFragmentData__asCompany copyWith({
@@ -231,10 +227,8 @@ class GSharedAuthorFragmentData__unknown extends GSharedAuthorFragmentData
   }
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['displayName'] = displayName;
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = super.toJson();
+    return _$result;
   }
 
   GSharedAuthorFragmentData__unknown copyWith({
@@ -308,11 +302,11 @@ sealed class GSharedBookFragmentData implements GSharedBookFragment {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['title'] = title;
-    result['author'] = author.toJson();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['title'] = this.title;
+    _$result['author'] = this.author.toJson();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 }
 
@@ -375,12 +369,9 @@ class GSharedBookFragmentData__asTextbook extends GSharedBookFragmentData
   final List<String> courses;
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['title'] = title;
-    result['author'] = author.toJson();
-    result['__typename'] = G__typename;
-    result['courses'] = courses.map((e) => e).toList();
-    return result;
+    final _$result = super.toJson();
+    _$result['courses'] = this.courses.map((_$e) => _$e).toList();
+    return _$result;
   }
 
   GSharedBookFragmentData__asTextbook copyWith({
@@ -442,12 +433,9 @@ class GSharedBookFragmentData__asColoringBook extends GSharedBookFragmentData
   final List<String> colors;
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['title'] = title;
-    result['author'] = author.toJson();
-    result['__typename'] = G__typename;
-    result['colors'] = colors.map((e) => e).toList();
-    return result;
+    final _$result = super.toJson();
+    _$result['colors'] = this.colors.map((_$e) => _$e).toList();
+    return _$result;
   }
 
   GSharedBookFragmentData__asColoringBook copyWith({
@@ -504,11 +492,8 @@ class GSharedBookFragmentData__unknown extends GSharedBookFragmentData
   }
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['title'] = title;
-    result['author'] = author.toJson();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = super.toJson();
+    return _$result;
   }
 
   GSharedBookFragmentData__unknown copyWith({
@@ -552,8 +537,8 @@ class GSharedBooksAData {
   factory GSharedBooksAData.fromJson(Map<String, dynamic> json) {
     return GSharedBooksAData(
       books: (json['books'] as List<dynamic>)
-          .map((e) =>
-              GSharedBookFragmentData.fromJson((e as Map<String, dynamic>)))
+          .map((_$e) =>
+              GSharedBookFragmentData.fromJson((_$e as Map<String, dynamic>)))
           .toList(),
       G__typename: (json['__typename'] as String),
     );
@@ -564,10 +549,10 @@ class GSharedBooksAData {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['books'] = books.map((e) => e.toJson()).toList();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['books'] = this.books.map((_$e) => _$e.toJson()).toList();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GSharedBooksAData copyWith({
@@ -608,8 +593,8 @@ class GSharedBooksBData {
   factory GSharedBooksBData.fromJson(Map<String, dynamic> json) {
     return GSharedBooksBData(
       books: (json['books'] as List<dynamic>)
-          .map((e) =>
-              GSharedBookFragmentData.fromJson((e as Map<String, dynamic>)))
+          .map((_$e) =>
+              GSharedBookFragmentData.fromJson((_$e as Map<String, dynamic>)))
           .toList(),
       G__typename: (json['__typename'] as String),
     );
@@ -620,10 +605,10 @@ class GSharedBooksBData {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['books'] = books.map((e) => e.toJson()).toList();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['books'] = this.books.map((_$e) => _$e.toJson()).toList();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GSharedBooksBData copyWith({

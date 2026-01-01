@@ -30,12 +30,12 @@ class GDroidFragmentData implements GDroidFragment {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final primaryFunctionValue = primaryFunction;
-    result['primaryFunction'] =
-        primaryFunctionValue == null ? null : primaryFunctionValue;
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$primaryFunctionValue = this.primaryFunction;
+    _$result['primaryFunction'] =
+        _$primaryFunctionValue == null ? null : _$primaryFunctionValue;
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GDroidFragmentData copyWith({
@@ -90,11 +90,11 @@ class GHeroForEpisodeData {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final heroValue = hero;
-    result['hero'] = heroValue == null ? null : heroValue.toJson();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$heroValue = this.hero;
+    _$result['hero'] = _$heroValue == null ? null : _$heroValue.toJson();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GHeroForEpisodeData copyWith({
@@ -150,14 +150,16 @@ sealed class GHeroForEpisodeData_hero {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['name'] = name;
-    final friendsValue = friends;
-    result['friends'] = friendsValue == null
+    final _$result = <String, dynamic>{};
+    _$result['name'] = this.name;
+    final _$friendsValue = this.friends;
+    _$result['friends'] = _$friendsValue == null
         ? null
-        : friendsValue.map((e) => e == null ? null : e.toJson()).toList();
-    result['__typename'] = G__typename;
-    return result;
+        : _$friendsValue
+            .map((_$e) => _$e == null ? null : _$e.toJson())
+            .toList();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 }
 
@@ -207,10 +209,10 @@ class GHeroForEpisodeData_hero_friends {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['name'] = name;
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['name'] = this.name;
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GHeroForEpisodeData_hero_friends copyWith({
@@ -258,10 +260,10 @@ class GHeroForEpisodeData_hero__asDroid extends GHeroForEpisodeData_hero
       friends: json['friends'] == null
           ? null
           : (json['friends'] as List<dynamic>)
-              .map((e) => e == null
+              .map((_$e) => _$e == null
                   ? null
                   : GHeroForEpisodeData_hero_friends.fromJson(
-                      (e as Map<String, dynamic>)))
+                      (_$e as Map<String, dynamic>)))
               .toList(),
       G__typename: (json['__typename'] as String),
       primaryFunction: json['primaryFunction'] == null
@@ -273,17 +275,11 @@ class GHeroForEpisodeData_hero__asDroid extends GHeroForEpisodeData_hero
   final String? primaryFunction;
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['name'] = name;
-    final friendsValue = friends;
-    result['friends'] = friendsValue == null
-        ? null
-        : friendsValue.map((e) => e == null ? null : e.toJson()).toList();
-    result['__typename'] = G__typename;
-    final primaryFunctionValue = primaryFunction;
-    result['primaryFunction'] =
-        primaryFunctionValue == null ? null : primaryFunctionValue;
-    return result;
+    final _$result = super.toJson();
+    final _$primaryFunctionValue = this.primaryFunction;
+    _$result['primaryFunction'] =
+        _$primaryFunctionValue == null ? null : _$primaryFunctionValue;
+    return _$result;
   }
 
   GHeroForEpisodeData_hero__asDroid copyWith({
@@ -339,24 +335,18 @@ class GHeroForEpisodeData_hero__unknown extends GHeroForEpisodeData_hero {
       friends: json['friends'] == null
           ? null
           : (json['friends'] as List<dynamic>)
-              .map((e) => e == null
+              .map((_$e) => _$e == null
                   ? null
                   : GHeroForEpisodeData_hero_friends.fromJson(
-                      (e as Map<String, dynamic>)))
+                      (_$e as Map<String, dynamic>)))
               .toList(),
       G__typename: (json['__typename'] as String),
     );
   }
 
   Map<String, dynamic> toJson() {
-    final result = super.toJson();
-    result['name'] = name;
-    final friendsValue = friends;
-    result['friends'] = friendsValue == null
-        ? null
-        : friendsValue.map((e) => e == null ? null : e.toJson()).toList();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = super.toJson();
+    return _$result;
   }
 
   GHeroForEpisodeData_hero__unknown copyWith({

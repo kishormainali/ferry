@@ -26,12 +26,12 @@ class GReviewAddedData {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final reviewAddedValue = reviewAdded;
-    result['reviewAdded'] =
-        reviewAddedValue == null ? null : reviewAddedValue.toJson();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$reviewAddedValue = this.reviewAdded;
+    _$result['reviewAdded'] =
+        _$reviewAddedValue == null ? null : _$reviewAddedValue.toJson();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GReviewAddedData copyWith({
@@ -93,14 +93,16 @@ class GReviewAddedData_reviewAdded {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final episodeValue = episode;
-    result['episode'] = episodeValue == null ? null : episodeValue.toJson();
-    result['stars'] = stars;
-    final commentaryValue = commentary;
-    result['commentary'] = commentaryValue == null ? null : commentaryValue;
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$episodeValue = this.episode;
+    _$result['episode'] =
+        _$episodeValue == null ? null : _$episodeValue.toJson();
+    _$result['stars'] = this.stars;
+    final _$commentaryValue = this.commentary;
+    _$result['commentary'] =
+        _$commentaryValue == null ? null : _$commentaryValue;
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GReviewAddedData_reviewAdded copyWith({

@@ -28,10 +28,10 @@ class GheroDataData implements GheroData {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['name'] = name;
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['name'] = this.name;
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GheroDataData copyWith({
@@ -108,12 +108,12 @@ class GcomparisonFieldsData implements GcomparisonFields, GheroData {
   final GcomparisonFieldsData_friendsConnection friendsConnection;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['id'] = id;
-    result['name'] = name;
-    result['__typename'] = G__typename;
-    result['friendsConnection'] = friendsConnection.toJson();
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['id'] = this.id;
+    _$result['name'] = this.name;
+    _$result['__typename'] = this.G__typename;
+    _$result['friendsConnection'] = this.friendsConnection.toJson();
+    return _$result;
   }
 
   GcomparisonFieldsData copyWith({
@@ -167,10 +167,10 @@ class GcomparisonFieldsData_friendsConnection
       edges: json['edges'] == null
           ? null
           : (json['edges'] as List<dynamic>)
-              .map((e) => e == null
+              .map((_$e) => _$e == null
                   ? null
                   : GcomparisonFieldsData_friendsConnection_edges.fromJson(
-                      (e as Map<String, dynamic>)))
+                      (_$e as Map<String, dynamic>)))
               .toList(),
       G__typename: (json['__typename'] as String),
     );
@@ -183,15 +183,16 @@ class GcomparisonFieldsData_friendsConnection
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final totalCountValue = totalCount;
-    result['totalCount'] = totalCountValue == null ? null : totalCountValue;
-    final edgesValue = edges;
-    result['edges'] = edgesValue == null
+    final _$result = <String, dynamic>{};
+    final _$totalCountValue = this.totalCount;
+    _$result['totalCount'] =
+        _$totalCountValue == null ? null : _$totalCountValue;
+    final _$edgesValue = this.edges;
+    _$result['edges'] = _$edgesValue == null
         ? null
-        : edgesValue.map((e) => e == null ? null : e.toJson()).toList();
-    result['__typename'] = G__typename;
-    return result;
+        : _$edgesValue.map((_$e) => _$e == null ? null : _$e.toJson()).toList();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GcomparisonFieldsData_friendsConnection copyWith({
@@ -251,11 +252,11 @@ class GcomparisonFieldsData_friendsConnection_edges
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final nodeValue = node;
-    result['node'] = nodeValue == null ? null : nodeValue.toJson();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$nodeValue = this.node;
+    _$result['node'] = _$nodeValue == null ? null : _$nodeValue.toJson();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GcomparisonFieldsData_friendsConnection_edges copyWith({
@@ -309,11 +310,11 @@ class GHeroWithFragmentsData {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final heroValue = hero;
-    result['hero'] = heroValue == null ? null : heroValue.toJson();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$heroValue = this.hero;
+    _$result['hero'] = _$heroValue == null ? null : _$heroValue.toJson();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GHeroWithFragmentsData copyWith({

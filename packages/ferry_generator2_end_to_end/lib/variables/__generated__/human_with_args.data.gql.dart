@@ -22,11 +22,11 @@ class GHumanWithArgsData {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final humanValue = human;
-    result['human'] = humanValue == null ? null : humanValue.toJson();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$humanValue = this.human;
+    _$result['human'] = _$humanValue == null ? null : _$humanValue.toJson();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GHumanWithArgsData copyWith({
@@ -81,12 +81,12 @@ class GHumanWithArgsData_human {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['name'] = name;
-    final heightValue = height;
-    result['height'] = heightValue == null ? null : heightValue;
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['name'] = this.name;
+    final _$heightValue = this.height;
+    _$result['height'] = _$heightValue == null ? null : _$heightValue;
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GHumanWithArgsData_human copyWith({

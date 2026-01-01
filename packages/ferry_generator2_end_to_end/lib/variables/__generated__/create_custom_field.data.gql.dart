@@ -21,12 +21,12 @@ class GCreateCustomFieldData {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final createCustomFieldValue = createCustomField;
-    result['createCustomField'] =
-        createCustomFieldValue == null ? null : createCustomFieldValue;
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$createCustomFieldValue = this.createCustomField;
+    _$result['createCustomField'] =
+        _$createCustomFieldValue == null ? null : _$createCustomFieldValue;
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GCreateCustomFieldData copyWith({

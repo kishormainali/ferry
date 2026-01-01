@@ -8,10 +8,10 @@ bool listEquals<T>(
 ) {
   if (identical(left, right)) return true;
   if (left == null || right == null) return false;
-  final length = left.length;
-  if (length != right.length) return false;
-  for (var i = 0; i < length; i++) {
-    if (left[i] != right[i]) return false;
+  final _$length = left.length;
+  if (_$length != right.length) return false;
+  for (var _$i = 0; _$i < _$length; _$i++) {
+    if (left[_$i] != right[_$i]) return false;
   }
   return true;
 }
@@ -23,10 +23,10 @@ bool listEqualsDeep<T>(
 ) {
   if (identical(left, right)) return true;
   if (left == null || right == null) return false;
-  final length = left.length;
-  if (length != right.length) return false;
-  for (var i = 0; i < length; i++) {
-    if (!deepEquals(left[i], right[i])) return false;
+  final _$length = left.length;
+  if (_$length != right.length) return false;
+  for (var _$i = 0; _$i < _$length; _$i++) {
+    if (!deepEquals(left[_$i], right[_$i])) return false;
   }
   return true;
 }
@@ -34,21 +34,21 @@ bool listEqualsDeep<T>(
 @pragma('vm:prefer-inline')
 int listHash<T>(List<T>? values) {
   if (values == null) return 0;
-  var hash = 0;
-  for (final value in values) {
-    hash = Object.hash(hash, value);
+  var _$hash = 0;
+  for (final _$value in values) {
+    _$hash = Object.hash(_$hash, _$value);
   }
-  return hash;
+  return _$hash;
 }
 
 @pragma('vm:prefer-inline')
 int listHashDeep<T>(List<T>? values) {
   if (values == null) return 0;
-  var hash = 0;
-  for (final value in values) {
-    hash = Object.hash(hash, deepHash(value));
+  var _$hash = 0;
+  for (final _$value in values) {
+    _$hash = Object.hash(_$hash, deepHash(_$value));
   }
-  return hash;
+  return _$hash;
 }
 
 @pragma('vm:prefer-inline')
@@ -63,9 +63,9 @@ bool deepEquals(
   }
   if (left is Map && right is Map) {
     if (left.length != right.length) return false;
-    for (final entry in left.entries) {
-      if (!right.containsKey(entry.key)) return false;
-      if (!deepEquals(entry.value, right[entry.key])) return false;
+    for (final _$entry in left.entries) {
+      if (!right.containsKey(_$entry.key)) return false;
+      if (!deepEquals(_$entry.value, right[_$entry.key])) return false;
     }
     return true;
   }
@@ -81,9 +81,9 @@ int deepHash(Object? value) {
   if (value is Map) {
     return Object.hashAllUnordered(
       value.entries.map(
-        (entry) => Object.hash(
-          deepHash(entry.key),
-          deepHash(entry.value),
+        (_$entry) => Object.hash(
+          deepHash(_$entry.key),
+          deepHash(_$entry.value),
         ),
       ),
     );

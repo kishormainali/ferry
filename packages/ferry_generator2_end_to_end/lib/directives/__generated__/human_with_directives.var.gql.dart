@@ -19,11 +19,11 @@ class GHumanWithDirectivesVars {
   final bool skipId;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final includeNameValue = includeName;
-    result['includeName'] = includeNameValue;
-    final skipIdValue = skipId;
-    result['skipId'] = skipIdValue;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$includeNameValue = this.includeName;
+    _$result['includeName'] = _$includeNameValue;
+    final _$skipIdValue = this.skipId;
+    _$result['skipId'] = _$skipIdValue;
+    return _$result;
   }
 }

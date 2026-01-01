@@ -17,9 +17,9 @@ class GCreateCustomFieldVars {
   final _i1.GCustomFieldInput input;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final inputValue = input;
-    result['input'] = inputValue.toJson();
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$inputValue = this.input;
+    _$result['input'] = _$inputValue.toJson();
+    return _$result;
   }
 }

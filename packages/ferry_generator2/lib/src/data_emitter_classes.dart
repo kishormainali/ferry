@@ -450,8 +450,11 @@ Class _buildConcreteClass({
   required List<FieldSpec> superFields,
   required bool usesSuperToJson,
 }) {
+  final toJsonFields = usesSuperToJson
+      ? fields.where((field) => !superFields.contains(field)).toList()
+      : fields;
   final methods = <Method>[
-    _buildToJsonMethod(ctx, fields, usesSuper: usesSuperToJson),
+    _buildToJsonMethod(ctx, toJsonFields, usesSuper: usesSuperToJson),
   ];
   if (ctx.config.generateCopyWith) {
     methods.add(_buildCopyWithMethod(className, fields));
@@ -581,18 +584,18 @@ Method _buildToJsonMethod(
 }) {
   final statements = <Code>[];
   if (usesSuper) {
-    statements.add(const Code("final result = super.toJson();"));
+    statements.add(const Code(r"final _$result = super.toJson();"));
   } else {
-    statements.add(const Code("final result = <String, dynamic>{};"));
+    statements.add(const Code(r"final _$result = <String, dynamic>{};"));
   }
   for (final field in fieldsList) {
-    Expression valueRef = refer(field.propertyName);
+    Expression valueRef = refer("this").property(field.propertyName);
     if (isNullableField(field)) {
-      final localName = "${field.propertyName}Value";
-      statements.add(Code("final $localName = ${field.propertyName};"));
+      final localName = "_\$${field.propertyName}Value";
+      statements.add(Code("final $localName = this.${field.propertyName};"));
       valueRef = refer(localName);
     }
-    final target = refer("result").index(literalString(field.responseKey));
+    final target = refer(r"_$result").index(literalString(field.responseKey));
     final valueExpr = toJsonExpression(
       ctx: ctx,
       field: field,
@@ -600,7 +603,7 @@ Method _buildToJsonMethod(
     );
     statements.add(target.assign(valueExpr).statement);
   }
-  statements.add(refer("result").returned.statement);
+  statements.add(refer(r"_$result").returned.statement);
 
   return Method(
     (b) => b

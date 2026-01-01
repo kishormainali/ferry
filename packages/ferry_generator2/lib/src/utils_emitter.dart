@@ -19,7 +19,7 @@ Expression _pragmaPreferInline() =>
 Method _buildListEqualsHelper({required bool deep}) {
   final name = deep ? "listEqualsDeep" : "listEquals";
   final elementCheck =
-      deep ? "!deepEquals(left[i], right[i])" : "left[i] != right[i]";
+      deep ? r"!deepEquals(left[_$i], right[_$i])" : r"left[_$i] != right[_$i]";
   return Method(
     (b) => b
       ..name = name
@@ -52,9 +52,9 @@ Method _buildListEqualsHelper({required bool deep}) {
         [
           "if (identical(left, right)) return true;",
           "if (left == null || right == null) return false;",
-          "final length = left.length;",
-          "if (length != right.length) return false;",
-          "for (var i = 0; i < length; i++) {",
+          r"final _$length = left.length;",
+          r"if (_$length != right.length) return false;",
+          r"for (var _$i = 0; _$i < _$length; _$i++) {",
           "  if ($elementCheck) return false;",
           "}",
           "return true;",
@@ -65,7 +65,7 @@ Method _buildListEqualsHelper({required bool deep}) {
 
 Method _buildListHashHelper({required bool deep}) {
   final name = deep ? "listHashDeep" : "listHash";
-  final elementHash = deep ? "deepHash(value)" : "value";
+  final elementHash = deep ? r"deepHash(_$value)" : r"_$value";
   return Method(
     (b) => b
       ..name = name
@@ -87,11 +87,11 @@ Method _buildListHashHelper({required bool deep}) {
       ..body = Code(
         [
           "if (values == null) return 0;",
-          "var hash = 0;",
-          "for (final value in values) {",
-          "  hash = Object.hash(hash, $elementHash);",
+          r"var _$hash = 0;",
+          r"for (final _$value in values) {",
+          "  _\$hash = Object.hash(_\$hash, $elementHash);",
           "}",
-          "return hash;",
+          r"return _$hash;",
         ].join("\n"),
       ),
   );
@@ -120,9 +120,9 @@ Method _buildDeepEqualsHelper() {
           "}",
           "if (left is Map && right is Map) {",
           "  if (left.length != right.length) return false;",
-          "  for (final entry in left.entries) {",
-          "    if (!right.containsKey(entry.key)) return false;",
-          "    if (!deepEquals(entry.value, right[entry.key])) return false;",
+          r"  for (final _$entry in left.entries) {",
+          r"    if (!right.containsKey(_$entry.key)) return false;",
+          r"    if (!deepEquals(_$entry.value, right[_$entry.key])) return false;",
           "  }",
           "  return true;",
           "}",
@@ -152,9 +152,9 @@ Method _buildDeepHashHelper() {
           "if (value is Map) {",
           "  return Object.hashAllUnordered(",
           "    value.entries.map(",
-          "      (entry) => Object.hash(",
-          "        deepHash(entry.key),",
-          "        deepHash(entry.value),",
+          r"      (_$entry) => Object.hash(",
+          r"        deepHash(_$entry.key),",
+          r"        deepHash(_$entry.value),",
           "      ),",
           "    ),",
           "  );",

@@ -16,9 +16,9 @@ class GHeroForEpisodeVars {
   final _i1.GEpisode ep;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final epValue = ep;
-    result['ep'] = epValue.toJson();
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$epValue = this.ep;
+    _$result['ep'] = _$epValue.toJson();
+    return _$result;
   }
 }

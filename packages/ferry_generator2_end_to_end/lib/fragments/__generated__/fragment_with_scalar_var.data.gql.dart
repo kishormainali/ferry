@@ -41,13 +41,13 @@ class GPostFragmentForUser1Data implements GPostFragmentForUser1 {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['id'] = id;
-    final favoritedUsersValue = favoritedUsers;
-    result['favoritedUsers'] =
-        favoritedUsersValue == null ? null : favoritedUsersValue.toJson();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['id'] = this.id;
+    final _$favoritedUsersValue = this.favoritedUsers;
+    _$result['favoritedUsers'] =
+        _$favoritedUsersValue == null ? null : _$favoritedUsersValue.toJson();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GPostFragmentForUser1Data copyWith({
@@ -104,10 +104,10 @@ class GPostFragmentForUser1Data_favoritedUsers
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['totalCount'] = totalCount;
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['totalCount'] = this.totalCount;
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GPostFragmentForUser1Data_favoritedUsers copyWith({
@@ -150,10 +150,10 @@ class GPostsWithFixedVariableData {
       posts: json['posts'] == null
           ? null
           : (json['posts'] as List<dynamic>)
-              .map((e) => e == null
+              .map((_$e) => _$e == null
                   ? null
                   : GPostFragmentForUser1Data.fromJson(
-                      (e as Map<String, dynamic>)))
+                      (_$e as Map<String, dynamic>)))
               .toList(),
       G__typename: (json['__typename'] as String),
     );
@@ -164,13 +164,13 @@ class GPostsWithFixedVariableData {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final postsValue = posts;
-    result['posts'] = postsValue == null
+    final _$result = <String, dynamic>{};
+    final _$postsValue = this.posts;
+    _$result['posts'] = _$postsValue == null
         ? null
-        : postsValue.map((e) => e == null ? null : e.toJson()).toList();
-    result['__typename'] = G__typename;
-    return result;
+        : _$postsValue.map((_$e) => _$e == null ? null : _$e.toJson()).toList();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GPostsWithFixedVariableData copyWith({

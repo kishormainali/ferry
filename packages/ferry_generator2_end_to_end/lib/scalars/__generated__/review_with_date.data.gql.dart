@@ -29,12 +29,12 @@ class GReviewWithDateData {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final createReviewValue = createReview;
-    result['createReview'] =
-        createReviewValue == null ? null : createReviewValue.toJson();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$createReviewValue = this.createReview;
+    _$result['createReview'] =
+        _$createReviewValue == null ? null : _$createReviewValue.toJson();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GReviewWithDateData copyWith({
@@ -90,7 +90,7 @@ class GReviewWithDateData_createReview {
           ? null
           : customDateFromJson(json['createdAt']),
       seenOn: (json['seenOn'] as List<dynamic>)
-          .map((e) => customDateFromJson(e))
+          .map((_$e) => customDateFromJson(_$e))
           .toList(),
       custom: List<String>.from((json['custom'] as List<dynamic>)),
       G__typename: (json['__typename'] as String),
@@ -112,19 +112,22 @@ class GReviewWithDateData_createReview {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final episodeValue = episode;
-    result['episode'] = episodeValue == null ? null : episodeValue.toJson();
-    result['stars'] = stars;
-    final commentaryValue = commentary;
-    result['commentary'] = commentaryValue == null ? null : commentaryValue;
-    final createdAtValue = createdAt;
-    result['createdAt'] =
-        createdAtValue == null ? null : customDateToJson(createdAtValue);
-    result['seenOn'] = seenOn.map((e) => customDateToJson(e)).toList();
-    result['custom'] = custom.map((e) => e).toList();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$episodeValue = this.episode;
+    _$result['episode'] =
+        _$episodeValue == null ? null : _$episodeValue.toJson();
+    _$result['stars'] = this.stars;
+    final _$commentaryValue = this.commentary;
+    _$result['commentary'] =
+        _$commentaryValue == null ? null : _$commentaryValue;
+    final _$createdAtValue = this.createdAt;
+    _$result['createdAt'] =
+        _$createdAtValue == null ? null : customDateToJson(_$createdAtValue);
+    _$result['seenOn'] =
+        this.seenOn.map((_$e) => customDateToJson(_$e)).toList();
+    _$result['custom'] = this.custom.map((_$e) => _$e).toList();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GReviewWithDateData_createReview copyWith({

@@ -17,9 +17,9 @@ class GHeroWithInterfaceSubTypedFragmentsVars {
   final _i1.GEpisode episode;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final episodeValue = episode;
-    result['episode'] = episodeValue.toJson();
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$episodeValue = this.episode;
+    _$result['episode'] = _$episodeValue.toJson();
+    return _$result;
   }
 }

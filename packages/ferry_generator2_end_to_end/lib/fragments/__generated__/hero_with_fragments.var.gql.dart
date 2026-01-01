@@ -17,13 +17,13 @@ class GHeroWithFragmentsVars {
   final Value<int> first;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final firstValue = first;
-    if (firstValue.isPresent) {
-      final firstRequired = firstValue.requireValue;
-      result['first'] = firstRequired == null ? null : firstRequired;
+    final _$result = <String, dynamic>{};
+    final _$firstValue = this.first;
+    if (_$firstValue.isPresent) {
+      final _$firstRequired = _$firstValue.requireValue;
+      _$result['first'] = _$firstRequired == null ? null : _$firstRequired;
     }
-    return result;
+    return _$result;
   }
 }
 
@@ -41,12 +41,12 @@ class GcomparisonFieldsVars {
   final Value<int> first;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final firstValue = first;
-    if (firstValue.isPresent) {
-      final firstRequired = firstValue.requireValue;
-      result['first'] = firstRequired == null ? null : firstRequired;
+    final _$result = <String, dynamic>{};
+    final _$firstValue = this.first;
+    if (_$firstValue.isPresent) {
+      final _$firstRequired = _$firstValue.requireValue;
+      _$result['first'] = _$firstRequired == null ? null : _$firstRequired;
     }
-    return result;
+    return _$result;
   }
 }

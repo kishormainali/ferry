@@ -18,10 +18,10 @@ class GreviewsWithListArgumentData {
       reviews: json['reviews'] == null
           ? null
           : (json['reviews'] as List<dynamic>)
-              .map((e) => e == null
+              .map((_$e) => _$e == null
                   ? null
                   : GreviewsWithListArgumentData_reviews.fromJson(
-                      (e as Map<String, dynamic>)))
+                      (_$e as Map<String, dynamic>)))
               .toList(),
       G__typename: (json['__typename'] as String),
     );
@@ -32,13 +32,15 @@ class GreviewsWithListArgumentData {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final reviewsValue = reviews;
-    result['reviews'] = reviewsValue == null
+    final _$result = <String, dynamic>{};
+    final _$reviewsValue = this.reviews;
+    _$result['reviews'] = _$reviewsValue == null
         ? null
-        : reviewsValue.map((e) => e == null ? null : e.toJson()).toList();
-    result['__typename'] = G__typename;
-    return result;
+        : _$reviewsValue
+            .map((_$e) => _$e == null ? null : _$e.toJson())
+            .toList();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GreviewsWithListArgumentData copyWith({
@@ -92,11 +94,12 @@ class GreviewsWithListArgumentData_reviews {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final episodeValue = episode;
-    result['episode'] = episodeValue == null ? null : episodeValue.toJson();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$episodeValue = this.episode;
+    _$result['episode'] =
+        _$episodeValue == null ? null : _$episodeValue.toJson();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GreviewsWithListArgumentData_reviews copyWith({

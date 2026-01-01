@@ -151,9 +151,6 @@ void main() {
         'vars': {
           'tristate_optionals': true,
         },
-        'requests': {
-          'data_to_json': 'type_safe',
-        },
         'data_classes': {
           'when_extensions': {
             'when': true,
@@ -170,9 +167,6 @@ void main() {
         ...baseConfig,
         'vars': {
           'tristate_optionals': false,
-        },
-        'requests': {
-          'data_to_json': 'type_safe',
         },
       },
       expectTristate: false,

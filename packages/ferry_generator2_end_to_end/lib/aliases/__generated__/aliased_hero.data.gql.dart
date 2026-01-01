@@ -35,14 +35,15 @@ class GAliasedHeroData {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    final empireHeroValue = empireHero;
-    result['empireHero'] =
-        empireHeroValue == null ? null : empireHeroValue.toJson();
-    final jediHeroValue = jediHero;
-    result['jediHero'] = jediHeroValue == null ? null : jediHeroValue.toJson();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    final _$empireHeroValue = this.empireHero;
+    _$result['empireHero'] =
+        _$empireHeroValue == null ? null : _$empireHeroValue.toJson();
+    final _$jediHeroValue = this.jediHero;
+    _$result['jediHero'] =
+        _$jediHeroValue == null ? null : _$jediHeroValue.toJson();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GAliasedHeroData copyWith({
@@ -92,7 +93,8 @@ class GAliasedHeroData_empireHero {
       id: (json['id'] as String),
       name: (json['name'] as String),
       from: (json['from'] as List<dynamic>)
-          .map((e) => e == null ? null : _i1.GEpisode.fromJson((e as String)))
+          .map((_$e) =>
+              _$e == null ? null : _i1.GEpisode.fromJson((_$e as String)))
           .toList(),
       G__typename: (json['__typename'] as String),
     );
@@ -107,12 +109,13 @@ class GAliasedHeroData_empireHero {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['id'] = id;
-    result['name'] = name;
-    result['from'] = from.map((e) => e == null ? null : e.toJson()).toList();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['id'] = this.id;
+    _$result['name'] = this.name;
+    _$result['from'] =
+        this.from.map((_$e) => _$e == null ? null : _$e.toJson()).toList();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GAliasedHeroData_empireHero copyWith({
@@ -164,7 +167,8 @@ class GAliasedHeroData_jediHero {
       id: (json['id'] as String),
       name: (json['name'] as String),
       from: (json['from'] as List<dynamic>)
-          .map((e) => e == null ? null : _i1.GEpisode.fromJson((e as String)))
+          .map((_$e) =>
+              _$e == null ? null : _i1.GEpisode.fromJson((_$e as String)))
           .toList(),
       G__typename: (json['__typename'] as String),
     );
@@ -179,12 +183,13 @@ class GAliasedHeroData_jediHero {
   final String G__typename;
 
   Map<String, dynamic> toJson() {
-    final result = <String, dynamic>{};
-    result['id'] = id;
-    result['name'] = name;
-    result['from'] = from.map((e) => e == null ? null : e.toJson()).toList();
-    result['__typename'] = G__typename;
-    return result;
+    final _$result = <String, dynamic>{};
+    _$result['id'] = this.id;
+    _$result['name'] = this.name;
+    _$result['from'] =
+        this.from.map((_$e) => _$e == null ? null : _$e.toJson()).toList();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
   }
 
   GAliasedHeroData_jediHero copyWith({

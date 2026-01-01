@@ -4,12 +4,13 @@ import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
 import 'package:ferry_generator2/graphql_builder.dart';
 import 'package:test/test.dart';
+import 'test_utils.dart';
 
 const _package = 'ferry_generator2';
 const _schemaPath = '$_package|lib/schema.graphql';
 const _queryPath = '$_package|lib/queries.graphql';
-const _dataPath =
-    '.dart_tool/build/generated/$_package/lib/__generated__/queries.data.gql.dart';
+const _queryInputPath = 'lib/queries.graphql';
+const _dataExtension = '.data.gql.dart';
 
 const _schema = r'''
 schema {
@@ -56,8 +57,14 @@ void main() {
     );
 
     expect(result.succeeded, isTrue);
-    final data = await result.readerWriter.readAsString(
-      AssetId(_package, _dataPath),
+    final sources = extractGeneratedDartSources(result.readerWriter, _package);
+    final data = readGeneratedDartSource(
+      sources,
+      generatedDartAssetIdForInput(
+        _package,
+        _queryInputPath,
+        _dataExtension,
+      ),
     );
     expect(data, contains(r'final _$result ='));
     expect(data, contains(r'final _$resultValue = this.result;'));

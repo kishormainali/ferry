@@ -5,6 +5,7 @@ import 'package:build_test/build_test.dart';
 import 'package:ferry_generator2/graphql_builder.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
+import 'test_utils.dart';
 
 const _package = 'end_to_end_test';
 const _outputDir = '__generated__';
@@ -14,7 +15,7 @@ const _reqExtension = '.req.gql.dart';
 const _schemaExtension = '.schema.gql.dart';
 
 void main() {
-  late TestReaderWriter readerWriter;
+  late Map<String, String> generatedSources;
 
   setUpAll(() async {
     final fixtureRoot = p.join(
@@ -63,13 +64,14 @@ void main() {
       generateFor: sourceAssets.keys.toSet(),
     );
 
-    readerWriter = result.readerWriter;
+    generatedSources =
+        extractGeneratedDartSources(result.readerWriter, _package);
   });
 
   test('schema output includes enums, inputs, possible types, tristate',
       () async {
-    final contents = await _readOutput(
-      readerWriter,
+    final contents = _readOutput(
+      generatedSources,
       'lib/graphql/schema.graphql',
       _schemaExtension,
     );
@@ -121,8 +123,8 @@ void main() {
       generateFor: sourceAssets.keys.toSet(),
     );
 
-    final contents = await _readOutput(
-      result.readerWriter,
+    final contents = _readOutput(
+      extractGeneratedDartSources(result.readerWriter, _package),
       'lib/graphql/schema.graphql',
       _schemaExtension,
     );
@@ -134,8 +136,8 @@ void main() {
   });
 
   test('aliases use response keys and alias fields', () async {
-    final contents = await _readOutput(
-      readerWriter,
+    final contents = _readOutput(
+      generatedSources,
       'lib/aliases/aliased_hero.graphql',
       _dataExtension,
     );
@@ -148,8 +150,8 @@ void main() {
   });
 
   test('alias fragment vars and data reuse', () async {
-    final vars = await _readOutput(
-      readerWriter,
+    final vars = _readOutput(
+      generatedSources,
       'lib/aliases/alias_var_fragment.graphql',
       _varExtension,
     );
@@ -157,8 +159,8 @@ void main() {
     expect(vars, contains('class GPostFragmentVars'));
     expect(_countOccurrences(vars, 'final String userId;'), 2);
 
-    final data = await _readOutput(
-      readerWriter,
+    final data = _readOutput(
+      generatedSources,
       'lib/aliases/alias_var_fragment.graphql',
       _dataExtension,
     );
@@ -170,15 +172,16 @@ void main() {
 
   test('no-vars operation omits vars output and uses null vars in request',
       () async {
-    final varsPath = _outputPath(
+    final varsPath = generatedDartAssetIdForInput(
+      _package,
       'lib/no_vars/hero_no_vars.graphql',
       _varExtension,
+      outputDir: _outputDir,
     );
-    final varsId = AssetId(_package, varsPath);
-    expect(readerWriter.testing.exists(varsId), isFalse);
+    expect(generatedSources.containsKey(varsPath), isFalse);
 
-    final req = await _readOutput(
-      readerWriter,
+    final req = _readOutput(
+      generatedSources,
       'lib/no_vars/hero_no_vars.graphql',
       _reqExtension,
     );
@@ -190,8 +193,8 @@ void main() {
   });
 
   test('interface selections include inline fragment variants', () async {
-    final contents = await _readOutput(
-      readerWriter,
+    final contents = _readOutput(
+      generatedSources,
       'lib/interfaces/hero_for_episode.graphql',
       _dataExtension,
     );
@@ -203,8 +206,8 @@ void main() {
   });
 
   test('nested duplicate fragments reuse child fragment data', () async {
-    final contents = await _readOutput(
-      readerWriter,
+    final contents = _readOutput(
+      generatedSources,
       'lib/fragments/nested_duplicate_fragments.graphql',
       _dataExtension,
     );
@@ -216,8 +219,8 @@ void main() {
   });
 
   test('multiple fragments merge into a single selection class', () async {
-    final contents = await _readOutput(
-      readerWriter,
+    final contents = _readOutput(
+      generatedSources,
       'lib/fragments/multiple_fragments.graphql',
       _dataExtension,
     );
@@ -228,8 +231,8 @@ void main() {
   });
 
   test('fragment variables propagate to fragment vars', () async {
-    final vars = await _readOutput(
-      readerWriter,
+    final vars = _readOutput(
+      generatedSources,
       'lib/fragments/hero_with_fragments.graphql',
       _varExtension,
     );
@@ -238,8 +241,8 @@ void main() {
     expect(vars, contains('class GcomparisonFieldsVars'));
     expect(vars, isNot(contains('class GheroDataVars')));
 
-    final data = await _readOutput(
-      readerWriter,
+    final data = _readOutput(
+      generatedSources,
       'lib/fragments/hero_with_fragments.graphql',
       _dataExtension,
     );
@@ -251,24 +254,24 @@ void main() {
   });
 
   test('list variables and input objects are typed correctly', () async {
-    final listVars = await _readOutput(
-      readerWriter,
+    final listVars = _readOutput(
+      generatedSources,
       'lib/variables/list_argument.graphql',
       _varExtension,
     );
     expect(listVars, contains('Value<List<int>> stars'));
     expect(listVars, contains('final _i1.GEpisode episode;'));
 
-    final createReviewVars = await _readOutput(
-      readerWriter,
+    final createReviewVars = _readOutput(
+      generatedSources,
       'lib/variables/create_review.graphql',
       _varExtension,
     );
     expect(createReviewVars, contains('Value<_i1.GEpisode> episode'));
     expect(createReviewVars, contains('final _i1.GReviewInput review;'));
 
-    final createCustomVars = await _readOutput(
-      readerWriter,
+    final createCustomVars = _readOutput(
+      generatedSources,
       'lib/variables/create_custom_field.graphql',
       _varExtension,
     );
@@ -276,15 +279,15 @@ void main() {
   });
 
   test('custom scalar overrides appear in vars and data', () async {
-    final vars = await _readOutput(
-      readerWriter,
+    final vars = _readOutput(
+      generatedSources,
       'lib/scalars/review_with_date.graphql',
       _varExtension,
     );
     expect(vars, contains('Value<CustomDate> createdAt'));
 
-    final data = await _readOutput(
-      readerWriter,
+    final data = _readOutput(
+      generatedSources,
       'lib/scalars/review_with_date.graphql',
       _dataExtension,
     );
@@ -294,8 +297,8 @@ void main() {
   });
 
   test('request classes expose execRequest and parseData', () async {
-    final req = await _readOutput(
-      readerWriter,
+    final req = _readOutput(
+      generatedSources,
       'lib/no_vars/hero_no_vars.graphql',
       _reqExtension,
     );
@@ -305,8 +308,8 @@ void main() {
   });
 
   test('data classes include copyWith and overrides', () async {
-    final contents = await _readOutput(
-      readerWriter,
+    final contents = _readOutput(
+      generatedSources,
       'lib/interfaces/hero_for_episode.graphql',
       _dataExtension,
     );
@@ -358,8 +361,8 @@ void main() {
       },
     );
 
-    final contents = await _readOutput(
-      result.readerWriter,
+    final contents = _readOutput(
+      extractGeneratedDartSources(result.readerWriter, _package),
       'lib/interfaces/hero_for_episode.graphql',
       _dataExtension,
     );
@@ -398,25 +401,19 @@ Future<Map<String, Object>> _loadGraphqlAssets(
   return assets;
 }
 
-Future<String> _readOutput(
-  TestReaderWriter readerWriter,
+String _readOutput(
+  Map<String, String> sources,
   String inputPath,
   String extension,
 ) {
-  final outputPath = _outputPath(inputPath, extension);
-  return readerWriter.readAsString(AssetId(_package, outputPath));
-}
-
-String _outputPath(String inputPath, String extension) {
-  final dir = p.posix.dirname(inputPath);
-  final fileName = p.posix.basenameWithoutExtension(inputPath);
-  final generatedPath = p.posix.join(dir, _outputDir, '$fileName$extension');
-  return p.posix.join(
-    '.dart_tool',
-    'build',
-    'generated',
-    _package,
-    generatedPath,
+  return readGeneratedDartSource(
+    sources,
+    generatedDartAssetIdForInput(
+      _package,
+      inputPath,
+      extension,
+      outputDir: _outputDir,
+    ),
   );
 }
 

@@ -9,6 +9,7 @@ import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
 import 'package:ferry_generator2/graphql_builder.dart';
 import 'package:test/test.dart';
+import 'test_utils.dart';
 
 const _package = 'ferry_generator2';
 const _schemaPath = '$_package|lib/schema.graphql';
@@ -219,29 +220,7 @@ Future<Map<String, String>> _runBuilder(Map<String, Object?> config) async {
     },
   );
 
-  return _extractGeneratedDartSources(result.readerWriter, _package);
-}
-
-Map<String, String> _extractGeneratedDartSources(
-  TestReaderWriter readerWriter,
-  String package,
-) {
-  final outputs = <String, String>{};
-  final prefix = '.dart_tool/build/generated/$package/';
-  for (final asset in readerWriter.testing.assets) {
-    if (!asset.path.startsWith(prefix) || !asset.path.endsWith('.dart')) {
-      continue;
-    }
-    final logicalPath = asset.path.substring(prefix.length);
-    final logicalId = AssetId(package, logicalPath);
-    outputs[logicalId.toString()] = readerWriter.testing.readString(asset);
-  }
-
-  if (outputs.isEmpty) {
-    throw StateError('No generated Dart outputs found.');
-  }
-
-  return outputs;
+  return extractGeneratedDartSources(result.readerWriter, _package);
 }
 
 Future<_ResolvedLibraries> _resolveGeneratedLibraries(

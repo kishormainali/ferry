@@ -35,21 +35,19 @@ class BuilderConfig {
   factory BuilderConfig(Map<String, dynamic> config) {
     final schemaValue = config["schema"];
     final schemaConfig = _toMap(schemaValue);
-    final schemaFile = schemaConfig["file"] ??
-        schemaConfig["schema"] ??
-        (schemaValue is String ? schemaValue : null);
-    final schemaFiles =
-        schemaConfig["files"] ?? schemaConfig["schemas"] ?? config["schemas"];
+    if (schemaValue != null && schemaConfig.isEmpty) {
+      throw ArgumentError.value(
+        schemaValue,
+        "schema",
+        "Expected a map with keys like file, files, add_typenames",
+      );
+    }
+    final schemaFile = schemaConfig["file"];
+    final schemaFiles = schemaConfig["files"];
 
     final outputsConfig = _toMap(config["outputs"]);
     final dataClassesConfig = _toMap(config["data_classes"]);
-    final legacyDataClassConfig = _toMap(config["data_class_config"]);
-    final resolvedDataClassesConfig = dataClassesConfig.isNotEmpty
-        ? dataClassesConfig
-        : legacyDataClassConfig;
-    final whenExtensionsConfig = _toMap(
-      dataClassesConfig["when_extensions"] ?? config["when_extensions"],
-    );
+    final whenExtensionsConfig = _toMap(dataClassesConfig["when_extensions"]);
     final utilsConfig = _toMap(dataClassesConfig["utils"]);
     final varsConfig = _toMap(config["vars"]);
     final requestsConfig = _toMap(config["requests"]);
@@ -57,7 +55,6 @@ class BuilderConfig {
     final enumsConfig = _toMap(config["enums"]);
     final enumsFallbackConfig = _toMap(enumsConfig["fallback"]);
     final scalarsConfig = _toMap(config["scalars"]);
-    final legacyOverrides = _toMap(config["type_overrides"]);
 
     _warnUnknownKeys(config, _topLevelKeys, "options");
     if (schemaConfig.isNotEmpty) {
@@ -82,20 +79,11 @@ class BuilderConfig {
     if (dataClassesConfig.isNotEmpty) {
       _warnUnknownKeys(dataClassesConfig, _dataClassesKeys, "data_classes");
     }
-    if (legacyDataClassConfig.isNotEmpty) {
-      _warnUnknownKeys(
-        legacyDataClassConfig,
-        _legacyDataClassKeys,
-        "data_class_config",
-      );
-    }
     if (whenExtensionsConfig.isNotEmpty) {
       _warnUnknownKeys(
         whenExtensionsConfig,
         _whenExtensionsKeys,
-        dataClassesConfig.isNotEmpty
-            ? "data_classes.when_extensions"
-            : "when_extensions",
+        "data_classes.when_extensions",
       );
     }
     if (utilsConfig.isNotEmpty) {
@@ -110,57 +98,40 @@ class BuilderConfig {
     if (scalarsConfig.isNotEmpty) {
       _warnUnknownScalarOverrides(scalarsConfig, "scalars");
     }
-    if (legacyOverrides.isNotEmpty) {
-      _warnUnknownScalarOverrides(legacyOverrides, "type_overrides");
-    }
 
-    final outputDirValue = schemaConfig["output_dir"] ?? config["output_dir"];
+    final outputDirValue = schemaConfig["output_dir"];
     final outputDir =
         outputDirValue is String ? outputDirValue : "__generated__";
-    final sourceExtensionValue =
-        schemaConfig["source_extension"] ?? config["source_extension"];
+    final sourceExtensionValue = schemaConfig["source_extension"];
     final sourceExtension =
         sourceExtensionValue is String ? sourceExtensionValue : ".graphql";
 
-    final formatValue = formattingConfig.isNotEmpty
-        ? formattingConfig["enabled"]
-        : config["format"];
-    final formatterLanguageVersionValue =
-        formattingConfig["language_version"] ??
-            formattingConfig["languageVersion"] ??
-            config["formatter_language_version"] ??
-            config["formatterLanguageVersion"];
+    final formatValue = formattingConfig["enabled"];
+    final formatterLanguageVersionValue = formattingConfig["language_version"];
 
     return BuilderConfig._(
       schemaId: _parseSchemaId(schemaFile),
       schemaIds: _parseSchemaIds(schemaFiles),
       shouldAddTypenames: _readBool(
-        schemaConfig["add_typenames"] ?? config["add_typenames"],
+        schemaConfig["add_typenames"],
         true,
       ),
       shouldGeneratePossibleTypes: _readBool(
-        schemaConfig["generate_possible_types_map"] ??
-            config["generate_possible_types_map"],
+        schemaConfig["generate_possible_types_map"],
         true,
       ),
-      typeOverrides: _getTypeOverrides(
-        scalarsConfig.isNotEmpty ? scalarsConfig : legacyOverrides,
-      ),
-      enumFallbackConfig: _getEnumFallbackConfig(
-        fallbackConfig: enumsFallbackConfig,
-        legacyConfig: config,
-      ),
+      typeOverrides: _getTypeOverrides(scalarsConfig),
+      enumFallbackConfig:
+          _getEnumFallbackConfig(fallbackConfig: enumsFallbackConfig),
       outputDir: outputDir,
       sourceExtension: sourceExtension,
       whenExtensionConfig: _getWhenExtensionConfig(whenExtensionsConfig),
-      dataClassConfig: _getDataClassConfig(resolvedDataClassesConfig),
+      dataClassConfig: _getDataClassConfig(dataClassesConfig),
       triStateOptionalsConfig: _getTriStateOptionalsConfig(
-        varsConfig["tristate_optionals"] ?? config["tristate_optionals"],
+        varsConfig["tristate_optionals"],
       ),
       dataToJsonMode: getDataToJsonModeFromConfig(
-        requestsConfig["data_to_json"] ??
-            requestsConfig["dataToJson"] ??
-            config["data_to_json"],
+        requestsConfig["data_to_json"],
       ),
       format: _readBool(formatValue, true),
       formatterLanguageVersion: _getFormatterLanguageVersion(
@@ -168,23 +139,23 @@ class BuilderConfig {
       ),
       outputs: _getOutputsConfig(outputsConfig),
       generateCopyWith: _readBool(
-        utilsConfig["copy_with"] ?? config["generate_copy_with"],
+        utilsConfig["copy_with"],
         false,
       ),
       generateEquals: _readBool(
-        utilsConfig["equals"] ?? config["generate_equals"],
+        utilsConfig["equals"],
         false,
       ),
       generateHashCode: _readBool(
-        utilsConfig["hash_code"] ?? config["generate_hash_code"],
+        utilsConfig["hash_code"],
         false,
       ),
       generateToString: _readBool(
-        utilsConfig["to_string"] ?? config["generate_to_string"],
+        utilsConfig["to_string"],
         false,
       ),
       generateDocs: _readBool(
-        resolvedDataClassesConfig["docs"] ?? config["generate_docs"],
+        dataClassesConfig["docs"],
         true,
       ),
     );
@@ -366,43 +337,27 @@ InlineFragmentSpreadWhenExtensionConfig _getWhenExtensionConfig(
     );
   }
   return InlineFragmentSpreadWhenExtensionConfig(
-    generateMaybeWhenExtensionMethod: _readBool(
-      config["maybe_when"] ?? config["maybeWhen"],
-      false,
-    ),
+    generateMaybeWhenExtensionMethod: _readBool(config["maybe_when"], false),
     generateWhenExtensionMethod: _readBool(config["when"], false),
   );
 }
 
 EnumFallbackConfig _getEnumFallbackConfig({
   required Map<String, dynamic> fallbackConfig,
-  required Map<String, dynamic> legacyConfig,
 }) {
-  if (fallbackConfig.isNotEmpty) {
-    return EnumFallbackConfig(
-      globalEnumFallbackName:
-          (fallbackConfig["name"] ?? "gUnknownEnumValue") as String,
-      generateFallbackValuesGlobally: fallbackConfig["global"] == true,
-      fallbackValueMap: _enumFallbackMap(
-        fallbackConfig["per_enum"] ?? fallbackConfig["perEnum"],
-      ),
+  if (fallbackConfig.isEmpty) {
+    return const EnumFallbackConfig(
+      fallbackValueMap: {},
+      generateFallbackValuesGlobally: false,
+      globalEnumFallbackName: "gUnknownEnumValue",
     );
   }
 
-  if (legacyConfig.isNotEmpty) {
-    return EnumFallbackConfig(
-      globalEnumFallbackName: (legacyConfig["global_enum_fallback_name"] ??
-          "gUnknownEnumValue") as String,
-      generateFallbackValuesGlobally:
-          legacyConfig["global_enum_fallbacks"] == true,
-      fallbackValueMap: _enumFallbackMap(legacyConfig["enum_fallbacks"]),
-    );
-  }
-
-  return const EnumFallbackConfig(
-    fallbackValueMap: {},
-    generateFallbackValuesGlobally: false,
-    globalEnumFallbackName: "gUnknownEnumValue",
+  return EnumFallbackConfig(
+    globalEnumFallbackName:
+        (fallbackConfig["name"] ?? "gUnknownEnumValue") as String,
+    generateFallbackValuesGlobally: fallbackConfig["global"] == true,
+    fallbackValueMap: _enumFallbackMap(fallbackConfig["per_enum"]),
   );
 }
 
@@ -450,12 +405,10 @@ Map<String, TypeOverrideConfig> _getTypeOverrides(Object? overrides) {
       return MapEntry(
         entry.key,
         TypeOverrideConfig(
-          type: (overrideConfig["type"] ?? overrideConfig["name"]) as String?,
+          type: overrideConfig["type"] as String?,
           import: overrideConfig["import"] as String?,
-          fromJsonFunctionName: overrideConfig["from_json"] as String? ??
-              overrideConfig["fromJson"] as String?,
-          toJsonFunctionName: overrideConfig["to_json"] as String? ??
-              overrideConfig["toJson"] as String?,
+          fromJsonFunctionName: overrideConfig["from_json"] as String?,
+          toJsonFunctionName: overrideConfig["to_json"] as String?,
         ),
       );
     }),
@@ -471,7 +424,6 @@ Map<String, dynamic> _toMap(Object? value) {
 
 const _topLevelKeys = {
   "schema",
-  "schemas",
   "outputs",
   "formatting",
   "enums",
@@ -479,34 +431,11 @@ const _topLevelKeys = {
   "vars",
   "requests",
   "scalars",
-  // Legacy
-  "add_typenames",
-  "generate_possible_types_map",
-  "type_overrides",
-  "enum_fallbacks",
-  "global_enum_fallbacks",
-  "global_enum_fallback_name",
-  "output_dir",
-  "source_extension",
-  "when_extensions",
-  "data_class_config",
-  "tristate_optionals",
-  "data_to_json",
-  "format",
-  "formatter_language_version",
-  "formatterLanguageVersion",
-  "generate_copy_with",
-  "generate_equals",
-  "generate_hash_code",
-  "generate_to_string",
-  "generate_docs",
 };
 
 const _schemaKeys = {
   "file",
-  "schema",
   "files",
-  "schemas",
   "add_typenames",
   "generate_possible_types_map",
   "output_dir",
@@ -515,11 +444,11 @@ const _schemaKeys = {
 
 const _outputsKeys = {"ast", "data", "vars", "req", "schema"};
 
-const _formattingKeys = {"enabled", "language_version", "languageVersion"};
+const _formattingKeys = {"enabled", "language_version"};
 
 const _enumsKeys = {"fallback"};
 
-const _enumFallbackKeys = {"global", "name", "per_enum", "perEnum"};
+const _enumFallbackKeys = {"global", "name", "per_enum"};
 
 const _dataClassesKeys = {
   "reuse_fragments",
@@ -528,24 +457,19 @@ const _dataClassesKeys = {
   "docs"
 };
 
-const _legacyDataClassKeys = {"reuse_fragments"};
-
-const _whenExtensionsKeys = {"when", "maybe_when", "maybeWhen"};
+const _whenExtensionsKeys = {"when", "maybe_when"};
 
 const _dataClassUtilsKeys = {"copy_with", "equals", "hash_code", "to_string"};
 
 const _varsKeys = {"tristate_optionals"};
 
-const _requestsKeys = {"data_to_json", "dataToJson"};
+const _requestsKeys = {"data_to_json"};
 
 const _scalarOverrideKeys = {
   "type",
-  "name",
   "import",
   "from_json",
-  "fromJson",
   "to_json",
-  "toJson",
 };
 
 void _warnUnknownKeys(

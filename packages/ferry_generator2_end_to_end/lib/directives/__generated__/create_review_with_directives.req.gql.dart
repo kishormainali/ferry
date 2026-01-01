@@ -52,7 +52,7 @@ class GCreateReviewWithDirectivesReq
 
   final _i4.Context? context;
 
-  static final _i5.DocumentNode _document =
+  static const _i5.DocumentNode _document =
       _i5.DocumentNode(definitions: [_i6.CreateReviewWithDirectives]);
 
   static final _i4.Operation _operation = _i4.Operation(

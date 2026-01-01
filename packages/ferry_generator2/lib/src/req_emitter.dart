@@ -161,7 +161,7 @@ class ReqEmitter {
         (b) => b
           ..name = "_document"
           ..static = true
-          ..modifier = FieldModifier.final$
+          ..modifier = FieldModifier.constant
           ..type = refer("DocumentNode", "package:gql/ast.dart")
           ..assignment = documentExpr.code,
       ),
@@ -439,7 +439,7 @@ ${hasVars ? "  vars: vars," : ""}
             (b) => b
               ..name = "_document"
               ..static = true
-              ..modifier = FieldModifier.final$
+              ..modifier = FieldModifier.constant
               ..type = refer("DocumentNode", "package:gql/ast.dart")
               ..assignment = documentExpr.code,
           ),
@@ -551,10 +551,10 @@ ${hasVars ? "  vars: vars," : ""}
   }
 
   Expression _documentExpression(List<Expression> definitionRefs) =>
-      refer("DocumentNode", "package:gql/ast.dart").call(
+      refer("DocumentNode", "package:gql/ast.dart").constInstance(
         [],
         {
-          "definitions": literalList(definitionRefs),
+          "definitions": literalConstList(definitionRefs),
         },
       );
 

@@ -51,7 +51,7 @@ class GHeroForEpisodeReq
 
   final _i4.Context? context;
 
-  static final _i5.DocumentNode _document = _i5.DocumentNode(definitions: [
+  static const _i5.DocumentNode _document = _i5.DocumentNode(definitions: [
     _i6.DroidFragment,
     _i6.HeroForEpisode,
   ]);
@@ -108,7 +108,7 @@ class GDroidFragmentReq
 
   final Map<String, dynamic> idFields;
 
-  static final _i5.DocumentNode _document =
+  static const _i5.DocumentNode _document =
       _i5.DocumentNode(definitions: [_i6.DroidFragment]);
 
   _i2.GDroidFragmentData? parseData(Map<String, dynamic> json) =>

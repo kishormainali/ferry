@@ -47,7 +47,7 @@ class GHeroNoVarsReq
 
   final _i3.Context? context;
 
-  static final _i4.DocumentNode _document =
+  static const _i4.DocumentNode _document =
       _i4.DocumentNode(definitions: [_i5.HeroNoVars]);
 
   static final _i3.Operation _operation = _i3.Operation(

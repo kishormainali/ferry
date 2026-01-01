@@ -46,7 +46,7 @@ class GGetBooksReq implements _i1.OperationRequest<_i2.GGetBooksData, Null> {
 
   final _i3.Context? context;
 
-  static final _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
+  static const _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
     _i5.AuthorFragment,
     _i5.BookFragment,
     _i5.GetBooks,
@@ -102,7 +102,7 @@ class GAuthorFragmentReq
 
   final Map<String, dynamic> idFields;
 
-  static final _i4.DocumentNode _document =
+  static const _i4.DocumentNode _document =
       _i4.DocumentNode(definitions: [_i5.AuthorFragment]);
 
   _i2.GAuthorFragmentData? parseData(Map<String, dynamic> json) =>
@@ -130,7 +130,7 @@ class GBookFragmentReq
 
   final Map<String, dynamic> idFields;
 
-  static final _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
+  static const _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
     _i5.AuthorFragment,
     _i5.BookFragment,
   ]);

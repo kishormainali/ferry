@@ -47,7 +47,7 @@ class GSharedBooksAReq
 
   final _i3.Context? context;
 
-  static final _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
+  static const _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
     _i5.SharedAuthorFragment,
     _i5.SharedBookFragment,
     _i5.SharedBooksA,
@@ -124,7 +124,7 @@ class GSharedBooksBReq
 
   final _i3.Context? context;
 
-  static final _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
+  static const _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
     _i5.SharedAuthorFragment,
     _i5.SharedBookFragment,
     _i5.SharedBooksB,
@@ -180,7 +180,7 @@ class GSharedAuthorFragmentReq
 
   final Map<String, dynamic> idFields;
 
-  static final _i4.DocumentNode _document =
+  static const _i4.DocumentNode _document =
       _i4.DocumentNode(definitions: [_i5.SharedAuthorFragment]);
 
   _i2.GSharedAuthorFragmentData? parseData(Map<String, dynamic> json) =>
@@ -208,7 +208,7 @@ class GSharedBookFragmentReq
 
   final Map<String, dynamic> idFields;
 
-  static final _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
+  static const _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
     _i5.SharedAuthorFragment,
     _i5.SharedBookFragment,
   ]);

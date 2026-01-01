@@ -50,7 +50,7 @@ class GPostsReq
 
   final _i4.Context? context;
 
-  static final _i5.DocumentNode _document = _i5.DocumentNode(definitions: [
+  static const _i5.DocumentNode _document = _i5.DocumentNode(definitions: [
     _i6.PostFragment,
     _i6.Posts,
   ]);
@@ -108,7 +108,7 @@ class GPostFragmentReq
 
   final Map<String, dynamic> idFields;
 
-  static final _i5.DocumentNode _document =
+  static const _i5.DocumentNode _document =
       _i5.DocumentNode(definitions: [_i6.PostFragment]);
 
   _i2.GPostFragmentData? parseData(Map<String, dynamic> json) =>

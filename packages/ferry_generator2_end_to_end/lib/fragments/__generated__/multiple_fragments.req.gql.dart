@@ -47,7 +47,7 @@ class GHeroWith2FragmentsReq
 
   final _i3.Context? context;
 
-  static final _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
+  static const _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
     _i5.heroName,
     _i5.heroId,
     _i5.HeroWith2Fragments,
@@ -103,7 +103,7 @@ class GheroNameReq implements _i1.FragmentRequest<_i2.GheroNameData, Null> {
 
   final Map<String, dynamic> idFields;
 
-  static final _i4.DocumentNode _document =
+  static const _i4.DocumentNode _document =
       _i4.DocumentNode(definitions: [_i5.heroName]);
 
   _i2.GheroNameData? parseData(Map<String, dynamic> json) =>
@@ -129,7 +129,7 @@ class GheroIdReq implements _i1.FragmentRequest<_i2.GheroIdData, Null> {
 
   final Map<String, dynamic> idFields;
 
-  static final _i4.DocumentNode _document =
+  static const _i4.DocumentNode _document =
       _i4.DocumentNode(definitions: [_i5.heroId]);
 
   _i2.GheroIdData? parseData(Map<String, dynamic> json) =>

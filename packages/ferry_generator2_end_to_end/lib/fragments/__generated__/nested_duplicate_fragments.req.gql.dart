@@ -47,7 +47,7 @@ class GSearchResultsQueryReq
 
   final _i3.Context? context;
 
-  static final _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
+  static const _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
     _i5.SearchResultsQuery,
     _i5.CharacterDetails,
     _i5.FriendInfo,
@@ -105,7 +105,7 @@ class GCharacterDetailsReq
 
   final Map<String, dynamic> idFields;
 
-  static final _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
+  static const _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
     _i5.CharacterDetails,
     _i5.FriendInfo,
     _i5.CharacterBasic,
@@ -135,7 +135,7 @@ class GFriendInfoReq implements _i1.FragmentRequest<_i2.GFriendInfoData, Null> {
 
   final Map<String, dynamic> idFields;
 
-  static final _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
+  static const _i4.DocumentNode _document = _i4.DocumentNode(definitions: [
     _i5.FriendInfo,
     _i5.CharacterBasic,
   ]);
@@ -164,7 +164,7 @@ class GCharacterBasicReq
 
   final Map<String, dynamic> idFields;
 
-  static final _i4.DocumentNode _document =
+  static const _i4.DocumentNode _document =
       _i4.DocumentNode(definitions: [_i5.CharacterBasic]);
 
   _i2.GCharacterBasicData? parseData(Map<String, dynamic> json) =>

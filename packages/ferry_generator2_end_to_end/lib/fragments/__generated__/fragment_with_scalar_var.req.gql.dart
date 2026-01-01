@@ -52,7 +52,7 @@ class GPostsWithFixedVariableReq
 
   final _i4.Context? context;
 
-  static final _i5.DocumentNode _document = _i5.DocumentNode(definitions: [
+  static const _i5.DocumentNode _document = _i5.DocumentNode(definitions: [
     _i6.PostFragmentForUser1,
     _i6.PostsWithFixedVariable,
   ]);
@@ -110,7 +110,7 @@ class GPostFragmentForUser1Req
 
   final Map<String, dynamic> idFields;
 
-  static final _i5.DocumentNode _document =
+  static const _i5.DocumentNode _document =
       _i5.DocumentNode(definitions: [_i6.PostFragmentForUser1]);
 
   _i2.GPostFragmentForUser1Data? parseData(Map<String, dynamic> json) =>

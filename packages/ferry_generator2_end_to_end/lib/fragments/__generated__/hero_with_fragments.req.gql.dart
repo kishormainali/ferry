@@ -52,7 +52,7 @@ class GHeroWithFragmentsReq
 
   final _i4.Context? context;
 
-  static final _i5.DocumentNode _document = _i5.DocumentNode(definitions: [
+  static const _i5.DocumentNode _document = _i5.DocumentNode(definitions: [
     _i6.HeroWithFragments,
     _i6.heroData,
     _i6.comparisonFields,
@@ -109,7 +109,7 @@ class GheroDataReq implements _i1.FragmentRequest<_i2.GheroDataData, Null> {
 
   final Map<String, dynamic> idFields;
 
-  static final _i5.DocumentNode _document =
+  static const _i5.DocumentNode _document =
       _i5.DocumentNode(definitions: [_i6.heroData]);
 
   _i2.GheroDataData? parseData(Map<String, dynamic> json) =>
@@ -139,7 +139,7 @@ class GcomparisonFieldsReq
 
   final Map<String, dynamic> idFields;
 
-  static final _i5.DocumentNode _document = _i5.DocumentNode(definitions: [
+  static const _i5.DocumentNode _document = _i5.DocumentNode(definitions: [
     _i6.heroData,
     _i6.comparisonFields,
   ]);

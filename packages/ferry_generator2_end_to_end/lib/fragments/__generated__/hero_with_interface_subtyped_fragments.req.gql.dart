@@ -52,7 +52,7 @@ class GHeroWithInterfaceSubTypedFragmentsReq
 
   final _i4.Context? context;
 
-  static final _i5.DocumentNode _document = _i5.DocumentNode(definitions: [
+  static const _i5.DocumentNode _document = _i5.DocumentNode(definitions: [
     _i6.HeroWithInterfaceSubTypedFragments,
     _i6.heroFieldsFragment,
     _i6.humanFieldsFragment,
@@ -114,7 +114,7 @@ class GheroFieldsFragmentReq
 
   final Map<String, dynamic> idFields;
 
-  static final _i5.DocumentNode _document = _i5.DocumentNode(definitions: [
+  static const _i5.DocumentNode _document = _i5.DocumentNode(definitions: [
     _i6.heroFieldsFragment,
     _i6.humanFieldsFragment,
     _i6.droidFieldsFragment,
@@ -145,7 +145,7 @@ class GhumanFieldsFragmentReq
 
   final Map<String, dynamic> idFields;
 
-  static final _i5.DocumentNode _document = _i5.DocumentNode(definitions: [
+  static const _i5.DocumentNode _document = _i5.DocumentNode(definitions: [
     _i6.humanFieldsFragment,
     _i6.droidFieldsFragment,
   ]);
@@ -175,7 +175,7 @@ class GdroidFieldsFragmentReq
 
   final Map<String, dynamic> idFields;
 
-  static final _i5.DocumentNode _document =
+  static const _i5.DocumentNode _document =
       _i5.DocumentNode(definitions: [_i6.droidFieldsFragment]);
 
   _i2.GdroidFieldsFragmentData? parseData(Map<String, dynamic> json) =>

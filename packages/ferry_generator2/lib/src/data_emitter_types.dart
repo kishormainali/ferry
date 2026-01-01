@@ -1,0 +1,88 @@
+import "package:code_builder/code_builder.dart";
+import "package:gql/ast.dart";
+
+import "selection_resolver.dart";
+
+class FragmentInfo {
+  final String name;
+  final String typeCondition;
+  final ResolvedSelectionSet selectionSet;
+  final Set<String> inlineTypes;
+
+  const FragmentInfo({
+    required this.name,
+    required this.typeCondition,
+    required this.selectionSet,
+    required this.inlineTypes,
+  });
+}
+
+class FieldSpec {
+  final String responseKey;
+  final String propertyName;
+  final TypeNode typeNode;
+  final Reference typeRef;
+  final Reference namedTypeRef;
+  final ResolvedSelectionSet? selectionSet;
+  final String? fragmentSpreadOnlyName;
+
+  const FieldSpec({
+    required this.responseKey,
+    required this.propertyName,
+    required this.typeNode,
+    required this.typeRef,
+    required this.namedTypeRef,
+    required this.selectionSet,
+    required this.fragmentSpreadOnlyName,
+  });
+}
+
+enum FieldContext { base, inline }
+
+String stripPrefix(String name) {
+  if (name.startsWith("G")) {
+    return name.substring(1);
+  }
+  return name;
+}
+
+Expression nullGuard(Expression valueExpr, Expression innerExpr) {
+  return CodeExpression(
+    Block.of([
+      valueExpr.code,
+      const Code(" == null ? null : "),
+      innerExpr.code,
+    ]),
+  );
+}
+
+Expression conditionalExpression(
+  Expression condition,
+  Expression whenTrue,
+  Expression whenFalse,
+) {
+  return CodeExpression(
+    Block.of([
+      condition.code,
+      const Code(" ? "),
+      whenTrue.code,
+      const Code(" : "),
+      whenFalse.code,
+    ]),
+  );
+}
+
+TypeReference mapStringDynamicType() => TypeReference(
+      (b) => b
+        ..symbol = "Map"
+        ..types.addAll([
+          refer("String"),
+          refer("dynamic"),
+        ]),
+    );
+
+TypeReference listDynamicType() => TypeReference(
+      (b) => b
+        ..symbol = "List"
+        ..types.add(refer("dynamic")),
+    );

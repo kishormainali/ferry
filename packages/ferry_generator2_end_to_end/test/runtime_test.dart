@@ -148,6 +148,12 @@ void main() {
     };
 
     final data = GSearchResultsQueryData.fromJson(input);
+    final first = data.search!.first!;
+    expect(first, isA<GSearchResultsQueryData_search__asHuman>());
+    expect(
+      (first as GSearchResultsQueryData_search__asHuman).appearsIn,
+      equals([_schema.GEpisode.NEWHOPE]),
+    );
     expect(data.toJson(), equals(input));
   });
 
@@ -309,6 +315,7 @@ void main() {
     };
 
     final data = GCreateReviewData.fromJson(input);
+    expect(data.createReview?.episode, _schema.GEpisode.JEDI);
     expect(data.toJson(), equals(input));
 
     final vars = GCreateReviewVars(
@@ -349,12 +356,15 @@ void main() {
     };
 
     final data = GReviewAddedData.fromJson(input);
+    expect(data.reviewAdded?.episode, _schema.GEpisode.EMPIRE);
     expect(data.toJson(), equals(input));
 
     final vars = GReviewAddedVars(episode: _schema.GEpisode.EMPIRE);
     final varsJson = vars.toJson();
     expect(varsJson, equals({'episode': 'EMPIRE'}));
-    expect(GReviewAddedVars.fromJson(varsJson).toJson(), equals(varsJson));
+    final parsedVars = GReviewAddedVars.fromJson(varsJson);
+    expect(parsedVars.episode, _schema.GEpisode.EMPIRE);
+    expect(parsedVars.toJson(), equals(varsJson));
 
     final req = GReviewAddedReq(vars: vars);
     expect(req.execRequest.variables, equals(varsJson));
@@ -385,7 +395,9 @@ void main() {
 
     final json = vars.toJson();
     expect(json, equals({'ep': 'EMPIRE'}));
-    expect(GHeroForEpisodeVars.fromJson(json).toJson(), equals(json));
+    final parsed = GHeroForEpisodeVars.fromJson(json);
+    expect(parsed.ep, _schema.GEpisode.EMPIRE);
+    expect(parsed.toJson(), equals(json));
     expect(request.execRequest.variables, equals(json));
   });
 

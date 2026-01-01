@@ -1,0 +1,27 @@
+targets:
+  $default:
+    sources:
+      - $package$
+      - lib/**
+    builders:
+      ferry_generator2|graphql_builder:
+        options:
+          schema: ferry_generator2_end_to_end|lib/graphql/schema.graphql
+          add_typenames: true
+          tristate_optionals: true
+          formatter_language_version: 3.6
+          global_enum_fallbacks: true
+          global_enum_fallback_name: gUnknownEnumValue
+          when_extensions:
+            when: true
+            maybeWhen: true
+          type_overrides:
+            Date:
+              type: CustomDate
+              import: package:ferry_generator2_end_to_end/custom/date.dart
+              fromJson: customDateFromJson
+              toJson: customDateToJson
+            CustomField:
+              type: String
+            Json:
+              type: 'Map<String, dynamic>'

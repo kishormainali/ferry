@@ -1,0 +1,182 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint
+
+// ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:ferry_exec/ferry_exec.dart' as _i1;
+import 'package:ferry_generator2_end_to_end/fragments/__generated__/hero_with_interface_subtyped_fragments.ast.gql.dart'
+    as _i5;
+import 'package:ferry_generator2_end_to_end/fragments/__generated__/hero_with_interface_subtyped_fragments.data.gql.dart'
+    as _i2;
+import 'package:ferry_generator2_end_to_end/fragments/__generated__/hero_with_interface_subtyped_fragments.var.gql.dart'
+    as _i3;
+import 'package:gql/ast.dart' as _i6;
+import 'package:gql_exec/gql_exec.dart' as _i4;
+
+class GHeroWithInterfaceSubTypedFragmentsReq
+    implements
+        _i1.OperationRequest<_i2.GHeroWithInterfaceSubTypedFragmentsData,
+            _i3.GHeroWithInterfaceSubTypedFragmentsVars> {
+  GHeroWithInterfaceSubTypedFragmentsReq({
+    required this.vars,
+    _i4.Operation? operation,
+    this.requestId,
+    this.updateResult,
+    this.optimisticResponse,
+    this.updateCacheHandlerKey,
+    this.updateCacheHandlerContext,
+    this.fetchPolicy,
+    this.executeOnListen = true,
+    this.context,
+  }) : operation = operation ?? _operation;
+
+  final _i3.GHeroWithInterfaceSubTypedFragmentsVars vars;
+
+  final _i4.Operation operation;
+
+  final String? requestId;
+
+  final _i2.GHeroWithInterfaceSubTypedFragmentsData? Function(
+    _i2.GHeroWithInterfaceSubTypedFragmentsData?,
+    _i2.GHeroWithInterfaceSubTypedFragmentsData?,
+  )? updateResult;
+
+  final _i2.GHeroWithInterfaceSubTypedFragmentsData? optimisticResponse;
+
+  final String? updateCacheHandlerKey;
+
+  final Map<String, dynamic>? updateCacheHandlerContext;
+
+  final _i1.FetchPolicy? fetchPolicy;
+
+  final bool executeOnListen;
+
+  final _i4.Context? context;
+
+  static final _i4.Operation _operation = _i4.Operation(
+    document: _i5.document,
+    operationName: 'HeroWithInterfaceSubTypedFragments',
+  );
+
+  _i4.Request get execRequest => _i4.Request(
+        operation: operation,
+        variables: varsToJson(),
+        context: context ?? const _i4.Context(),
+      );
+
+  _i2.GHeroWithInterfaceSubTypedFragmentsData? parseData(
+          Map<String, dynamic> json) =>
+      _i2.GHeroWithInterfaceSubTypedFragmentsData.fromJson(json);
+
+  Map<String, dynamic> varsToJson() => vars.toJson();
+
+  Map<String, dynamic> dataToJson(
+          _i2.GHeroWithInterfaceSubTypedFragmentsData data) =>
+      data.toJson();
+
+  _i1.OperationRequest<_i2.GHeroWithInterfaceSubTypedFragmentsData,
+          _i3.GHeroWithInterfaceSubTypedFragmentsVars>
+      transformOperation(_i4.Operation Function(_i4.Operation) transform) {
+    return GHeroWithInterfaceSubTypedFragmentsReq(
+      vars: vars,
+      operation: transform(operation),
+      requestId: requestId,
+      updateResult: updateResult,
+      optimisticResponse: optimisticResponse,
+      updateCacheHandlerKey: updateCacheHandlerKey,
+      updateCacheHandlerContext: updateCacheHandlerContext,
+      fetchPolicy: fetchPolicy,
+      executeOnListen: executeOnListen,
+      context: context,
+    );
+  }
+}
+
+class GheroFieldsFragmentReq
+    implements
+        _i1.FragmentRequest<_i2.GheroFieldsFragmentData,
+            _i3.GheroFieldsFragmentVars> {
+  GheroFieldsFragmentReq({
+    required this.vars,
+    _i6.DocumentNode? document,
+    this.fragmentName = 'heroFieldsFragment',
+    this.idFields = const <String, dynamic>{},
+  }) : document = document ?? _document;
+
+  final _i3.GheroFieldsFragmentVars vars;
+
+  final _i6.DocumentNode document;
+
+  final String? fragmentName;
+
+  final Map<String, dynamic> idFields;
+
+  static final _i6.DocumentNode _document = _i5.document;
+
+  _i2.GheroFieldsFragmentData? parseData(Map<String, dynamic> json) =>
+      _i2.GheroFieldsFragmentData.fromJson(json);
+
+  Map<String, dynamic> varsToJson() => vars.toJson();
+
+  Map<String, dynamic> dataToJson(_i2.GheroFieldsFragmentData data) =>
+      data.toJson();
+}
+
+class GhumanFieldsFragmentReq
+    implements
+        _i1.FragmentRequest<_i2.GhumanFieldsFragmentData,
+            _i3.GhumanFieldsFragmentVars> {
+  GhumanFieldsFragmentReq({
+    required this.vars,
+    _i6.DocumentNode? document,
+    this.fragmentName = 'humanFieldsFragment',
+    this.idFields = const <String, dynamic>{},
+  }) : document = document ?? _document;
+
+  final _i3.GhumanFieldsFragmentVars vars;
+
+  final _i6.DocumentNode document;
+
+  final String? fragmentName;
+
+  final Map<String, dynamic> idFields;
+
+  static final _i6.DocumentNode _document = _i5.document;
+
+  _i2.GhumanFieldsFragmentData? parseData(Map<String, dynamic> json) =>
+      _i2.GhumanFieldsFragmentData.fromJson(json);
+
+  Map<String, dynamic> varsToJson() => vars.toJson();
+
+  Map<String, dynamic> dataToJson(_i2.GhumanFieldsFragmentData data) =>
+      data.toJson();
+}
+
+class GdroidFieldsFragmentReq
+    implements
+        _i1.FragmentRequest<_i2.GdroidFieldsFragmentData,
+            _i3.GdroidFieldsFragmentVars> {
+  GdroidFieldsFragmentReq({
+    required this.vars,
+    _i6.DocumentNode? document,
+    this.fragmentName = 'droidFieldsFragment',
+    this.idFields = const <String, dynamic>{},
+  }) : document = document ?? _document;
+
+  final _i3.GdroidFieldsFragmentVars vars;
+
+  final _i6.DocumentNode document;
+
+  final String? fragmentName;
+
+  final Map<String, dynamic> idFields;
+
+  static final _i6.DocumentNode _document = _i5.document;
+
+  _i2.GdroidFieldsFragmentData? parseData(Map<String, dynamic> json) =>
+      _i2.GdroidFieldsFragmentData.fromJson(json);
+
+  Map<String, dynamic> varsToJson() => vars.toJson();
+
+  Map<String, dynamic> dataToJson(_i2.GdroidFieldsFragmentData data) =>
+      data.toJson();
+}

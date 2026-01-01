@@ -1,0 +1,29 @@
+fragment AuthorFragment on Author {
+  displayName
+  ... on Person {
+    firstName
+    lastName
+  }
+  ... on Company {
+    name
+  }
+}
+
+fragment BookFragment on Book {
+  author {
+    ...AuthorFragment
+  }
+  title
+  ... on Textbook {
+    courses
+  }
+  ... on ColoringBook {
+    colors
+  }
+}
+
+query GetBooks {
+  books {
+    ...BookFragment
+  }
+}

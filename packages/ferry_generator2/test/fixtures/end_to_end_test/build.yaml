@@ -1,0 +1,17 @@
+targets:
+  $default:
+    sources:
+      - $package$
+      - lib/**
+    builders:
+      ferry_generator2|graphql_builder:
+        options:
+          schema: end_to_end_test|lib/graphql/schema.graphql
+          add_typenames: true
+          tristate_optionals: true
+          type_overrides:
+            Date:
+              type: CustomDate
+              import: package:end_to_end_test/custom/date.dart
+              fromJson: customDateFromJson
+              toJson: customDateToJson

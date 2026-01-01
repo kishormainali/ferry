@@ -1,0 +1,139 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint
+
+// ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:ferry_exec/ferry_exec.dart' as _i1;
+import 'package:ferry_generator2_end_to_end/fragments/__generated__/multiple_fragments.ast.gql.dart'
+    as _i4;
+import 'package:ferry_generator2_end_to_end/fragments/__generated__/multiple_fragments.data.gql.dart'
+    as _i2;
+import 'package:ferry_generator2_end_to_end/fragments/__generated__/multiple_fragments.var.gql.dart'
+    as _i5;
+import 'package:gql/ast.dart' as _i6;
+import 'package:gql_exec/gql_exec.dart' as _i3;
+
+class GHeroWith2FragmentsReq
+    implements _i1.OperationRequest<_i2.GHeroWith2FragmentsData, Null> {
+  GHeroWith2FragmentsReq({
+    _i3.Operation? operation,
+    this.requestId,
+    this.updateResult,
+    this.optimisticResponse,
+    this.updateCacheHandlerKey,
+    this.updateCacheHandlerContext,
+    this.fetchPolicy,
+    this.executeOnListen = true,
+    this.context,
+  }) : operation = operation ?? _operation;
+
+  final Null vars = null;
+
+  final _i3.Operation operation;
+
+  final String? requestId;
+
+  final _i2.GHeroWith2FragmentsData? Function(
+    _i2.GHeroWith2FragmentsData?,
+    _i2.GHeroWith2FragmentsData?,
+  )? updateResult;
+
+  final _i2.GHeroWith2FragmentsData? optimisticResponse;
+
+  final String? updateCacheHandlerKey;
+
+  final Map<String, dynamic>? updateCacheHandlerContext;
+
+  final _i1.FetchPolicy? fetchPolicy;
+
+  final bool executeOnListen;
+
+  final _i3.Context? context;
+
+  static final _i3.Operation _operation = _i3.Operation(
+    document: _i4.document,
+    operationName: 'HeroWith2Fragments',
+  );
+
+  _i3.Request get execRequest => _i3.Request(
+        operation: operation,
+        variables: varsToJson(),
+        context: context ?? const _i3.Context(),
+      );
+
+  _i2.GHeroWith2FragmentsData? parseData(Map<String, dynamic> json) =>
+      _i2.GHeroWith2FragmentsData.fromJson(json);
+
+  Map<String, dynamic> varsToJson() => const <String, dynamic>{};
+
+  Map<String, dynamic> dataToJson(_i2.GHeroWith2FragmentsData data) =>
+      data.toJson();
+
+  _i1.OperationRequest<_i2.GHeroWith2FragmentsData, Null> transformOperation(
+      _i3.Operation Function(_i3.Operation) transform) {
+    return GHeroWith2FragmentsReq(
+      operation: transform(operation),
+      requestId: requestId,
+      updateResult: updateResult,
+      optimisticResponse: optimisticResponse,
+      updateCacheHandlerKey: updateCacheHandlerKey,
+      updateCacheHandlerContext: updateCacheHandlerContext,
+      fetchPolicy: fetchPolicy,
+      executeOnListen: executeOnListen,
+      context: context,
+    );
+  }
+}
+
+class GheroNameReq
+    implements _i1.FragmentRequest<_i2.GheroNameData, _i5.GheroNameVars> {
+  GheroNameReq({
+    required this.vars,
+    _i6.DocumentNode? document,
+    this.fragmentName = 'heroName',
+    this.idFields = const <String, dynamic>{},
+  }) : document = document ?? _document;
+
+  final _i5.GheroNameVars vars;
+
+  final _i6.DocumentNode document;
+
+  final String? fragmentName;
+
+  final Map<String, dynamic> idFields;
+
+  static final _i6.DocumentNode _document = _i4.document;
+
+  _i2.GheroNameData? parseData(Map<String, dynamic> json) =>
+      _i2.GheroNameData.fromJson(json);
+
+  Map<String, dynamic> varsToJson() => vars.toJson();
+
+  Map<String, dynamic> dataToJson(_i2.GheroNameData data) => data.toJson();
+}
+
+class GheroIdReq
+    implements _i1.FragmentRequest<_i2.GheroIdData, _i5.GheroIdVars> {
+  GheroIdReq({
+    required this.vars,
+    _i6.DocumentNode? document,
+    this.fragmentName = 'heroId',
+    this.idFields = const <String, dynamic>{},
+  }) : document = document ?? _document;
+
+  final _i5.GheroIdVars vars;
+
+  final _i6.DocumentNode document;
+
+  final String? fragmentName;
+
+  final Map<String, dynamic> idFields;
+
+  static final _i6.DocumentNode _document = _i4.document;
+
+  _i2.GheroIdData? parseData(Map<String, dynamic> json) =>
+      _i2.GheroIdData.fromJson(json);
+
+  Map<String, dynamic> varsToJson() => vars.toJson();
+
+  Map<String, dynamic> dataToJson(_i2.GheroIdData data) => data.toJson();
+}

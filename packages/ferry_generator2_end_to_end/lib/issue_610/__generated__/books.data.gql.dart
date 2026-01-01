@@ -1,0 +1,367 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint
+
+abstract class GAuthorFragment {
+  String get displayName;
+  String get G__typename;
+}
+
+abstract class GAuthorFragment__asPerson implements GAuthorFragment {
+  String get firstName;
+  String get lastName;
+  String get G__typename;
+}
+
+abstract class GAuthorFragment__asCompany implements GAuthorFragment {
+  String get name;
+  String get G__typename;
+}
+
+sealed class GAuthorFragmentData implements GAuthorFragment {
+  const GAuthorFragmentData({
+    required this.displayName,
+    required this.G__typename,
+  });
+
+  factory GAuthorFragmentData.fromJson(Map<String, dynamic> json) {
+    switch (json['__typename'] as String) {
+      case 'Person':
+        return GAuthorFragmentData__asPerson.fromJson(json);
+      case 'Company':
+        return GAuthorFragmentData__asCompany.fromJson(json);
+      default:
+        return GAuthorFragmentData__unknown.fromJson(json);
+    }
+  }
+
+  final String displayName;
+
+  final String G__typename;
+
+  Map<String, dynamic> toJson() {
+    final result = <String, dynamic>{};
+    result['displayName'] = displayName;
+    result['__typename'] = G__typename;
+    return result;
+  }
+}
+
+extension GAuthorFragmentDataWhenExtension on GAuthorFragmentData {
+  _T when<_T>({
+    required _T Function(GAuthorFragmentData__asPerson) person,
+    required _T Function(GAuthorFragmentData__asCompany) company,
+    required _T Function() orElse,
+  }) {
+    switch (G__typename) {
+      case 'Person':
+        return person(this as GAuthorFragmentData__asPerson);
+      case 'Company':
+        return company(this as GAuthorFragmentData__asCompany);
+      default:
+        return orElse();
+    }
+  }
+
+  _T maybeWhen<_T>({
+    _T Function(GAuthorFragmentData__asPerson)? person,
+    _T Function(GAuthorFragmentData__asCompany)? company,
+    required _T Function() orElse,
+  }) {
+    switch (G__typename) {
+      case 'Person':
+        return person == null
+            ? orElse()
+            : person(this as GAuthorFragmentData__asPerson);
+      case 'Company':
+        return company == null
+            ? orElse()
+            : company(this as GAuthorFragmentData__asCompany);
+      default:
+        return orElse();
+    }
+  }
+}
+
+class GAuthorFragmentData__asPerson extends GAuthorFragmentData
+    implements GAuthorFragment, GAuthorFragment__asPerson {
+  const GAuthorFragmentData__asPerson({
+    required displayName,
+    required G__typename,
+    required this.firstName,
+    required this.lastName,
+  }) : super(displayName: displayName, G__typename: G__typename);
+
+  factory GAuthorFragmentData__asPerson.fromJson(Map<String, dynamic> json) {
+    return GAuthorFragmentData__asPerson(
+      displayName: (json['displayName'] as String),
+      G__typename: (json['__typename'] as String),
+      firstName: (json['firstName'] as String),
+      lastName: (json['lastName'] as String),
+    );
+  }
+
+  final String firstName;
+
+  final String lastName;
+
+  Map<String, dynamic> toJson() {
+    final result = super.toJson();
+    result['displayName'] = displayName;
+    result['__typename'] = G__typename;
+    result['firstName'] = firstName;
+    result['lastName'] = lastName;
+    return result;
+  }
+}
+
+class GAuthorFragmentData__asCompany extends GAuthorFragmentData
+    implements GAuthorFragment, GAuthorFragment__asCompany {
+  const GAuthorFragmentData__asCompany({
+    required displayName,
+    required G__typename,
+    required this.name,
+  }) : super(displayName: displayName, G__typename: G__typename);
+
+  factory GAuthorFragmentData__asCompany.fromJson(Map<String, dynamic> json) {
+    return GAuthorFragmentData__asCompany(
+      displayName: (json['displayName'] as String),
+      G__typename: (json['__typename'] as String),
+      name: (json['name'] as String),
+    );
+  }
+
+  final String name;
+
+  Map<String, dynamic> toJson() {
+    final result = super.toJson();
+    result['displayName'] = displayName;
+    result['__typename'] = G__typename;
+    result['name'] = name;
+    return result;
+  }
+}
+
+class GAuthorFragmentData__unknown extends GAuthorFragmentData
+    implements GAuthorFragment {
+  const GAuthorFragmentData__unknown({
+    required displayName,
+    required G__typename,
+  }) : super(displayName: displayName, G__typename: G__typename);
+
+  factory GAuthorFragmentData__unknown.fromJson(Map<String, dynamic> json) {
+    return GAuthorFragmentData__unknown(
+      displayName: (json['displayName'] as String),
+      G__typename: (json['__typename'] as String),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final result = super.toJson();
+    result['displayName'] = displayName;
+    result['__typename'] = G__typename;
+    return result;
+  }
+}
+
+abstract class GBookFragment {
+  GAuthorFragment get author;
+  String get title;
+  String get G__typename;
+}
+
+abstract class GBookFragment__asTextbook implements GBookFragment {
+  List<String> get courses;
+  String get G__typename;
+}
+
+abstract class GBookFragment__asColoringBook implements GBookFragment {
+  List<String> get colors;
+  String get G__typename;
+}
+
+sealed class GBookFragmentData implements GBookFragment {
+  const GBookFragmentData({
+    required this.author,
+    required this.title,
+    required this.G__typename,
+  });
+
+  factory GBookFragmentData.fromJson(Map<String, dynamic> json) {
+    switch (json['__typename'] as String) {
+      case 'Textbook':
+        return GBookFragmentData__asTextbook.fromJson(json);
+      case 'ColoringBook':
+        return GBookFragmentData__asColoringBook.fromJson(json);
+      default:
+        return GBookFragmentData__unknown.fromJson(json);
+    }
+  }
+
+  final GAuthorFragmentData author;
+
+  final String title;
+
+  final String G__typename;
+
+  Map<String, dynamic> toJson() {
+    final result = <String, dynamic>{};
+    result['author'] = author.toJson();
+    result['title'] = title;
+    result['__typename'] = G__typename;
+    return result;
+  }
+}
+
+extension GBookFragmentDataWhenExtension on GBookFragmentData {
+  _T when<_T>({
+    required _T Function(GBookFragmentData__asTextbook) textbook,
+    required _T Function(GBookFragmentData__asColoringBook) coloringBook,
+    required _T Function() orElse,
+  }) {
+    switch (G__typename) {
+      case 'Textbook':
+        return textbook(this as GBookFragmentData__asTextbook);
+      case 'ColoringBook':
+        return coloringBook(this as GBookFragmentData__asColoringBook);
+      default:
+        return orElse();
+    }
+  }
+
+  _T maybeWhen<_T>({
+    _T Function(GBookFragmentData__asTextbook)? textbook,
+    _T Function(GBookFragmentData__asColoringBook)? coloringBook,
+    required _T Function() orElse,
+  }) {
+    switch (G__typename) {
+      case 'Textbook':
+        return textbook == null
+            ? orElse()
+            : textbook(this as GBookFragmentData__asTextbook);
+      case 'ColoringBook':
+        return coloringBook == null
+            ? orElse()
+            : coloringBook(this as GBookFragmentData__asColoringBook);
+      default:
+        return orElse();
+    }
+  }
+}
+
+class GBookFragmentData__asTextbook extends GBookFragmentData
+    implements GBookFragment, GBookFragment__asTextbook {
+  const GBookFragmentData__asTextbook({
+    required author,
+    required title,
+    required G__typename,
+    required this.courses,
+  }) : super(author: author, title: title, G__typename: G__typename);
+
+  factory GBookFragmentData__asTextbook.fromJson(Map<String, dynamic> json) {
+    return GBookFragmentData__asTextbook(
+      author: GAuthorFragmentData.fromJson(
+          (json['author'] as Map<String, dynamic>)),
+      title: (json['title'] as String),
+      G__typename: (json['__typename'] as String),
+      courses:
+          (json['courses'] as List<dynamic>).map((e) => (e as String)).toList(),
+    );
+  }
+
+  final List<String> courses;
+
+  Map<String, dynamic> toJson() {
+    final result = super.toJson();
+    result['author'] = author.toJson();
+    result['title'] = title;
+    result['__typename'] = G__typename;
+    result['courses'] = courses.map((e) => e).toList();
+    return result;
+  }
+}
+
+class GBookFragmentData__asColoringBook extends GBookFragmentData
+    implements GBookFragment, GBookFragment__asColoringBook {
+  const GBookFragmentData__asColoringBook({
+    required author,
+    required title,
+    required G__typename,
+    required this.colors,
+  }) : super(author: author, title: title, G__typename: G__typename);
+
+  factory GBookFragmentData__asColoringBook.fromJson(
+      Map<String, dynamic> json) {
+    return GBookFragmentData__asColoringBook(
+      author: GAuthorFragmentData.fromJson(
+          (json['author'] as Map<String, dynamic>)),
+      title: (json['title'] as String),
+      G__typename: (json['__typename'] as String),
+      colors:
+          (json['colors'] as List<dynamic>).map((e) => (e as String)).toList(),
+    );
+  }
+
+  final List<String> colors;
+
+  Map<String, dynamic> toJson() {
+    final result = super.toJson();
+    result['author'] = author.toJson();
+    result['title'] = title;
+    result['__typename'] = G__typename;
+    result['colors'] = colors.map((e) => e).toList();
+    return result;
+  }
+}
+
+class GBookFragmentData__unknown extends GBookFragmentData
+    implements GBookFragment {
+  const GBookFragmentData__unknown({
+    required author,
+    required title,
+    required G__typename,
+  }) : super(author: author, title: title, G__typename: G__typename);
+
+  factory GBookFragmentData__unknown.fromJson(Map<String, dynamic> json) {
+    return GBookFragmentData__unknown(
+      author: GAuthorFragmentData.fromJson(
+          (json['author'] as Map<String, dynamic>)),
+      title: (json['title'] as String),
+      G__typename: (json['__typename'] as String),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    final result = super.toJson();
+    result['author'] = author.toJson();
+    result['title'] = title;
+    result['__typename'] = G__typename;
+    return result;
+  }
+}
+
+class GGetBooksData {
+  const GGetBooksData({
+    required this.books,
+    required this.G__typename,
+  });
+
+  factory GGetBooksData.fromJson(Map<String, dynamic> json) {
+    return GGetBooksData(
+      books: (json['books'] as List<dynamic>)
+          .map((e) => GBookFragmentData.fromJson((e as Map<String, dynamic>)))
+          .toList(),
+      G__typename: (json['__typename'] as String),
+    );
+  }
+
+  final List<GBookFragmentData> books;
+
+  final String G__typename;
+
+  Map<String, dynamic> toJson() {
+    final result = <String, dynamic>{};
+    result['books'] = books.map((e) => e.toJson()).toList();
+    result['__typename'] = G__typename;
+    return result;
+  }
+}

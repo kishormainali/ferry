@@ -261,6 +261,51 @@ void main() {
     expect(contents, contains('hashCode'));
     expect(contents, contains('toString'));
   });
+
+  test('data classes omit utilities when disabled', () async {
+    final fixtureRoot = p.join(
+      Directory.current.path,
+      'test',
+      'fixtures',
+      'end_to_end_test',
+    );
+    final sourceAssets = await _loadGraphqlAssets(
+      fixtureRoot,
+      packageName: _package,
+    );
+
+    final builder = graphqlBuilder(
+      BuilderOptions({
+        'schema': 'end_to_end_test|lib/graphql/schema.graphql',
+        'add_typenames': true,
+        'tristate_optionals': true,
+        'generate_copy_with': false,
+        'generate_equals': false,
+        'generate_hash_code': false,
+        'generate_to_string': false,
+      }),
+    );
+
+    final result = await testBuilder(
+      builder,
+      sourceAssets,
+      rootPackage: _package,
+      generateFor: {
+        'end_to_end_test|lib/interfaces/hero_for_episode.graphql',
+      },
+    );
+
+    final contents = await _readOutput(
+      result.readerWriter,
+      'lib/interfaces/hero_for_episode.graphql',
+      _dataExtension,
+    );
+
+    expect(contents, isNot(contains('copyWith')));
+    expect(contents, isNot(contains('operator ==')));
+    expect(contents, isNot(contains('hashCode')));
+    expect(contents, isNot(contains('toString')));
+  });
 }
 
 Future<Map<String, Object>> _loadGraphqlAssets(

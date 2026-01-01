@@ -39,6 +39,13 @@ fragment AuthorFields on Author {
   name
 }
 
+fragment TitleWithAuthor on Book {
+  ...TitleFields
+  author {
+    ...AuthorFields
+  }
+}
+
 query BooksA {
   books {
     ...TitleFields
@@ -47,9 +54,7 @@ query BooksA {
 
 query BooksB {
   books {
-    author {
-      ...AuthorFields
-    }
+    ...TitleWithAuthor
   }
 }
 ''';
@@ -86,12 +91,14 @@ void main() {
     expect(booksABlock, contains('TitleFields'));
     expect(booksABlock, isNot(contains('BooksB')));
     expect(booksABlock, isNot(contains('AuthorFields')));
+    expect(booksABlock, isNot(contains('TitleWithAuthor')));
 
     final booksBBlock = _classBlock(reqContents, 'GBooksBReq');
     expect(booksBBlock, contains('BooksB'));
+    expect(booksBBlock, contains('TitleWithAuthor'));
+    expect(booksBBlock, contains('TitleFields'));
     expect(booksBBlock, contains('AuthorFields'));
     expect(booksBBlock, isNot(contains('BooksA')));
-    expect(booksBBlock, isNot(contains('TitleFields')));
   });
 }
 

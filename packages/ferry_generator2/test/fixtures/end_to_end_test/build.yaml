@@ -6,12 +6,14 @@ targets:
     builders:
       ferry_generator2|graphql_builder:
         options:
-          schema: end_to_end_test|lib/graphql/schema.graphql
-          add_typenames: true
-          tristate_optionals: true
-          type_overrides:
+          schema:
+            file: end_to_end_test|lib/graphql/schema.graphql
+            add_typenames: true
+          vars:
+            tristate_optionals: true
+          scalars:
             Date:
               type: CustomDate
               import: package:end_to_end_test/custom/date.dart
-              fromJson: customDateFromJson
-              toJson: customDateToJson
+              from_json: customDateFromJson
+              to_json: customDateToJson

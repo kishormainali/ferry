@@ -169,7 +169,7 @@ class SelectionResolver {
     if (needsTypename && !result.fields.containsKey("__typename")) {
       if (!addTypenames) {
         throw StateError(
-          "Polymorphic selections require add_typenames to be true.",
+          "Polymorphic selections require schema.add_typenames to be true.",
         );
       }
       _ensureTypenameField(result);

@@ -137,8 +137,10 @@ class _ResolvedLibraries {
 
 void main() {
   final baseConfig = <String, Object?>{
-    'schema': _schemaPath,
-    'add_typenames': true,
+    'schema': {
+      'file': _schemaPath,
+      'add_typenames': true,
+    },
   };
 
   final scenarios = <_Scenario>[
@@ -146,11 +148,17 @@ void main() {
       name: 'tristate + when + type_safe',
       config: {
         ...baseConfig,
-        'tristate_optionals': true,
-        'data_to_json': 'type_safe',
-        'when_extensions': {
-          'when': true,
-          'maybeWhen': true,
+        'vars': {
+          'tristate_optionals': true,
+        },
+        'requests': {
+          'data_to_json': 'type_safe',
+        },
+        'data_classes': {
+          'when_extensions': {
+            'when': true,
+            'maybe_when': true,
+          },
         },
       },
       expectTristate: true,
@@ -160,8 +168,12 @@ void main() {
       name: 'no tristate + no when + type_safe',
       config: {
         ...baseConfig,
-        'tristate_optionals': false,
-        'data_to_json': 'type_safe',
+        'vars': {
+          'tristate_optionals': false,
+        },
+        'requests': {
+          'data_to_json': 'type_safe',
+        },
       },
       expectTristate: false,
       expectWhenExtensions: false,

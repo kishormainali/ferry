@@ -30,19 +30,27 @@ void main() {
 
     final builder = graphqlBuilder(
       BuilderOptions({
-        'schema': 'end_to_end_test|lib/graphql/schema.graphql',
-        'add_typenames': true,
-        'tristate_optionals': true,
-        'generate_copy_with': true,
-        'generate_equals': true,
-        'generate_hash_code': true,
-        'generate_to_string': true,
-        'type_overrides': {
+        'schema': {
+          'file': 'end_to_end_test|lib/graphql/schema.graphql',
+          'add_typenames': true,
+        },
+        'vars': {
+          'tristate_optionals': true,
+        },
+        'data_classes': {
+          'utils': {
+            'copy_with': true,
+            'equals': true,
+            'hash_code': true,
+            'to_string': true,
+          },
+        },
+        'scalars': {
           'Date': {
             'type': 'CustomDate',
             'import': 'package:custom/date.dart',
-            'fromJson': 'customDateFromJson',
-            'toJson': 'customDateToJson',
+            'from_json': 'customDateFromJson',
+            'to_json': 'customDateToJson',
           },
         },
       }),
@@ -76,6 +84,53 @@ void main() {
     expect(contents, contains("'Human'"));
     expect(contents, contains("'Droid'"));
     expect(contents, contains("'Starship'"));
+  });
+
+  test('per-enum fallback config emits enum-specific fallback', () async {
+    final fixtureRoot = p.join(
+      Directory.current.path,
+      'test',
+      'fixtures',
+      'end_to_end_test',
+    );
+    final sourceAssets = await _loadGraphqlAssets(
+      fixtureRoot,
+      packageName: _package,
+    );
+
+    final builder = graphqlBuilder(
+      BuilderOptions({
+        'schema': {
+          'file': 'end_to_end_test|lib/graphql/schema.graphql',
+          'add_typenames': true,
+        },
+        'enums': {
+          'fallback': {
+            'per_enum': {
+              'Episode': 'gUnknownEpisode',
+            },
+          },
+        },
+      }),
+    );
+
+    final result = await testBuilder(
+      builder,
+      sourceAssets,
+      rootPackage: _package,
+      generateFor: sourceAssets.keys.toSet(),
+    );
+
+    final contents = await _readOutput(
+      result.readerWriter,
+      'lib/graphql/schema.graphql',
+      _schemaExtension,
+    );
+
+    expect(contents, contains('enum GEpisode'));
+    expect(contents, contains('gUnknownEpisode'));
+    expect(contents, contains('default:'));
+    expect(contents, contains('return GEpisode.gUnknownEpisode;'));
   });
 
   test('aliases use response keys and alias fields', () async {
@@ -276,13 +331,21 @@ void main() {
 
     final builder = graphqlBuilder(
       BuilderOptions({
-        'schema': 'end_to_end_test|lib/graphql/schema.graphql',
-        'add_typenames': true,
-        'tristate_optionals': true,
-        'generate_copy_with': false,
-        'generate_equals': false,
-        'generate_hash_code': false,
-        'generate_to_string': false,
+        'schema': {
+          'file': 'end_to_end_test|lib/graphql/schema.graphql',
+          'add_typenames': true,
+        },
+        'vars': {
+          'tristate_optionals': true,
+        },
+        'data_classes': {
+          'utils': {
+            'copy_with': false,
+            'equals': false,
+            'hash_code': false,
+            'to_string': false,
+          },
+        },
       }),
     );
 

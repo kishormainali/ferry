@@ -230,9 +230,12 @@ query Hero {
     await _expectBuildFailure(
       document: document,
       expectedMessage:
-          'Polymorphic selections require add_typenames to be true.',
+          'Polymorphic selections require schema.add_typenames to be true.',
       config: const {
-        'add_typenames': false,
+        'schema': {
+          'file': _schemaPath,
+          'add_typenames': false,
+        },
       },
     );
   });
@@ -248,11 +251,17 @@ query Books {
 
     await _expectBuildFailure(
       document: document,
-      expectedMessage: 'When extensions require add_typenames to be true.',
+      expectedMessage:
+          'When extensions require schema.add_typenames to be true.',
       config: const {
-        'add_typenames': false,
-        'when_extensions': {
-          'when': true,
+        'schema': {
+          'file': _schemaPath,
+          'add_typenames': false,
+        },
+        'data_classes': {
+          'when_extensions': {
+            'when': true,
+          },
         },
       },
     );
@@ -526,8 +535,10 @@ Future<void> _expectBuildFailure({
 }) async {
   final builder = graphqlBuilder(
     BuilderOptions({
-      'schema': _schemaPath,
-      'add_typenames': true,
+      'schema': {
+        'file': _schemaPath,
+        'add_typenames': true,
+      },
       ...config,
     }),
   );

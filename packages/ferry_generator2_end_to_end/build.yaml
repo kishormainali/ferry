@@ -6,25 +6,32 @@ targets:
     builders:
       ferry_generator2|graphql_builder:
         options:
-          schema: ferry_generator2_end_to_end|lib/graphql/schema.graphql
-          add_typenames: true
-          tristate_optionals: true
-          formatter_language_version: 3.6
-          global_enum_fallbacks: true
-          global_enum_fallback_name: gUnknownEnumValue
-          when_extensions:
-            when: true
-            maybeWhen: true
-          generate_copy_with: true
-          generate_equals: true
-          generate_hash_code: true
-          generate_to_string: true
-          type_overrides:
+          schema:
+            file: ferry_generator2_end_to_end|lib/graphql/schema.graphql
+            add_typenames: true
+          vars:
+            tristate_optionals: true
+          formatting:
+            language_version: 3.6
+          enums:
+            fallback:
+              global: true
+              name: gUnknownEnumValue
+          data_classes:
+            when_extensions:
+              when: true
+              maybe_when: true
+            utils:
+              copy_with: true
+              equals: true
+              hash_code: true
+              to_string: true
+          scalars:
             Date:
               type: CustomDate
               import: package:ferry_generator2_end_to_end/custom/date.dart
-              fromJson: customDateFromJson
-              toJson: customDateToJson
+              from_json: customDateFromJson
+              to_json: customDateToJson
             CustomField:
               type: String
             Json:

@@ -5,7 +5,9 @@ import 'package:test/test.dart';
 void main() {
   test('formatter language version accepts x.y', () {
     final config = BuilderConfig({
-      'formatter_language_version': '3.4',
+      'formatting': {
+        'language_version': '3.4',
+      },
     });
 
     expect(config.formatterLanguageVersion, Version(3, 4, 0));
@@ -13,7 +15,9 @@ void main() {
 
   test('formatter language version accepts numeric', () {
     final config = BuilderConfig({
-      'formatter_language_version': 3.3,
+      'formatting': {
+        'language_version': 3.3,
+      },
     });
 
     expect(config.formatterLanguageVersion, Version(3, 3, 0));
@@ -21,9 +25,28 @@ void main() {
 
   test('formatter language version accepts x.y.z', () {
     final config = BuilderConfig({
-      'formatter_language_version': '3.6.1',
+      'formatting': {
+        'language_version': '3.6.1',
+      },
     });
 
     expect(config.formatterLanguageVersion, Version(3, 6, 1));
+  });
+
+  test('per-enum fallback config parses', () {
+    final config = BuilderConfig({
+      'enums': {
+        'fallback': {
+          'per_enum': {
+            'Episode': 'gUnknownEpisode',
+          },
+        },
+      },
+    });
+
+    expect(
+      config.enumFallbackConfig.fallbackValueMap['Episode'],
+      'gUnknownEpisode',
+    );
   });
 }

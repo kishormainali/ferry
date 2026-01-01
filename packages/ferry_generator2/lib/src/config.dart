@@ -57,6 +57,62 @@ class BuilderConfig {
     final enumsConfig = _toMap(config["enums"]);
     final enumsFallbackConfig = _toMap(enumsConfig["fallback"]);
     final scalarsConfig = _toMap(config["scalars"]);
+    final legacyOverrides = _toMap(config["type_overrides"]);
+
+    _warnUnknownKeys(config, _topLevelKeys, "options");
+    if (schemaConfig.isNotEmpty) {
+      _warnUnknownKeys(schemaConfig, _schemaKeys, "schema");
+    }
+    if (outputsConfig.isNotEmpty) {
+      _warnUnknownKeys(outputsConfig, _outputsKeys, "outputs");
+    }
+    if (formattingConfig.isNotEmpty) {
+      _warnUnknownKeys(formattingConfig, _formattingKeys, "formatting");
+    }
+    if (enumsConfig.isNotEmpty) {
+      _warnUnknownKeys(enumsConfig, _enumsKeys, "enums");
+    }
+    if (enumsFallbackConfig.isNotEmpty) {
+      _warnUnknownKeys(
+        enumsFallbackConfig,
+        _enumFallbackKeys,
+        "enums.fallback",
+      );
+    }
+    if (dataClassesConfig.isNotEmpty) {
+      _warnUnknownKeys(dataClassesConfig, _dataClassesKeys, "data_classes");
+    }
+    if (legacyDataClassConfig.isNotEmpty) {
+      _warnUnknownKeys(
+        legacyDataClassConfig,
+        _legacyDataClassKeys,
+        "data_class_config",
+      );
+    }
+    if (whenExtensionsConfig.isNotEmpty) {
+      _warnUnknownKeys(
+        whenExtensionsConfig,
+        _whenExtensionsKeys,
+        dataClassesConfig.isNotEmpty
+            ? "data_classes.when_extensions"
+            : "when_extensions",
+      );
+    }
+    if (utilsConfig.isNotEmpty) {
+      _warnUnknownKeys(utilsConfig, _dataClassUtilsKeys, "data_classes.utils");
+    }
+    if (varsConfig.isNotEmpty) {
+      _warnUnknownKeys(varsConfig, _varsKeys, "vars");
+    }
+    if (requestsConfig.isNotEmpty) {
+      _warnUnknownKeys(requestsConfig, _requestsKeys, "requests");
+    }
+    if (scalarsConfig.isNotEmpty) {
+      _warnUnknownScalarOverrides(scalarsConfig, "scalars");
+    }
+    if (legacyOverrides.isNotEmpty) {
+      _warnUnknownScalarOverrides(legacyOverrides, "type_overrides");
+    }
 
     final outputDirValue = schemaConfig["output_dir"] ?? config["output_dir"];
     final outputDir =
@@ -88,7 +144,7 @@ class BuilderConfig {
         true,
       ),
       typeOverrides: _getTypeOverrides(
-        scalarsConfig.isNotEmpty ? scalarsConfig : config["type_overrides"],
+        scalarsConfig.isNotEmpty ? scalarsConfig : legacyOverrides,
       ),
       enumFallbackConfig: _getEnumFallbackConfig(
         fallbackConfig: enumsFallbackConfig,
@@ -411,4 +467,113 @@ Map<String, dynamic> _toMap(Object? value) {
   if (value is YamlMap) return Map<String, dynamic>.from(value);
   if (value is Map) return Map<String, dynamic>.from(value);
   return {};
+}
+
+const _topLevelKeys = {
+  "schema",
+  "schemas",
+  "outputs",
+  "formatting",
+  "enums",
+  "data_classes",
+  "vars",
+  "requests",
+  "scalars",
+  // Legacy
+  "add_typenames",
+  "generate_possible_types_map",
+  "type_overrides",
+  "enum_fallbacks",
+  "global_enum_fallbacks",
+  "global_enum_fallback_name",
+  "output_dir",
+  "source_extension",
+  "when_extensions",
+  "data_class_config",
+  "tristate_optionals",
+  "data_to_json",
+  "format",
+  "formatter_language_version",
+  "formatterLanguageVersion",
+  "generate_copy_with",
+  "generate_equals",
+  "generate_hash_code",
+  "generate_to_string",
+  "generate_docs",
+};
+
+const _schemaKeys = {
+  "file",
+  "schema",
+  "files",
+  "schemas",
+  "add_typenames",
+  "generate_possible_types_map",
+  "output_dir",
+  "source_extension",
+};
+
+const _outputsKeys = {"ast", "data", "vars", "req", "schema"};
+
+const _formattingKeys = {"enabled", "language_version", "languageVersion"};
+
+const _enumsKeys = {"fallback"};
+
+const _enumFallbackKeys = {"global", "name", "per_enum", "perEnum"};
+
+const _dataClassesKeys = {
+  "reuse_fragments",
+  "when_extensions",
+  "utils",
+  "docs"
+};
+
+const _legacyDataClassKeys = {"reuse_fragments"};
+
+const _whenExtensionsKeys = {"when", "maybe_when", "maybeWhen"};
+
+const _dataClassUtilsKeys = {"copy_with", "equals", "hash_code", "to_string"};
+
+const _varsKeys = {"tristate_optionals"};
+
+const _requestsKeys = {"data_to_json", "dataToJson"};
+
+const _scalarOverrideKeys = {
+  "type",
+  "name",
+  "import",
+  "from_json",
+  "fromJson",
+  "to_json",
+  "toJson",
+};
+
+void _warnUnknownKeys(
+  Map<String, dynamic> config,
+  Set<String> allowedKeys,
+  String context,
+) {
+  if (config.isEmpty) return;
+  final unknown = config.keys
+      .whereType<String>()
+      .where((key) => !allowedKeys.contains(key))
+      .toList()
+    ..sort();
+  if (unknown.isEmpty) return;
+  log.warning("Unknown config option(s) at $context: ${unknown.join(', ')}");
+}
+
+void _warnUnknownScalarOverrides(
+  Map<String, dynamic> overrides,
+  String context,
+) {
+  for (final entry in overrides.entries) {
+    final overrideConfig = _toMap(entry.value);
+    if (overrideConfig.isEmpty) continue;
+    _warnUnknownKeys(
+      overrideConfig,
+      _scalarOverrideKeys,
+      "$context.${entry.key}",
+    );
+  }
 }

@@ -1,5 +1,7 @@
 @TestOn('vm')
 
+import 'package:analyzer/dart/constant/value.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
 import 'package:ferry_generator2/graphql_builder.dart';
@@ -8,8 +10,7 @@ import 'package:test/test.dart';
 const _package = 'ferry_generator2';
 const _schemaPath = '$_package|lib/schema.graphql';
 const _queryPath = '$_package|lib/queries.graphql';
-const _reqPath =
-    '.dart_tool/build/generated/$_package/lib/__generated__/queries.req.gql.dart';
+const _reqPath = '$_package|lib/__generated__/queries.req.gql.dart';
 
 const _schema = r'''
 schema {
@@ -82,32 +83,100 @@ void main() {
     );
 
     expect(result.succeeded, isTrue);
-    final reqContents = await result.readerWriter.readAsString(
-      AssetId(_package, _reqPath),
+
+    final sources = _extractGeneratedDartSources(
+      result.readerWriter,
+      _package,
     );
+    final documents = await _resolveRequestDocuments(sources);
 
-    final booksABlock = _classBlock(reqContents, 'GBooksAReq');
-    expect(booksABlock, contains('BooksA'));
-    expect(booksABlock, contains('TitleFields'));
-    expect(booksABlock, isNot(contains('BooksB')));
-    expect(booksABlock, isNot(contains('AuthorFields')));
-    expect(booksABlock, isNot(contains('TitleWithAuthor')));
-
-    final booksBBlock = _classBlock(reqContents, 'GBooksBReq');
-    expect(booksBBlock, contains('BooksB'));
-    expect(booksBBlock, contains('TitleWithAuthor'));
-    expect(booksBBlock, contains('TitleFields'));
-    expect(booksBBlock, contains('AuthorFields'));
-    expect(booksBBlock, isNot(contains('BooksA')));
+    expect(
+      documents['GBooksAReq'],
+      unorderedEquals(<String>[
+        'BooksA',
+        'TitleFields',
+      ]),
+    );
+    expect(
+      documents['GBooksBReq'],
+      unorderedEquals(<String>[
+        'BooksB',
+        'TitleWithAuthor',
+        'TitleFields',
+        'AuthorFields',
+      ]),
+    );
   });
 }
 
-String _classBlock(String contents, String className) {
-  final start = contents.indexOf('class $className');
-  if (start == -1) {
-    throw StateError('Missing class $className in request output');
+Future<Map<String, Set<String>>> _resolveRequestDocuments(
+  Map<String, String> sources,
+) {
+  return resolveSources(
+    sources,
+    (resolver) async {
+      final library = await resolver.libraryFor(AssetId.parse(_reqPath));
+      return {
+        'GBooksAReq': _definitionNamesFor(
+          library.getClass('GBooksAReq'),
+        ),
+        'GBooksBReq': _definitionNamesFor(
+          library.getClass('GBooksBReq'),
+        ),
+      };
+    },
+    rootPackage: _package,
+    readAllSourcesFromFilesystem: true,
+  );
+}
+
+Set<String> _definitionNamesFor(ClassElement? element) {
+  if (element == null) {
+    throw StateError('Missing request class in resolved library');
   }
-  final next = contents.indexOf('class G', start + 1);
-  final end = next == -1 ? contents.length : next;
-  return contents.substring(start, end);
+  final documentField =
+      element.fields.singleWhere((field) => field.name == '_document');
+  final documentValue = documentField.computeConstantValue();
+  if (documentValue == null) {
+    throw StateError('Failed to evaluate _document const value');
+  }
+
+  final definitionsValue = documentValue.getField('definitions');
+  final definitions = definitionsValue?.toListValue();
+  if (definitions == null) {
+    throw StateError('Missing definitions in DocumentNode');
+  }
+
+  return definitions.map(_definitionName).toSet();
+}
+
+String _definitionName(DartObject definition) {
+  final nameNode = definition.getField('name');
+  final nameValue = nameNode?.getField('value')?.toStringValue();
+  if (nameValue == null) {
+    throw StateError('Definition is missing a name');
+  }
+  return nameValue;
+}
+
+Map<String, String> _extractGeneratedDartSources(
+  TestReaderWriter readerWriter,
+  String package,
+) {
+  final outputs = <String, String>{};
+  final prefix = '.dart_tool/build/generated/$package/';
+  for (final asset in readerWriter.testing.assets) {
+    if (!asset.path.startsWith(prefix) || !asset.path.endsWith('.dart')) {
+      continue;
+    }
+    final logicalPath = asset.path.substring(prefix.length);
+    final logicalId = AssetId(package, logicalPath);
+    outputs[logicalId.toString()] = readerWriter.testing.readString(asset);
+  }
+
+  if (outputs.isEmpty) {
+    throw StateError('No generated Dart outputs found.');
+  }
+
+  return outputs;
 }

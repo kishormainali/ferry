@@ -12,7 +12,7 @@ abstract class GFragLevel1 {
   String get G__typename;
 }
 
-class GFragLevel1Data implements GFragLevel1, GFragLevel2 {
+class GFragLevel1Data implements GFragLevel1, GFragLevel3, GFragLevel2 {
   const GFragLevel1Data({
     required this.id,
     required this.name,

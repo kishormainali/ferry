@@ -87,7 +87,6 @@ void indexFragments({required DataEmitterContext ctx}) {
     baseName: baseName,
     selectionSet: resolved,
     parentTypeName: resolved.parentTypeName,
-    fragmentSpreads: resolved.fragmentSpreads,
     classImplements: [
       refer(builtClassName(fragment.name.value)),
     ],

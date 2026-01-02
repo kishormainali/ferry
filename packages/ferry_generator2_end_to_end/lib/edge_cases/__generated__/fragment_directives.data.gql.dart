@@ -119,7 +119,7 @@ class GHeroFragmentDirectivesData {
   }
 }
 
-class GHeroFragmentDirectivesData_hero implements GHeroName {
+class GHeroFragmentDirectivesData_hero {
   const GHeroFragmentDirectivesData_hero({
     required this.G__typename,
     required this.id,

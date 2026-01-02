@@ -312,6 +312,8 @@ void main() {
 
     final data = GDeepFragmentsData.fromJson(input);
     expect(data.hero, isA<GFragLevel1Data>());
+    expect(data.hero, isA<GFragLevel3>());
+    expect(data.hero, isNot(isA<GFragLevel4>()));
     expect(data.hero!.friends!.first, isA<GFragLevel4Data>());
     expect(data.toJson(), equals(input));
   });

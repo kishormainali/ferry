@@ -5,6 +5,7 @@ import "data_emitter_context.dart";
 import "data_emitter_fields.dart";
 import "data_emitter_json.dart";
 import "data_emitter_types.dart";
+import "fragment_interface_refs.dart";
 import "naming.dart";
 import "selection_resolver.dart";
 
@@ -23,7 +24,6 @@ import "selection_resolver.dart";
       baseName: baseName,
       selectionSet: resolved,
       parentTypeName: resolved.parentTypeName,
-      fragmentSpreads: resolved.fragmentSpreads,
       classImplements: const [],
       fragmentName: null,
     ),
@@ -36,7 +36,6 @@ List<Spec> buildSelectionSetClasses({
   required String baseName,
   required ResolvedSelectionSet selectionSet,
   required String parentTypeName,
-  required Set<String> fragmentSpreads,
   required List<Reference> classImplements,
   required String? fragmentName,
 }) {
@@ -46,6 +45,7 @@ List<Spec> buildSelectionSetClasses({
   }
 
   final specs = <Spec>[];
+  final interfaceSpreads = selectionSet.unconditionalFragmentSpreads;
 
   if (selectionSet.inlineFragments.isEmpty) {
     final fieldsList = buildFieldSpecs(
@@ -57,7 +57,7 @@ List<Spec> buildSelectionSetClasses({
     );
     final implementsRefs = _interfaceRefs(
       ctx: ctx,
-      fragmentSpreads: fragmentSpreads,
+      fragmentSpreads: interfaceSpreads,
       parentTypeName: parentTypeName,
       baseImplements: classImplements,
     );
@@ -87,7 +87,7 @@ List<Spec> buildSelectionSetClasses({
 
   final baseImplements = _interfaceRefs(
     ctx: ctx,
-    fragmentSpreads: fragmentSpreads,
+    fragmentSpreads: interfaceSpreads,
     parentTypeName: parentTypeName,
     baseImplements: classImplements,
   );
@@ -129,7 +129,7 @@ List<Spec> buildSelectionSetClasses({
     ];
     final inlineImplements = _interfaceRefs(
       ctx: ctx,
-      fragmentSpreads: entry.value.fragmentSpreads,
+      fragmentSpreads: entry.value.unconditionalFragmentSpreads,
       parentTypeName: typeName,
       baseImplements: classImplements,
     );
@@ -170,7 +170,7 @@ List<Spec> buildSelectionSetClasses({
       fields: baseFields,
       implementsRefs: _interfaceRefs(
         ctx: ctx,
-        fragmentSpreads: fragmentSpreads,
+        fragmentSpreads: interfaceSpreads,
         parentTypeName: parentTypeName,
         baseImplements: classImplements,
       ),
@@ -339,7 +339,6 @@ List<Spec> _buildNestedClasses(
         baseName: nestedName,
         selectionSet: field.selectionSet!,
         parentTypeName: field.selectionSet!.parentTypeName,
-        fragmentSpreads: field.selectionSet!.fragmentSpreads,
         classImplements: nestedInterfaces,
         fragmentName: null,
       ),
@@ -388,33 +387,12 @@ List<Reference> _interfaceRefs({
   required String parentTypeName,
   required List<Reference> baseImplements,
 }) {
-  final refs = <Reference>[...baseImplements];
-  for (final fragmentName in fragmentSpreads) {
-    final interfaceName = _fragmentInterfaceForType(
-        ctx: ctx, fragmentName: fragmentName, typeName: parentTypeName);
-    final fragmentUrl = ctx.fragmentSourceUrls[fragmentName];
-    if (fragmentUrl == null) continue;
-    refs.add(
-      Reference(
-        interfaceName,
-        "$fragmentUrl#data",
-      ),
-    );
-  }
-  return refs;
-}
-
-String _fragmentInterfaceForType({
-  required DataEmitterContext ctx,
-  required String fragmentName,
-  required String typeName,
-}) {
-  final info = ctx.fragmentInfo[fragmentName];
-  if (info == null) return builtClassName(fragmentName);
-  if (info.inlineTypes.contains(typeName)) {
-    return builtClassName("${fragmentName}__as$typeName");
-  }
-  return builtClassName(fragmentName);
+  return fragmentInterfaceRefs(
+    ctx: ctx,
+    fragmentSpreads: fragmentSpreads,
+    parentTypeName: parentTypeName,
+    baseImplements: baseImplements,
+  );
 }
 
 Class _buildPolymorphicBaseClass({

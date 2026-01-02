@@ -69,12 +69,21 @@ class ResolvedSelectionSet {
   final Map<String, FieldSelection> fields = {};
   final Map<String, ResolvedSelectionSet> inlineFragments = {};
   final Set<String> fragmentSpreads = {};
+  final Set<String> unconditionalFragmentSpreads = {};
 
   ResolvedSelectionSet({required this.parentTypeName});
 
-  void addFragmentSpread(String name) => fragmentSpreads.add(name);
+  void addFragmentSpread(String name, {required bool unconditional}) {
+    fragmentSpreads.add(name);
+    if (unconditional) {
+      unconditionalFragmentSpreads.add(name);
+    }
+  }
 
-  void mergeFrom(ResolvedSelectionSet other) {
+  void mergeFrom(
+    ResolvedSelectionSet other, {
+    bool includeUnconditional = true,
+  }) {
     for (final entry in other.fields.entries) {
       final existing = fields[entry.key];
       if (existing == null) {
@@ -92,11 +101,15 @@ class ResolvedSelectionSet {
         existing.mergeInlineFrom(entry.value);
       }
     }
+
+    fragmentSpreads.addAll(other.fragmentSpreads);
+    if (includeUnconditional) {
+      unconditionalFragmentSpreads.addAll(other.unconditionalFragmentSpreads);
+    }
   }
 
   void mergeInlineFrom(ResolvedSelectionSet other) {
     mergeFrom(other);
-    fragmentSpreads.addAll(other.fragmentSpreads);
   }
 }
 
@@ -250,9 +263,16 @@ class SelectionResolver {
       typeConditionName,
       fragmentStack: fragmentStack,
     );
+    final unconditional = !_hasConditionalDirective(fragment.directives);
+    if (!unconditional) {
+      _clearUnconditionalFragmentSpreads(resolved);
+    }
 
     if (_shouldMergeIntoBase(parentTypeName, typeConditionName)) {
-      result.mergeFrom(resolved);
+      result.mergeFrom(
+        resolved,
+        includeUnconditional: unconditional,
+      );
       return;
     }
 
@@ -260,7 +280,10 @@ class SelectionResolver {
     if (existing == null) {
       result.inlineFragments[typeConditionName] = resolved;
     } else {
-      existing.mergeInlineFrom(resolved);
+      existing.mergeFrom(
+        resolved,
+        includeUnconditional: unconditional,
+      );
     }
   }
 
@@ -282,20 +305,30 @@ class SelectionResolver {
       fragmentTypeName,
       fragmentStack: {...fragmentStack, name},
     );
+    final unconditional = !_hasConditionalDirective(spread.directives);
+    if (!unconditional) {
+      _clearUnconditionalFragmentSpreads(resolved);
+    }
 
     if (_shouldMergeIntoBase(parentTypeName, fragmentTypeName)) {
-      result.mergeFrom(resolved);
-      result.addFragmentSpread(name);
+      result.mergeFrom(
+        resolved,
+        includeUnconditional: unconditional,
+      );
+      result.addFragmentSpread(name, unconditional: unconditional);
       return;
     }
 
     final existing = result.inlineFragments[fragmentTypeName];
     if (existing == null) {
       result.inlineFragments[fragmentTypeName] = resolved;
-      resolved.addFragmentSpread(name);
+      resolved.addFragmentSpread(name, unconditional: unconditional);
     } else {
-      existing.mergeInlineFrom(resolved);
-      existing.addFragmentSpread(name);
+      existing.mergeFrom(
+        resolved,
+        includeUnconditional: unconditional,
+      );
+      existing.addFragmentSpread(name, unconditional: unconditional);
     }
   }
 
@@ -329,6 +362,19 @@ class SelectionResolver {
       fragmentSpreadOnlyName: null,
       isSynthetic: true,
     );
+  }
+}
+
+void _clearUnconditionalFragmentSpreads(ResolvedSelectionSet selectionSet) {
+  selectionSet.unconditionalFragmentSpreads.clear();
+  for (final field in selectionSet.fields.values) {
+    final nested = field.selectionSet;
+    if (nested != null) {
+      _clearUnconditionalFragmentSpreads(nested);
+    }
+  }
+  for (final inline in selectionSet.inlineFragments.values) {
+    _clearUnconditionalFragmentSpreads(inline);
   }
 }
 

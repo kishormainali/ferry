@@ -183,12 +183,12 @@ class ReqEmitter {
         (b) => b
           ..name = "_operation"
           ..static = true
-          ..modifier = FieldModifier.final$
+          ..modifier = FieldModifier.constant
           ..type = refer("Operation", "package:gql_exec/gql_exec.dart")
           ..assignment = refer(
             "Operation",
             "package:gql_exec/gql_exec.dart",
-          ).call(
+          ).constInstance(
             [],
             {
               "document": refer("_document"),

@@ -54,7 +54,7 @@ class GGetBooksReq implements _i1.OperationRequest<_i2.GGetBooksData, Null> {
     _i5.GetBooks,
   ]);
 
-  static final _i3.Operation _operation = _i3.Operation(
+  static const _i3.Operation _operation = _i3.Operation(
     document: _document,
     operationName: 'GetBooks',
   );

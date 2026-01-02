@@ -57,7 +57,7 @@ class GCreateCustomFieldReq
   static const _i5.DocumentNode _document =
       _i5.DocumentNode(definitions: [_i6.CreateCustomField]);
 
-  static final _i4.Operation _operation = _i4.Operation(
+  static const _i4.Operation _operation = _i4.Operation(
     document: _document,
     operationName: 'CreateCustomField',
   );

@@ -55,7 +55,7 @@ class GHeroWith2FragmentsReq
     _i5.HeroWith2Fragments,
   ]);
 
-  static final _i3.Operation _operation = _i3.Operation(
+  static const _i3.Operation _operation = _i3.Operation(
     document: _document,
     operationName: 'HeroWith2Fragments',
   );

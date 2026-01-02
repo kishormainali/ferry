@@ -58,7 +58,7 @@ class GHeroForEpisodeReq
     _i6.HeroForEpisode,
   ]);
 
-  static final _i4.Operation _operation = _i4.Operation(
+  static const _i4.Operation _operation = _i4.Operation(
     document: _document,
     operationName: 'HeroForEpisode',
   );

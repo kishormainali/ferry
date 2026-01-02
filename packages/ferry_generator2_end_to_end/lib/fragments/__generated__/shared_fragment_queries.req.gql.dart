@@ -55,7 +55,7 @@ class GSharedBooksAReq
     _i5.SharedBooksA,
   ]);
 
-  static final _i3.Operation _operation = _i3.Operation(
+  static const _i3.Operation _operation = _i3.Operation(
     document: _document,
     operationName: 'SharedBooksA',
   );
@@ -210,7 +210,7 @@ class GSharedBooksBReq
     _i5.SharedBooksB,
   ]);
 
-  static final _i3.Operation _operation = _i3.Operation(
+  static const _i3.Operation _operation = _i3.Operation(
     document: _document,
     operationName: 'SharedBooksB',
   );

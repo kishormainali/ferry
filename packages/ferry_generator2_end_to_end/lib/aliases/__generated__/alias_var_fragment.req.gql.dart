@@ -57,7 +57,7 @@ class GPostsReq
     _i6.Posts,
   ]);
 
-  static final _i4.Operation _operation = _i4.Operation(
+  static const _i4.Operation _operation = _i4.Operation(
     document: _document,
     operationName: 'Posts',
   );

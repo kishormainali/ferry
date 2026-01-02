@@ -18,6 +18,7 @@ const _outputDir = '__generated__';
 const _dataExtension = '.data.gql.dart';
 const _varExtension = '.var.gql.dart';
 const _reqExtension = '.req.gql.dart';
+const _astExtension = '.ast.gql.dart';
 const _schemaExtension = '.schema.gql.dart';
 
 const _schemaInput = 'lib/graphql/schema.graphql';
@@ -108,6 +109,25 @@ void main() {
         _assetId(_reviewWithDateInput, _dataExtension),
       },
       rootPackage: _package,
+    );
+  });
+
+  test('schema input skips data/vars/req outputs', () {
+    expect(
+      _generatedSources.containsKey(_assetId(_schemaInput, _dataExtension)),
+      isFalse,
+    );
+    expect(
+      _generatedSources.containsKey(_assetId(_schemaInput, _varExtension)),
+      isFalse,
+    );
+    expect(
+      _generatedSources.containsKey(_assetId(_schemaInput, _reqExtension)),
+      isFalse,
+    );
+    expect(
+      _generatedSources.containsKey(_assetId(_schemaInput, _astExtension)),
+      isTrue,
     );
   });
 

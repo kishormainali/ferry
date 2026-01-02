@@ -141,6 +141,19 @@ class GraphqlBuilder implements Builder {
     }
 
     if (buildStep.inputId == schemaId) {
+      if (config.outputs.ast) {
+        final outputId = outputAssetId(
+          buildStep.inputId,
+          astExtension,
+          config.outputDir,
+        );
+        await writeOutput(
+          astExtension,
+          buildAstLibrary(schemaSource),
+          outputId,
+        );
+      }
+
       if (config.outputs.schema) {
         final outputId = outputAssetId(
           buildStep.inputId,

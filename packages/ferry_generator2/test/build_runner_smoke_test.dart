@@ -1,6 +1,10 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:analyzer/dart/analysis/features.dart';
+import 'package:analyzer/dart/analysis/utilities.dart';
+import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 
@@ -140,6 +144,113 @@ Future<void> _copyDirectory(Directory source, Directory destination) async {
   }
 }
 
+ClassDeclaration _classDecl(CompilationUnit unit, String name) {
+  return unit.declarations
+      .whereType<ClassDeclaration>()
+      .firstWhere((decl) => decl.name.lexeme == name);
+}
+
+ConstructorDeclaration _factoryConstructor(
+  ClassDeclaration classDecl,
+  String name,
+) {
+  return classDecl.members
+      .whereType<ConstructorDeclaration>()
+      .firstWhere((ctor) => ctor.name?.lexeme == name);
+}
+
+Set<String> _implementsNames(ClassDeclaration classDecl) {
+  final clause = classDecl.implementsClause;
+  if (clause == null) return const {};
+  return clause.interfaces.map((type) => type.name.lexeme).toSet();
+}
+
+Set<String> _switchCaseStrings(ConstructorDeclaration ctor) {
+  final body = ctor.body;
+  if (body is! BlockFunctionBody) {
+    throw StateError('Expected block body in factory constructor');
+  }
+  final switchStmt = body.block.statements
+      .whereType<SwitchStatement>()
+      .firstWhere((_) => true);
+  final labels = <String>{};
+  for (final member in switchStmt.members) {
+    if (member is SwitchCase) {
+      final value = member.expression;
+      if (value is StringLiteral) {
+        final stringValue = value.stringValue;
+        if (stringValue != null) {
+          labels.add(stringValue);
+        }
+      }
+    } else if (member is SwitchPatternCase) {
+      final pattern = member.guardedPattern.pattern;
+      if (pattern is ConstantPattern) {
+        final value = pattern.expression;
+        if (value is StringLiteral) {
+          final stringValue = value.stringValue;
+          if (stringValue != null) {
+            labels.add(stringValue);
+          }
+        }
+      }
+    }
+  }
+  return labels;
+}
+
+bool _containsStringLiteral(CompilationUnit unit, String substring) {
+  final visitor = _StringLiteralVisitor(substring);
+  unit.visitChildren(visitor);
+  return visitor.found;
+}
+
+bool _containsListFromJson(CompilationUnit unit) {
+  final visitor = _ListFromJsonVisitor();
+  unit.visitChildren(visitor);
+  return visitor.found;
+}
+
+class _StringLiteralVisitor extends RecursiveAstVisitor<void> {
+  final String substring;
+  bool found = false;
+
+  _StringLiteralVisitor(this.substring);
+
+  @override
+  void visitSimpleStringLiteral(SimpleStringLiteral node) {
+    final value = node.stringValue;
+    if (value != null && value.contains(substring)) {
+      found = true;
+    }
+    super.visitSimpleStringLiteral(node);
+  }
+
+  @override
+  void visitAdjacentStrings(AdjacentStrings node) {
+    final value = node.stringValue;
+    if (value != null && value.contains(substring)) {
+      found = true;
+    }
+    super.visitAdjacentStrings(node);
+  }
+}
+
+class _ListFromJsonVisitor extends RecursiveAstVisitor<void> {
+  bool found = false;
+
+  @override
+  void visitMethodInvocation(MethodInvocation node) {
+    final target = node.target;
+    if (target is SimpleIdentifier &&
+        target.name == 'List' &&
+        node.methodName.name == 'fromJson') {
+      found = true;
+    }
+    super.visitMethodInvocation(node);
+  }
+}
+
 void main() {
   test(
     'build_runner smoke test with interface fragments',
@@ -208,21 +319,47 @@ void main() {
         reason: 'Missing generated data at $dataPath',
       );
 
-      final dataContents = await dataFile.readAsString();
-      expect(dataContents, contains('class GFriendInfoData__asHuman'));
-      expect(dataContents, contains('class GFriendInfoData__asDroid'));
-      expect(dataContents, contains('GFriendInfoData.fromJson'));
-      expect(dataContents, contains("case 'Human':"));
-      expect(dataContents, contains("case 'Droid':"));
-      expect(dataContents, contains('GFriendInfoData'));
-      expect(dataContents,
-          contains('implements GFriendInfo, GFriendInfo__asHuman'));
-      expect(dataContents,
-          contains('implements GFriendInfo, GFriendInfo__asDroid'));
-      expect(dataContents, isNot(contains('GCharacterDetails__asHuman')));
-      expect(dataContents, isNot(contains('GCharacterDetails__asDroid')));
-      expect(dataContents, isNot(contains('#data')));
-      expect(dataContents, isNot(contains('List.fromJson')));
+      final parseResult = parseFile(
+        path: dataPath,
+        featureSet: FeatureSet.latestLanguageVersion(),
+      );
+      final unit = parseResult.unit;
+      final classNames = unit.declarations
+          .whereType<ClassDeclaration>()
+          .map((decl) => decl.name.lexeme)
+          .toSet();
+      expect(
+        classNames,
+        containsAll(<String>[
+          'GFriendInfoData',
+          'GFriendInfoData__asHuman',
+          'GFriendInfoData__asDroid',
+        ]),
+      );
+      expect(classNames.contains('GCharacterDetails__asHuman'), isFalse);
+      expect(classNames.contains('GCharacterDetails__asDroid'), isFalse);
+
+      final baseClass = _classDecl(unit, 'GFriendInfoData');
+      final fromJson = _factoryConstructor(baseClass, 'fromJson');
+      final caseLabels = _switchCaseStrings(fromJson);
+      expect(caseLabels, containsAll(<String>['Human', 'Droid']));
+
+      final humanClass = _classDecl(unit, 'GFriendInfoData__asHuman');
+      final humanImplements = _implementsNames(humanClass);
+      expect(
+        humanImplements,
+        containsAll(<String>['GFriendInfo', 'GFriendInfo__asHuman']),
+      );
+
+      final droidClass = _classDecl(unit, 'GFriendInfoData__asDroid');
+      final droidImplements = _implementsNames(droidClass);
+      expect(
+        droidImplements,
+        containsAll(<String>['GFriendInfo', 'GFriendInfo__asDroid']),
+      );
+
+      expect(_containsStringLiteral(unit, '#data'), isFalse);
+      expect(_containsListFromJson(unit), isFalse);
 
       final toolDir = Directory(p.join(tempDir.path, 'tool'));
       await toolDir.create(recursive: true);

@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
 import 'package:path/path.dart' as p;
@@ -47,4 +50,23 @@ String readGeneratedDartSource(
     throw StateError('Missing generated output for $assetId');
   }
   return source;
+}
+
+Future<Map<String, LibraryElement>> resolveGeneratedLibraries(
+  Map<String, String> sources,
+  Iterable<String> assetIds, {
+  required String rootPackage,
+}) {
+  return resolveSources(
+    sources,
+    (resolver) async {
+      final libraries = <String, LibraryElement>{};
+      for (final assetId in assetIds) {
+        libraries[assetId] = await resolver.libraryFor(AssetId.parse(assetId));
+      }
+      return libraries;
+    },
+    rootPackage: rootPackage,
+    readAllSourcesFromFilesystem: true,
+  );
 }

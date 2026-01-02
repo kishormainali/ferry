@@ -1,5 +1,10 @@
 import 'dart:io';
 
+import 'package:analyzer/dart/analysis/results.dart';
+import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/ast/visitor.dart';
+import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
 import 'package:ferry_generator2/graphql_builder.dart';
@@ -14,9 +19,24 @@ const _varExtension = '.var.gql.dart';
 const _reqExtension = '.req.gql.dart';
 const _schemaExtension = '.schema.gql.dart';
 
-void main() {
-  late Map<String, String> generatedSources;
+const _schemaInput = 'lib/graphql/schema.graphql';
+const _aliasedHeroInput = 'lib/aliases/aliased_hero.graphql';
+const _aliasVarFragmentInput = 'lib/aliases/alias_var_fragment.graphql';
+const _heroNoVarsInput = 'lib/no_vars/hero_no_vars.graphql';
+const _heroForEpisodeInput = 'lib/interfaces/hero_for_episode.graphql';
+const _nestedDuplicateFragmentsInput =
+    'lib/fragments/nested_duplicate_fragments.graphql';
+const _multipleFragmentsInput = 'lib/fragments/multiple_fragments.graphql';
+const _heroWithFragmentsInput = 'lib/fragments/hero_with_fragments.graphql';
+const _listArgumentInput = 'lib/variables/list_argument.graphql';
+const _createReviewInput = 'lib/variables/create_review.graphql';
+const _createCustomFieldInput = 'lib/variables/create_custom_field.graphql';
+const _reviewWithDateInput = 'lib/scalars/review_with_date.graphql';
 
+late Map<String, String> _generatedSources;
+late Map<String, LibraryElement> _libraries;
+
+void main() {
   setUpAll(() async {
     final fixtureRoot = p.join(
       Directory.current.path,
@@ -64,28 +84,49 @@ void main() {
       generateFor: sourceAssets.keys.toSet(),
     );
 
-    generatedSources =
+    _generatedSources =
         extractGeneratedDartSources(result.readerWriter, _package);
+    _libraries = await resolveGeneratedLibraries(
+      _generatedSources,
+      {
+        _assetId(_schemaInput, _schemaExtension),
+        _assetId(_aliasedHeroInput, _dataExtension),
+        _assetId(_aliasVarFragmentInput, _varExtension),
+        _assetId(_aliasVarFragmentInput, _dataExtension),
+        _assetId(_heroNoVarsInput, _reqExtension),
+        _assetId(_heroForEpisodeInput, _dataExtension),
+        _assetId(_nestedDuplicateFragmentsInput, _dataExtension),
+        _assetId(_multipleFragmentsInput, _dataExtension),
+        _assetId(_heroWithFragmentsInput, _varExtension),
+        _assetId(_heroWithFragmentsInput, _dataExtension),
+        _assetId(_listArgumentInput, _varExtension),
+        _assetId(_createReviewInput, _varExtension),
+        _assetId(_createCustomFieldInput, _varExtension),
+        _assetId(_reviewWithDateInput, _varExtension),
+        _assetId(_reviewWithDateInput, _dataExtension),
+      },
+      rootPackage: _package,
+    );
   });
 
   test('schema output includes enums, inputs, possible types, tristate',
       () async {
-    final contents = _readOutput(
-      generatedSources,
-      'lib/graphql/schema.graphql',
-      _schemaExtension,
-    );
+    final library = _libraryFor(_schemaInput, _schemaExtension);
+    expect(_enumIn(library, 'GEpisode'), isNotNull);
 
-    expect(contents, contains('enum GEpisode'));
-    expect(contents, contains('class GReviewInput'));
-    expect(contents, contains('Value<String>'));
+    final reviewInput = _classIn(library, 'GReviewInput');
+    final commentaryField = _fieldIn(reviewInput, 'commentary');
+    _expectValueType(commentaryField.type, (inner) {
+      expect(_isDartCoreString(inner), isTrue);
+    });
+
+    final possibleTypes = _possibleTypesMap(library);
+    expect(possibleTypes.keys, containsAll(['Character', 'SearchResult']));
+    expect(possibleTypes['Character'], containsAll(['Human', 'Droid']));
     expect(
-        contents, contains('const Map<String, Set<String>> possibleTypesMap'));
-    expect(contents, contains("'Character'"));
-    expect(contents, contains("'SearchResult'"));
-    expect(contents, contains("'Human'"));
-    expect(contents, contains("'Droid'"));
-    expect(contents, contains("'Starship'"));
+      possibleTypes['SearchResult'],
+      containsAll(['Human', 'Droid', 'Starship']),
+    );
   });
 
   test('per-enum fallback config emits enum-specific fallback', () async {
@@ -123,201 +164,200 @@ void main() {
       generateFor: sourceAssets.keys.toSet(),
     );
 
-    final contents = _readOutput(
-      extractGeneratedDartSources(result.readerWriter, _package),
-      'lib/graphql/schema.graphql',
-      _schemaExtension,
+    final sources = extractGeneratedDartSources(result.readerWriter, _package);
+    final schemaAssetId = _assetId(_schemaInput, _schemaExtension);
+    final resolvedLibraries = await resolveGeneratedLibraries(
+      sources,
+      {schemaAssetId},
+      rootPackage: _package,
     );
+    final library = resolvedLibraries[schemaAssetId];
+    if (library == null) {
+      throw StateError('Missing schema output for per-enum config test.');
+    }
 
-    expect(contents, contains('enum GEpisode'));
-    expect(contents, contains('gUnknownEpisode'));
-    expect(contents, contains('default:'));
-    expect(contents, contains('return GEpisode.gUnknownEpisode;'));
+    final episodeEnum = _enumIn(library, 'GEpisode');
+    final hasFallback = episodeEnum.constants
+        .any((constant) => constant.name == 'gUnknownEpisode');
+    expect(hasFallback, isTrue);
+
+    final unit = await _resolvedUnit(library);
+    final enumDecl = _enumDecl(unit, 'GEpisode');
+    final fromJson = _enumMethod(enumDecl, 'fromJson');
+    expect(
+      _switchDefaultReturnsEnumValue(fromJson, 'GEpisode', 'gUnknownEpisode'),
+      isTrue,
+    );
   });
 
   test('aliases use response keys and alias fields', () async {
-    final contents = _readOutput(
-      generatedSources,
-      'lib/aliases/aliased_hero.graphql',
-      _dataExtension,
-    );
+    final library = _libraryFor(_aliasedHeroInput, _dataExtension);
+    expect(_classIn(library, 'GAliasedHeroData'), isNotNull);
 
-    expect(contents, contains('class GAliasedHeroData'));
-    expect(contents, contains('empireHero'));
-    expect(contents, contains('jediHero'));
-    expect(contents, contains("json['from']"));
-    expect(contents, contains("result['from']"));
+    final unit = await _resolvedUnit(library);
+    final empireClass = _classDecl(unit, 'GAliasedHeroData_empireHero');
+    final jediClass = _classDecl(unit, 'GAliasedHeroData_jediHero');
+
+    final empireFromJson = _factoryConstructor(empireClass, 'fromJson');
+    final empireToJson = _methodDecl(empireClass, 'toJson');
+    final jediFromJson = _factoryConstructor(jediClass, 'fromJson');
+    final jediToJson = _methodDecl(jediClass, 'toJson');
+
+    expect(_containsIndexWithString(empireFromJson, 'from'), isTrue);
+    expect(_containsIndexWithString(empireToJson, 'from'), isTrue);
+    expect(_containsIndexWithString(jediFromJson, 'from'), isTrue);
+    expect(_containsIndexWithString(jediToJson, 'from'), isTrue);
   });
 
   test('alias fragment vars and data reuse', () async {
-    final vars = _readOutput(
-      generatedSources,
-      'lib/aliases/alias_var_fragment.graphql',
-      _varExtension,
-    );
-    expect(vars, contains('class GPostsVars'));
-    expect(vars, contains('class GPostFragmentVars'));
-    expect(_countOccurrences(vars, 'final String userId;'), 2);
+    final varsLibrary = _libraryFor(_aliasVarFragmentInput, _varExtension);
+    final postsVars = _classIn(varsLibrary, 'GPostsVars');
+    final fragmentVars = _classIn(varsLibrary, 'GPostFragmentVars');
+    expect(_fieldIn(postsVars, 'userId').type, isA<InterfaceType>());
+    expect(_fieldIn(fragmentVars, 'userId').type, isA<InterfaceType>());
+    expect(_isDartCoreString(_fieldIn(postsVars, 'userId').type), isTrue);
+    expect(_isDartCoreString(_fieldIn(fragmentVars, 'userId').type), isTrue);
 
-    final data = _readOutput(
-      generatedSources,
-      'lib/aliases/alias_var_fragment.graphql',
-      _dataExtension,
-    );
-    expect(data, contains('class GPostFragmentData'));
-    expect(data, contains('isFavorited'));
-    expect(data, contains('isLiked'));
-    expect(data, isNot(contains('class GPostsData_posts')));
+    final dataLibrary = _libraryFor(_aliasVarFragmentInput, _dataExtension);
+    final postFragment = _classIn(dataLibrary, 'GPostFragmentData');
+    expect(postFragment.fields.any((field) => field.name == 'isFavorited'),
+        isTrue);
+    expect(postFragment.fields.any((field) => field.name == 'isLiked'), isTrue);
+    expect(dataLibrary.getClass('GPostsData_posts'), isNull);
   });
 
   test('no-vars operation omits vars output and uses null vars in request',
       () async {
-    final varsPath = generatedDartAssetIdForInput(
-      _package,
-      'lib/no_vars/hero_no_vars.graphql',
-      _varExtension,
-      outputDir: _outputDir,
-    );
-    expect(generatedSources.containsKey(varsPath), isFalse);
+    final varsAssetId = _assetId(_heroNoVarsInput, _varExtension);
+    expect(_generatedSources.containsKey(varsAssetId), isFalse);
 
-    final req = _readOutput(
-      generatedSources,
-      'lib/no_vars/hero_no_vars.graphql',
-      _reqExtension,
+    final reqLibrary = _libraryFor(_heroNoVarsInput, _reqExtension);
+    final reqClass = _classIn(reqLibrary, 'GHeroNoVarsReq');
+    final opRequestType = reqClass.interfaces.firstWhere(
+      (type) => type.element.name == 'OperationRequest',
+      orElse: () =>
+          throw StateError('OperationRequest not found on GHeroNoVarsReq'),
     );
-    expect(req, contains('GHeroNoVarsData'));
-    expect(req, contains('OperationRequest'));
-    expect(req, contains('Null'));
-    expect(req, contains('final Null vars = null;'));
-    expect(req, contains('const <String, dynamic>{}'));
+    expect(opRequestType.typeArguments, hasLength(2));
+    expect(_typeName(opRequestType.typeArguments.first), 'GHeroNoVarsData');
+    expect(opRequestType.typeArguments.last.isDartCoreNull, isTrue);
+
+    final varsField = _fieldIn(reqClass, 'vars');
+    expect(varsField.type.isDartCoreNull, isTrue);
   });
 
   test('interface selections include inline fragment variants', () async {
-    final contents = _readOutput(
-      generatedSources,
-      'lib/interfaces/hero_for_episode.graphql',
-      _dataExtension,
-    );
+    final library = _libraryFor(_heroForEpisodeInput, _dataExtension);
+    final heroBase = _classIn(library, 'GHeroForEpisodeData_hero');
+    expect(heroBase.isSealed, isTrue);
 
-    expect(contents, contains('sealed class GHeroForEpisodeData_hero'));
-    expect(contents, contains('class GHeroForEpisodeData_hero__asDroid'));
-    expect(contents, contains('class GHeroForEpisodeData_hero__unknown'));
-    expect(contents, contains('implements GDroidFragment'));
+    final asDroid = _classIn(library, 'GHeroForEpisodeData_hero__asDroid');
+    _classIn(library, 'GHeroForEpisodeData_hero__unknown');
+    final implementsDroid =
+        asDroid.interfaces.any((type) => type.element.name == 'GDroidFragment');
+    expect(implementsDroid, isTrue);
   });
 
   test('nested duplicate fragments reuse child fragment data', () async {
-    final contents = _readOutput(
-      generatedSources,
-      'lib/fragments/nested_duplicate_fragments.graphql',
-      _dataExtension,
-    );
-
-    expect(contents, contains('switch (json[\'__typename\'] as String)'));
-    expect(contents, contains('class GSearchResultsQueryData_search__unknown'));
-    expect(contents, contains('GFriendInfoData'));
-    expect(contents, isNot(contains('class GCharacterDetailsData_friends')));
+    final library = _libraryFor(_nestedDuplicateFragmentsInput, _dataExtension);
+    _classIn(library, 'GSearchResultsQueryData_search__unknown');
+    _classIn(library, 'GFriendInfoData');
+    expect(library.getClass('GCharacterDetailsData_friends'), isNull);
   });
 
   test('multiple fragments merge into a single selection class', () async {
-    final contents = _readOutput(
-      generatedSources,
-      'lib/fragments/multiple_fragments.graphql',
-      _dataExtension,
-    );
-
-    expect(contents, contains('class GHeroWith2FragmentsData_hero'));
-    expect(contents, contains('final String id;'));
-    expect(contents, contains('final String name;'));
+    final library = _libraryFor(_multipleFragmentsInput, _dataExtension);
+    final heroClass = _classIn(library, 'GHeroWith2FragmentsData_hero');
+    expect(heroClass.fields.any((field) => field.name == 'id'), isTrue);
+    expect(heroClass.fields.any((field) => field.name == 'name'), isTrue);
   });
 
   test('fragment variables propagate to fragment vars', () async {
-    final vars = _readOutput(
-      generatedSources,
-      'lib/fragments/hero_with_fragments.graphql',
-      _varExtension,
-    );
+    final varsLibrary = _libraryFor(_heroWithFragmentsInput, _varExtension);
+    final comparisonVars = _classIn(varsLibrary, 'GcomparisonFieldsVars');
+    final heroVars = _classIn(varsLibrary, 'GHeroWithFragmentsVars');
 
-    expect(_countOccurrences(vars, 'Value<int> first'), 2);
-    expect(vars, contains('class GcomparisonFieldsVars'));
-    expect(vars, isNot(contains('class GheroDataVars')));
+    final comparisonField = _fieldIn(comparisonVars, 'first');
+    final heroField = _fieldIn(heroVars, 'first');
+    _expectValueType(comparisonField.type, (inner) {
+      expect(_isDartCoreInt(inner), isTrue);
+    });
+    _expectValueType(heroField.type, (inner) {
+      expect(_isDartCoreInt(inner), isTrue);
+    });
+    expect(varsLibrary.getClass('GheroDataVars'), isNull);
 
-    final data = _readOutput(
-      generatedSources,
-      'lib/fragments/hero_with_fragments.graphql',
-      _dataExtension,
-    );
-    expect(data, contains('class GheroDataData'));
+    final dataLibrary = _libraryFor(_heroWithFragmentsInput, _dataExtension);
+    _classIn(dataLibrary, 'GheroDataData');
     expect(
-        data,
-        isNot(contains(
-            'class GcomparisonFieldsData_friendsConnection_edges_node')));
+      dataLibrary
+          .getClass('GcomparisonFieldsData_friendsConnection_edges_node'),
+      isNull,
+    );
   });
 
   test('list variables and input objects are typed correctly', () async {
-    final listVars = _readOutput(
-      generatedSources,
-      'lib/variables/list_argument.graphql',
-      _varExtension,
-    );
-    expect(listVars, contains('Value<List<int>> stars'));
-    expect(listVars, contains('final _i1.GEpisode episode;'));
+    final listVarsLibrary = _libraryFor(_listArgumentInput, _varExtension);
+    final listVars = _classIn(listVarsLibrary, 'GreviewsWithListArgumentVars');
+    final starsField = _fieldIn(listVars, 'stars');
+    _expectValueType(starsField.type, (inner) {
+      final listType = _asInterfaceType(inner);
+      expect(listType.isDartCoreList, isTrue);
+      expect(listType.typeArguments.single.isDartCoreInt, isTrue);
+    });
+    final episodeField = _fieldIn(listVars, 'episode');
+    expect(_typeName(episodeField.type), 'GEpisode');
 
-    final createReviewVars = _readOutput(
-      generatedSources,
-      'lib/variables/create_review.graphql',
-      _varExtension,
-    );
-    expect(createReviewVars, contains('Value<_i1.GEpisode> episode'));
-    expect(createReviewVars, contains('final _i1.GReviewInput review;'));
+    final createReviewLibrary = _libraryFor(_createReviewInput, _varExtension);
+    final createReviewVars = _classIn(createReviewLibrary, 'GCreateReviewVars');
+    final reviewEpisode = _fieldIn(createReviewVars, 'episode');
+    _expectValueType(reviewEpisode.type, (inner) {
+      expect(_typeName(inner), 'GEpisode');
+    });
+    final reviewField = _fieldIn(createReviewVars, 'review');
+    expect(_typeName(reviewField.type), 'GReviewInput');
 
-    final createCustomVars = _readOutput(
-      generatedSources,
-      'lib/variables/create_custom_field.graphql',
-      _varExtension,
-    );
-    expect(createCustomVars, contains('final _i1.GCustomFieldInput input;'));
+    final createCustomLibrary =
+        _libraryFor(_createCustomFieldInput, _varExtension);
+    final createCustomVars =
+        _classIn(createCustomLibrary, 'GCreateCustomFieldVars');
+    final inputField = _fieldIn(createCustomVars, 'input');
+    expect(_typeName(inputField.type), 'GCustomFieldInput');
   });
 
   test('custom scalar overrides appear in vars and data', () async {
-    final vars = _readOutput(
-      generatedSources,
-      'lib/scalars/review_with_date.graphql',
-      _varExtension,
-    );
-    expect(vars, contains('Value<CustomDate> createdAt'));
+    final varsLibrary = _libraryFor(_reviewWithDateInput, _varExtension);
+    final varsUnit = await _resolvedUnit(varsLibrary);
+    final varsClass = _classDecl(varsUnit, 'GReviewWithDateVars');
+    final createdAtType = _fieldTypeAnnotation(varsClass, 'createdAt');
+    expect(createdAtType.toSource(), contains('CustomDate'));
+    expect(createdAtType.toSource(), contains('Value'));
 
-    final data = _readOutput(
-      generatedSources,
-      'lib/scalars/review_with_date.graphql',
-      _dataExtension,
-    );
-    expect(data, contains('CustomDate'));
-    expect(data, contains('customDateFromJson'));
-    expect(data, contains('customDateToJson'));
+    final dataLibrary = _libraryFor(_reviewWithDateInput, _dataExtension);
+    final unit = await _resolvedUnit(dataLibrary);
+    final reviewClass = _classDecl(unit, 'GReviewWithDateData_createReview');
+    final createdAtDataType = _fieldTypeAnnotation(reviewClass, 'createdAt');
+    expect(createdAtDataType.toSource(), contains('CustomDate'));
+    final fromJson = _factoryConstructor(reviewClass, 'fromJson');
+    final toJson = _methodDecl(reviewClass, 'toJson');
+    expect(_containsMethodInvocation(fromJson, 'customDateFromJson'), isTrue);
+    expect(_containsMethodInvocation(toJson, 'customDateToJson'), isTrue);
   });
 
   test('request classes expose execRequest and parseData', () async {
-    final req = _readOutput(
-      generatedSources,
-      'lib/no_vars/hero_no_vars.graphql',
-      _reqExtension,
-    );
-    expect(req, contains('class GHeroNoVarsReq'));
-    expect(req, contains('Request get execRequest'));
-    expect(req, contains('parseData'));
+    final reqLibrary = _libraryFor(_heroNoVarsInput, _reqExtension);
+    final reqClass = _classIn(reqLibrary, 'GHeroNoVarsReq');
+    expect(_declaresGetter(reqClass, 'execRequest'), isTrue);
+    expect(_declaresMethod(reqClass, 'parseData'), isTrue);
   });
 
   test('data classes include copyWith and overrides', () async {
-    final contents = _readOutput(
-      generatedSources,
-      'lib/interfaces/hero_for_episode.graphql',
-      _dataExtension,
-    );
-
-    expect(contents, contains('copyWith'));
-    expect(contents, contains('operator =='));
-    expect(contents, contains('hashCode'));
-    expect(contents, contains('toString'));
+    final library = _libraryFor(_heroForEpisodeInput, _dataExtension);
+    final heroData = _classIn(library, 'GHeroForEpisodeData');
+    expect(_declaresMethod(heroData, 'copyWith'), isTrue);
+    expect(_declaresMethod(heroData, '=='), isTrue);
+    expect(_declaresGetter(heroData, 'hashCode'), isTrue);
+    expect(_declaresMethod(heroData, 'toString'), isTrue);
   });
 
   test('data classes omit utilities when disabled', () async {
@@ -361,16 +401,23 @@ void main() {
       },
     );
 
-    final contents = _readOutput(
-      extractGeneratedDartSources(result.readerWriter, _package),
-      'lib/interfaces/hero_for_episode.graphql',
-      _dataExtension,
+    final sources = extractGeneratedDartSources(result.readerWriter, _package);
+    final assetId = _assetId(_heroForEpisodeInput, _dataExtension);
+    final resolvedLibraries = await resolveGeneratedLibraries(
+      sources,
+      {assetId},
+      rootPackage: _package,
     );
+    final library = resolvedLibraries[assetId];
+    if (library == null) {
+      throw StateError('Missing data output for utilities-disabled test.');
+    }
 
-    expect(contents, isNot(contains('copyWith')));
-    expect(contents, isNot(contains('operator ==')));
-    expect(contents, isNot(contains('hashCode')));
-    expect(contents, isNot(contains('toString')));
+    final heroData = _classIn(library, 'GHeroForEpisodeData');
+    expect(_declaresMethod(heroData, 'copyWith'), isFalse);
+    expect(_declaresMethod(heroData, '=='), isFalse);
+    expect(_declaresGetter(heroData, 'hashCode'), isFalse);
+    expect(_declaresMethod(heroData, 'toString'), isFalse);
   });
 }
 
@@ -401,31 +448,272 @@ Future<Map<String, Object>> _loadGraphqlAssets(
   return assets;
 }
 
-String _readOutput(
-  Map<String, String> sources,
-  String inputPath,
-  String extension,
-) {
-  return readGeneratedDartSource(
-    sources,
-    generatedDartAssetIdForInput(
-      _package,
-      inputPath,
-      extension,
-      outputDir: _outputDir,
-    ),
+String _assetId(String inputPath, String extension) {
+  return generatedDartAssetIdForInput(
+    _package,
+    inputPath,
+    extension,
+    outputDir: _outputDir,
   );
 }
 
-int _countOccurrences(String haystack, String needle) {
-  var count = 0;
-  var index = 0;
-  while (true) {
-    index = haystack.indexOf(needle, index);
-    if (index == -1) {
-      return count;
+LibraryElement _libraryFor(String inputPath, String extension) {
+  final assetId = _assetId(inputPath, extension);
+  final library = _libraries[assetId];
+  if (library == null) {
+    throw StateError('Missing generated library for $assetId');
+  }
+  return library;
+}
+
+ClassElement _classIn(LibraryElement library, String name) {
+  final element = library.getClass(name);
+  if (element == null) {
+    throw StateError(
+      'Missing class $name in ${library.firstFragment.source.uri}',
+    );
+  }
+  return element;
+}
+
+EnumElement _enumIn(LibraryElement library, String name) {
+  final element = library.getEnum(name);
+  if (element == null) {
+    throw StateError(
+      'Missing enum $name in ${library.firstFragment.source.uri}',
+    );
+  }
+  return element;
+}
+
+FieldElement _fieldIn(ClassElement element, String name) {
+  final field = element.fields.firstWhere(
+    (candidate) => candidate.name == name,
+    orElse: () => throw StateError('Missing field $name on ${element.name}'),
+  );
+  return field;
+}
+
+bool _declaresMethod(ClassElement element, String name) {
+  return element.methods.any((method) => method.name == name);
+}
+
+bool _declaresGetter(ClassElement element, String name) {
+  return element.getters.any((getter) => getter.name == name);
+}
+
+void _expectValueType(
+  DartType type,
+  void Function(DartType) innerCheck,
+) {
+  final interface = _asInterfaceType(type);
+  expect(interface.element.name, 'Value');
+  expect(interface.typeArguments, hasLength(1));
+  innerCheck(interface.typeArguments.single);
+}
+
+InterfaceType _asInterfaceType(DartType type) {
+  if (type is InterfaceType) {
+    return type;
+  }
+  throw StateError('Expected interface type, got ${type.runtimeType}');
+}
+
+String _typeName(DartType type) {
+  if (type is InterfaceType) {
+    final name = type.element.name;
+    if (name != null && name.isNotEmpty) {
+      return name;
     }
-    count++;
-    index += needle.length;
+  }
+  final display = type.getDisplayString(withNullability: false);
+  final parts = display.split('.');
+  return parts.isNotEmpty ? parts.last : display;
+}
+
+bool _isDartCoreString(DartType type) =>
+    type is InterfaceType && type.isDartCoreString;
+
+bool _isDartCoreInt(DartType type) =>
+    type is InterfaceType && type.isDartCoreInt;
+
+Map<String, Set<String>> _possibleTypesMap(LibraryElement library) {
+  final variable = library.topLevelVariables.firstWhere(
+    (candidate) => candidate.name == 'possibleTypesMap',
+    orElse: () => throw StateError(
+      'Missing possibleTypesMap in ${library.firstFragment.source.uri}',
+    ),
+  );
+  final value = variable.computeConstantValue();
+  if (value == null) {
+    throw StateError('possibleTypesMap has no constant value');
+  }
+  final mapValue = value.toMapValue();
+  if (mapValue == null) {
+    throw StateError('possibleTypesMap is not a const map');
+  }
+
+  final result = <String, Set<String>>{};
+  for (final entry in mapValue.entries) {
+    final key = entry.key?.toStringValue();
+    final setValue = entry.value?.toSetValue();
+    if (key == null || setValue == null) {
+      throw StateError('Invalid entry in possibleTypesMap');
+    }
+    result[key] = setValue
+        .map((value) => value.toStringValue())
+        .whereType<String>()
+        .toSet();
+  }
+
+  return result;
+}
+
+Future<CompilationUnit> _resolvedUnit(LibraryElement library) async {
+  final result = await library.session.getResolvedLibraryByElement(library);
+  if (result is! ResolvedLibraryResult) {
+    throw StateError(
+      'Failed to resolve ${library.firstFragment.source.uri}',
+    );
+  }
+  return result.units.first.unit;
+}
+
+EnumDeclaration _enumDecl(CompilationUnit unit, String name) {
+  return unit.declarations
+      .whereType<EnumDeclaration>()
+      .firstWhere((decl) => decl.name.lexeme == name);
+}
+
+ClassDeclaration _classDecl(CompilationUnit unit, String name) {
+  return unit.declarations
+      .whereType<ClassDeclaration>()
+      .firstWhere((decl) => decl.name.lexeme == name);
+}
+
+MethodDeclaration _enumMethod(EnumDeclaration enumDecl, String name) {
+  return enumDecl.members
+      .whereType<MethodDeclaration>()
+      .firstWhere((member) => member.name.lexeme == name);
+}
+
+MethodDeclaration _methodDecl(ClassDeclaration classDecl, String name) {
+  return classDecl.members
+      .whereType<MethodDeclaration>()
+      .firstWhere((member) => member.name.lexeme == name);
+}
+
+ConstructorDeclaration _factoryConstructor(
+  ClassDeclaration classDecl,
+  String name,
+) {
+  return classDecl.members
+      .whereType<ConstructorDeclaration>()
+      .firstWhere((ctor) => ctor.name?.lexeme == name);
+}
+
+TypeAnnotation _fieldTypeAnnotation(
+  ClassDeclaration classDecl,
+  String fieldName,
+) {
+  for (final member in classDecl.members.whereType<FieldDeclaration>()) {
+    for (final variable in member.fields.variables) {
+      if (variable.name.lexeme == fieldName) {
+        final type = member.fields.type;
+        if (type == null) {
+          throw StateError('Field $fieldName is missing a type annotation.');
+        }
+        return type;
+      }
+    }
+  }
+  throw StateError('Missing field $fieldName in ${classDecl.name.lexeme}');
+}
+
+bool _containsIndexWithString(AstNode node, String value) {
+  final visitor = _IndexStringVisitor(value);
+  node.visitChildren(visitor);
+  return visitor.found;
+}
+
+bool _containsMethodInvocation(AstNode node, String name) {
+  final visitor = _MethodInvocationVisitor(name);
+  node.visitChildren(visitor);
+  return visitor.found;
+}
+
+bool _switchDefaultReturnsEnumValue(
+  MethodDeclaration method,
+  String enumName,
+  String valueName,
+) {
+  final body = method.body;
+  if (body is! BlockFunctionBody) {
+    throw StateError('Expected block body in ${method.name.lexeme}');
+  }
+  final switchStatement = body.block.statements
+      .whereType<SwitchStatement>()
+      .firstWhere((_) => true, orElse: () {
+    throw StateError('Missing switch statement in ${method.name.lexeme}');
+  });
+  final defaultMember = switchStatement.members
+      .whereType<SwitchDefault>()
+      .firstWhere((_) => true, orElse: () {
+    throw StateError('Missing default case in ${method.name.lexeme}');
+  });
+  final returnStatement = defaultMember.statements
+      .whereType<ReturnStatement>()
+      .firstWhere((_) => true, orElse: () {
+    throw StateError('Missing return in default case');
+  });
+  return _isEnumValueReference(returnStatement.expression, enumName, valueName);
+}
+
+bool _isEnumValueReference(
+  Expression? expression,
+  String enumName,
+  String valueName,
+) {
+  if (expression is PrefixedIdentifier) {
+    return expression.prefix.name == enumName &&
+        expression.identifier.name == valueName;
+  }
+  if (expression is PropertyAccess) {
+    final target = expression.target;
+    return target is SimpleIdentifier &&
+        target.name == enumName &&
+        expression.propertyName.name == valueName;
+  }
+  return false;
+}
+
+class _IndexStringVisitor extends RecursiveAstVisitor<void> {
+  final String value;
+  bool found = false;
+
+  _IndexStringVisitor(this.value);
+
+  @override
+  void visitIndexExpression(IndexExpression node) {
+    if (node.index is SimpleStringLiteral &&
+        (node.index as SimpleStringLiteral).value == value) {
+      found = true;
+    }
+    super.visitIndexExpression(node);
+  }
+}
+
+class _MethodInvocationVisitor extends RecursiveAstVisitor<void> {
+  final String name;
+  bool found = false;
+
+  _MethodInvocationVisitor(this.name);
+
+  @override
+  void visitMethodInvocation(MethodInvocation node) {
+    if (node.methodName.name == name) {
+      found = true;
+    }
+    super.visitMethodInvocation(node);
   }
 }

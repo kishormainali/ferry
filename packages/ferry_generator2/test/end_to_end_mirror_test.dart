@@ -526,7 +526,7 @@ String _typeName(DartType type) {
       return name;
     }
   }
-  final display = type.getDisplayString(withNullability: false);
+  final display = type.getDisplayString().replaceAll('?', '');
   final parts = display.split('.');
   return parts.isNotEmpty ? parts.last : display;
 }

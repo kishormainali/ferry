@@ -1,7 +1,7 @@
 import "package:code_builder/code_builder.dart";
 
 import "data_emitter_context.dart";
-import "naming.dart";
+import "../utils/naming.dart";
 
 List<Reference> fragmentInterfaceRefs({
   required DataEmitterContext ctx,

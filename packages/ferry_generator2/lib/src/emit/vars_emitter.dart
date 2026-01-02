@@ -1,187 +1,78 @@
 import "package:code_builder/code_builder.dart";
 import "package:gql/ast.dart";
 
-import "config.dart";
-import "naming.dart";
-import "schema.dart";
-import "type_utils.dart";
+import "../config/config.dart";
+import "../utils/naming.dart";
+import "../schema/schema.dart";
+import "../selection/selection_resolver.dart";
+import "../schema/type_utils.dart";
 
-Library buildSchemaLibrary({
-  required SchemaIndex schema,
-  required BuilderConfig config,
-}) {
-  final emitter = _SchemaEmitter(schema, config);
-  return emitter.buildLibrary();
-}
-
-List<Spec> _buildEnum(
-  EnumTypeDefinitionNode node,
-  SchemaIndex schema,
-  EnumFallbackConfig config,
-) {
-  final enumName = builtClassName(node.name.value);
-  final enumValues = schema.lookupEnumValueDefinitions(node);
-  final fallbackName = _selectFallbackValueName(node, enumValues, config);
-
-  final values = <_EnumMappedValue>[
-    for (final value in enumValues)
-      _EnumMappedValue(
-        graphQLName: value.name.value,
-        dartName: identifier(value.name.value),
-      ),
-    if (fallbackName != null)
-      _EnumMappedValue(
-        graphQLName: fallbackName,
-        dartName: identifier(fallbackName),
-      ),
-  ];
-
-  return [
-    Enum(
-      (b) => b
-        ..name = enumName
-        ..values.addAll(
-          values.map(
-            (value) => EnumValue((b) => b..name = value.dartName),
-          ),
-        )
-        ..methods.addAll([
-          _buildEnumFromJson(enumName, values, fallbackName),
-          _buildEnumToJson(enumName, values),
-        ]),
-    ),
-  ];
-}
-
-Method _buildEnumFromJson(
-  String enumName,
-  List<_EnumMappedValue> values,
-  String? fallbackName,
-) {
-  final cases = values.where((value) => value.graphQLName != fallbackName).map(
-        (value) => Code(
-            "case r'${value.graphQLName}': return $enumName.${value.dartName};"),
-      );
-
-  final fallbackCase = fallbackName == null
-      ? Code(
-          "default: throw ArgumentError.value(value, 'value', 'Unknown $enumName value');",
-        )
-      : Code("default: return $enumName.${identifier(fallbackName)};");
-
-  return Method(
-    (b) => b
-      ..name = "fromJson"
-      ..static = true
-      ..returns = refer(enumName)
-      ..requiredParameters.add(
-        Parameter(
-          (b) => b
-            ..name = "value"
-            ..type = refer("String"),
-        ),
-      )
-      ..body = Block.of([
-        Code("switch(value) {"),
-        ...cases,
-        fallbackCase,
-        Code("}"),
-      ]),
-  );
-}
-
-Method _buildEnumToJson(
-  String enumName,
-  List<_EnumMappedValue> values,
-) {
-  final cases = values.map(
-    (value) => Code(
-      "case $enumName.${value.dartName}: return r'${value.graphQLName}';",
-    ),
-  );
-
-  return Method(
-    (b) => b
-      ..name = "toJson"
-      ..returns = refer("String")
-      ..body = Block.of([
-        Code("switch(this) {"),
-        ...cases,
-        Code("}"),
-      ]),
-  );
-}
-
-Spec _buildPossibleTypesMap(SchemaIndex schema) {
-  final possibleTypes = schema.possibleTypesMap();
-  return declareConst(
-    "possibleTypesMap",
-    type: Reference("Map<String, Set<String>>"),
-  ).assign(literalMap(possibleTypes)).statement;
-}
-
-String? _selectFallbackValueName(
-  EnumTypeDefinitionNode node,
-  List<EnumValueDefinitionNode> values,
-  EnumFallbackConfig config,
-) {
-  final localFallback = config.fallbackValueMap[node.name.value];
-  final fallbackBase = localFallback ??
-      (config.generateFallbackValuesGlobally
-          ? config.globalEnumFallbackName
-          : null);
-  if (fallbackBase == null) return null;
-
-  final existing = values.map((value) => value.name.value).toSet();
-  var candidate = fallbackBase;
-  while (existing.contains(candidate)) {
-    candidate = "g$candidate";
-  }
-  return candidate;
-}
-
-class _EnumMappedValue {
-  final String graphQLName;
-  final String dartName;
-
-  const _EnumMappedValue({
-    required this.graphQLName,
-    required this.dartName,
-  });
-}
-
-class _SchemaEmitter {
+class VarsEmitter {
   final SchemaIndex schema;
   final BuilderConfig config;
-  final Set<String> _extraImports = {};
+  final DocumentIndex documentIndex;
+  final Set<String> extraImports = {};
+
   bool _usesTriStateValue = false;
 
-  _SchemaEmitter(this.schema, this.config);
+  VarsEmitter({
+    required this.schema,
+    required this.config,
+    required this.documentIndex,
+  });
 
-  Library buildLibrary() {
+  Library? buildLibrary({
+    required Iterable<FragmentDefinitionNode> ownedFragments,
+    required Iterable<OperationDefinitionNode> ownedOperations,
+  }) {
     final specs = <Spec>[];
 
-    for (final definition in schema.document.definitions) {
-      if (definition is EnumTypeDefinitionNode &&
-          !definition.name.value.startsWith("__")) {
-        specs.addAll(_buildEnum(
-          definition,
-          schema,
-          config.enumFallbackConfig,
-        ));
+    for (final operation in ownedOperations) {
+      if (operation.name == null) continue;
+      if (operation.variableDefinitions.isEmpty) {
+        continue;
       }
-      if (definition is InputObjectTypeDefinitionNode &&
-          !definition.name.value.startsWith("__")) {
-        specs.add(_buildInputObject(definition));
-      }
+      specs.addAll(
+        _buildVarsClass(
+          "${operation.name!.value}Vars",
+          operation.variableDefinitions
+              .map(
+                (definition) => _fieldSpecFromDefinition(
+                  definition.variable.name.value,
+                  definition.type,
+                ),
+              )
+              .toList(),
+        ),
+      );
     }
 
-    if (config.shouldGeneratePossibleTypes) {
-      specs.add(_buildPossibleTypesMap(schema));
+    for (final fragment in ownedFragments) {
+      final varTypes = _fragmentVarTypes(fragment);
+      if (varTypes.isEmpty) {
+        continue;
+      }
+      specs.addAll(
+        _buildVarsClass(
+          "${fragment.name.value}Vars",
+          varTypes.entries
+              .map(
+                (entry) => _fieldSpecFromDefinition(
+                  entry.key,
+                  entry.value,
+                ),
+              )
+              .toList(),
+        ),
+      );
+    }
+
+    if (specs.isEmpty) {
+      return null;
     }
 
     if (_usesTriStateValue) {
-      _extraImports.add(
+      extraImports.add(
         "package:gql_tristate_value/gql_tristate_value.dart",
       );
     }
@@ -189,33 +80,35 @@ class _SchemaEmitter {
     return Library(
       (b) => b
         ..directives.addAll(
-          _extraImports.map(Directive.import),
+          extraImports.map(Directive.import),
         )
         ..body.addAll(specs),
     );
   }
 
-  Class _buildInputObject(InputObjectTypeDefinitionNode node) {
-    final fields = schema
-        .lookupInputValueDefinitions(node)
-        .map((field) => _fieldSpecFromDefinition(field.name.value, field.type))
-        .toList();
-    final className = builtClassName(node.name.value);
-    return Class(
-      (b) => b
-        ..name = className
-        ..fields.addAll(fields.map(_buildField))
-        ..constructors.addAll([
-          _buildConstructor(fields),
-          _buildFromJsonFactory(className, fields),
-        ])
-        ..methods.add(
-          _buildToJsonMethod(fields),
-        ),
-    );
+  Map<String, TypeNode> fragmentVarTypes(FragmentDefinitionNode fragment) {
+    return _fragmentVarTypes(fragment);
   }
 
-  Constructor _buildConstructor(List<_InputFieldSpec> fields) {
+  List<Spec> _buildVarsClass(String name, List<InputFieldSpec> fields) {
+    final className = builtClassName(name);
+    return [
+      Class(
+        (b) => b
+          ..name = className
+          ..fields.addAll(fields.map(_buildField))
+          ..constructors.addAll([
+            _buildConstructor(fields),
+            _buildFromJsonFactory(className, fields),
+          ])
+          ..methods.add(
+            _buildToJsonMethod(fields),
+          ),
+      ),
+    ];
+  }
+
+  Constructor _buildConstructor(List<InputFieldSpec> fields) {
     final parameters = fields.map(
       (field) => Parameter(
         (b) => b
@@ -237,7 +130,7 @@ class _SchemaEmitter {
 
   Constructor _buildFromJsonFactory(
     String className,
-    List<_InputFieldSpec> fields,
+    List<InputFieldSpec> fields,
   ) {
     final args = <String, Expression>{};
     for (final field in fields) {
@@ -257,7 +150,7 @@ class _SchemaEmitter {
     );
   }
 
-  Method _buildToJsonMethod(List<_InputFieldSpec> fields) {
+  Method _buildToJsonMethod(List<InputFieldSpec> fields) {
     final statements = <Code>[
       const Code(r"final _$result = <String, dynamic>{};"),
     ];
@@ -312,14 +205,14 @@ class _SchemaEmitter {
     );
   }
 
-  Field _buildField(_InputFieldSpec field) => Field(
+  Field _buildField(InputFieldSpec field) => Field(
         (b) => b
           ..name = field.propertyName
           ..type = field.typeRef
           ..modifier = FieldModifier.final$,
       );
 
-  _InputFieldSpec _fieldSpecFromDefinition(String name, TypeNode typeNode) {
+  InputFieldSpec _fieldSpecFromDefinition(String name, TypeNode typeNode) {
     final responseKey = name;
     final propertyName = identifier(name);
     final namedTypeName = unwrapNamedTypeName(typeNode) ?? "Object";
@@ -328,7 +221,10 @@ class _SchemaEmitter {
     Reference namedTypeRef;
     if (typeDef is InputObjectTypeDefinitionNode ||
         typeDef is EnumTypeDefinitionNode) {
-      namedTypeRef = Reference(builtClassName(namedTypeName));
+      namedTypeRef = Reference(
+        builtClassName(namedTypeName),
+        "#schema",
+      );
     } else if (typeDef is ScalarTypeDefinitionNode) {
       namedTypeRef = _scalarReference(namedTypeName);
     } else {
@@ -346,7 +242,7 @@ class _SchemaEmitter {
       isTriState: isTriState,
     );
 
-    return _InputFieldSpec(
+    return InputFieldSpec(
       responseKey: responseKey,
       propertyName: propertyName,
       typeNode: typeNode,
@@ -360,7 +256,7 @@ class _SchemaEmitter {
     final override = config.typeOverrides[typeName];
     if (override?.type != null) {
       if (override!.import != null) {
-        _extraImports.add(override.import!);
+        extraImports.add(override.import!);
       }
       return Reference(override.type);
     }
@@ -373,6 +269,49 @@ class _SchemaEmitter {
       "String" => refer("String"),
       _ => refer("Object"),
     };
+  }
+
+  bool _canUseListFrom({
+    required String typeName,
+    required TypeDefinitionNode? typeDef,
+    required TypeOverrideConfig? override,
+  }) {
+    if (typeDef is! ScalarTypeDefinitionNode) return false;
+    if (override?.fromJsonFunctionName != null) return false;
+    if (_isBuiltinScalarName(typeName)) return true;
+    final overrideType = override?.type;
+    if (overrideType == null) return false;
+    final normalized = overrideType.replaceAll(" ", "");
+    if (normalized == "Object" ||
+        normalized == "Object?" ||
+        normalized == "dynamic") {
+      return false;
+    }
+    return true;
+  }
+
+  bool _isBuiltinScalarName(String typeName) => switch (typeName) {
+        "Int" => true,
+        "Float" => true,
+        "Boolean" => true,
+        "ID" => true,
+        "String" => true,
+        _ => false,
+      };
+
+  Reference _typeReferenceWithNullability(
+    Reference typeRef, {
+    required bool isNullable,
+  }) {
+    if (typeRef is TypeReference) {
+      return typeRef.rebuild((b) => b..isNullable = isNullable);
+    }
+    return TypeReference(
+      (b) => b
+        ..symbol = typeRef.symbol
+        ..url = typeRef.url
+        ..isNullable = isNullable,
+    );
   }
 
   Reference _typeReferenceForTypeNode(
@@ -427,7 +366,7 @@ class _SchemaEmitter {
     throw StateError("Invalid type node");
   }
 
-  Expression _fromJsonExpression(_InputFieldSpec field) {
+  Expression _fromJsonExpression(InputFieldSpec field) {
     final accessExpr = refer("json").index(literalString(field.responseKey));
     if (field.isTriState) {
       final inner = _fromJsonForTypeNode(field.typeNode, field, accessExpr);
@@ -443,10 +382,38 @@ class _SchemaEmitter {
 
   Expression _fromJsonForTypeNode(
     TypeNode node,
-    _InputFieldSpec field,
+    InputFieldSpec field,
     Expression valueExpr,
   ) {
     if (node is ListTypeNode) {
+      if (node.type is NamedTypeNode) {
+        final innerNode = node.type as NamedTypeNode;
+        final typeName = innerNode.name.value;
+        final typeDef = schema.lookupType(NameNode(value: typeName));
+        final override = config.typeOverrides[typeName];
+        if (_canUseListFrom(
+          typeName: typeName,
+          typeDef: typeDef,
+          override: override,
+        )) {
+          final scalarRef = _scalarReference(typeName);
+          final innerTypeRef = _typeReferenceWithNullability(
+            scalarRef,
+            isNullable: !innerNode.isNonNull,
+          );
+          final listTypeRef = TypeReference(
+            (b) => b
+              ..symbol = "List"
+              ..types.add(innerTypeRef),
+          );
+          final castExpr = valueExpr.asA(_listDynamicType());
+          final fromExpr = listTypeRef.property("from").call([castExpr]);
+          if (node.isNonNull) {
+            return fromExpr;
+          }
+          return _nullGuard(valueExpr, fromExpr);
+        }
+      }
       final innerExpr = _fromJsonForTypeNode(node.type, field, refer(r"_$e"));
       final castExpr = valueExpr.asA(_listDynamicType());
       final mapped = castExpr
@@ -491,7 +458,7 @@ class _SchemaEmitter {
     required String typeName,
     required TypeDefinitionNode? typeDef,
     required TypeOverrideConfig? override,
-    required _InputFieldSpec field,
+    required InputFieldSpec field,
     required Expression valueExpr,
   }) {
     if (override?.fromJsonFunctionName != null) {
@@ -513,7 +480,7 @@ class _SchemaEmitter {
   }
 
   Expression _toJsonExpression(
-    _InputFieldSpec field, {
+    InputFieldSpec field, {
     required Expression valueExpr,
   }) {
     return _toJsonForTypeNode(
@@ -525,7 +492,7 @@ class _SchemaEmitter {
 
   Expression _toJsonForTypeNode(
     TypeNode node,
-    _InputFieldSpec field,
+    InputFieldSpec field,
     Expression valueExpr,
   ) {
     if (node is ListTypeNode) {
@@ -572,7 +539,7 @@ class _SchemaEmitter {
     required String typeName,
     required TypeDefinitionNode? typeDef,
     required TypeOverrideConfig? override,
-    required _InputFieldSpec field,
+    required InputFieldSpec field,
     required Expression valueExpr,
   }) {
     if (override?.toJsonFunctionName != null) {
@@ -587,9 +554,140 @@ class _SchemaEmitter {
 
   bool get _useTriState =>
       config.triStateOptionalsConfig == TriStateValueConfig.onAllNullableFields;
+
+  Map<String, TypeNode> _fragmentVarTypes(FragmentDefinitionNode fragment) {
+    return _collectVarTypes(
+      fragment.selectionSet,
+      fragment.typeCondition.on.name.value,
+      fragmentStack: {fragment.name.value},
+    );
+  }
+
+  Map<String, TypeNode> _collectVarTypes(
+    SelectionSetNode selectionSet,
+    String parentTypeName, {
+    required Set<String> fragmentStack,
+  }) {
+    final parentType = schema.lookupType(NameNode(value: parentTypeName));
+    if (parentType == null) return {};
+
+    final result = <String, TypeNode>{};
+
+    for (final selection in selectionSet.selections) {
+      if (selection is FieldNode) {
+        final fieldDef =
+            schema.lookupFieldDefinitionNode(parentType, selection.name);
+        if (fieldDef != null) {
+          for (final argument in selection.arguments) {
+            final argDef =
+                fieldDef.args.whereType<InputValueDefinitionNode?>().firstWhere(
+                      (arg) => arg?.name.value == argument.name.value,
+                      orElse: () => null,
+                    );
+            if (argDef != null) {
+              _mergeVarTypes(
+                result,
+                _collectVarTypesFromValue(argument.value, argDef.type),
+              );
+            }
+          }
+
+          if (selection.selectionSet != null) {
+            final fieldType =
+                schema.lookupTypeDefinitionFromTypeNode(fieldDef.type);
+            if (fieldType != null) {
+              _mergeVarTypes(
+                result,
+                _collectVarTypes(
+                  selection.selectionSet!,
+                  fieldType.name.value,
+                  fragmentStack: fragmentStack,
+                ),
+              );
+            }
+          }
+        }
+      } else if (selection is InlineFragmentNode) {
+        final typeName =
+            selection.typeCondition?.on.name.value ?? parentTypeName;
+        _mergeVarTypes(
+          result,
+          _collectVarTypes(
+            selection.selectionSet,
+            typeName,
+            fragmentStack: fragmentStack,
+          ),
+        );
+      } else if (selection is FragmentSpreadNode) {
+        final name = selection.name.value;
+        if (fragmentStack.contains(name)) {
+          throw StateError("Fragment spread cycle detected at $name");
+        }
+        final fragment = documentIndex.getFragment(name);
+        _mergeVarTypes(
+          result,
+          _collectVarTypes(
+            fragment.selectionSet,
+            fragment.typeCondition.on.name.value,
+            fragmentStack: {...fragmentStack, name},
+          ),
+        );
+      }
+    }
+
+    return result;
+  }
+
+  Map<String, TypeNode> _collectVarTypesFromValue(
+    ValueNode value,
+    TypeNode typeNode,
+  ) {
+    if (value is VariableNode) {
+      return {value.name.value: typeNode};
+    }
+    if (value is ListValueNode && typeNode is ListTypeNode) {
+      final result = <String, TypeNode>{};
+      for (final entry in value.values) {
+        _mergeVarTypes(
+          result,
+          _collectVarTypesFromValue(entry, typeNode.type),
+        );
+      }
+      return result;
+    }
+    if (value is ObjectValueNode) {
+      final namedType = unwrapNamedType(typeNode);
+      if (namedType == null) return {};
+      final inputDef = schema.lookupTypeAs<InputObjectTypeDefinitionNode>(
+        namedType.name,
+      );
+      if (inputDef == null) return {};
+      final result = <String, TypeNode>{};
+      for (final field in value.fields) {
+        final inputField =
+            schema.lookupInputFieldDefinition(inputDef, field.name);
+        if (inputField == null) continue;
+        _mergeVarTypes(
+          result,
+          _collectVarTypesFromValue(field.value, inputField.type),
+        );
+      }
+      return result;
+    }
+    return {};
+  }
+
+  void _mergeVarTypes(
+    Map<String, TypeNode> target,
+    Map<String, TypeNode> other,
+  ) {
+    for (final entry in other.entries) {
+      target[entry.key] = entry.value;
+    }
+  }
 }
 
-class _InputFieldSpec {
+class InputFieldSpec {
   final String responseKey;
   final String propertyName;
   final TypeNode typeNode;
@@ -597,7 +695,7 @@ class _InputFieldSpec {
   final Reference namedTypeRef;
   final bool isTriState;
 
-  const _InputFieldSpec({
+  const InputFieldSpec({
     required this.responseKey,
     required this.propertyName,
     required this.typeNode,

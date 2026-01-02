@@ -1,7 +1,7 @@
-import "config.dart";
+import "../config/config.dart";
 import "data_emitter_types.dart";
-import "schema.dart";
-import "selection_resolver.dart";
+import "../schema/schema.dart";
+import "../selection/selection_resolver.dart";
 
 const utilsImportAlias = "_gqlUtils";
 const utilsPrefix = "$utilsImportAlias.";

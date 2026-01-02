@@ -1,5 +1,5 @@
 import 'package:code_builder/code_builder.dart';
-import 'package:ferry_generator2/src/allocator.dart';
+import 'package:ferry_generator2/src/utils/allocator.dart';
 import 'package:test/test.dart';
 
 void main() {

@@ -5,9 +5,9 @@ import "data_emitter_classes.dart";
 import "data_emitter_context.dart";
 import "data_emitter_fields.dart";
 import "data_emitter_types.dart";
-import "naming.dart";
-import "selection_resolver.dart";
-import "type_utils.dart";
+import "../utils/naming.dart";
+import "../selection/selection_resolver.dart";
+import "../schema/type_utils.dart";
 
 void indexFragments({required DataEmitterContext ctx}) {
   for (final fragment in ctx.documentIndex.fragments.values) {

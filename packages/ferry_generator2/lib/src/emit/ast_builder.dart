@@ -1,8 +1,8 @@
 import "package:code_builder/code_builder.dart";
 import "package:gql/ast.dart";
 
-import "naming.dart";
-import "source.dart";
+import "../utils/naming.dart";
+import "../source/source.dart";
 
 Library buildAstLibrary(DocumentSource source) {
   final definitions = source.document.definitions.map(

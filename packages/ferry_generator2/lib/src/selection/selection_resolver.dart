@@ -1,8 +1,8 @@
 import "package:gql/ast.dart";
 import "package:gql/language.dart";
 
-import "schema.dart";
-import "type_utils.dart";
+import "../schema/schema.dart";
+import "../schema/type_utils.dart";
 
 class DocumentIndex {
   final DocumentNode document;

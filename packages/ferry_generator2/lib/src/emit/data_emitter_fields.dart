@@ -1,12 +1,12 @@
 import "package:code_builder/code_builder.dart";
 import "package:gql/ast.dart";
 
-import "config.dart";
+import "../config/config.dart";
 import "data_emitter_context.dart";
 import "data_emitter_types.dart";
-import "naming.dart";
-import "selection_resolver.dart";
-import "type_utils.dart";
+import "../utils/naming.dart";
+import "../selection/selection_resolver.dart";
+import "../schema/type_utils.dart";
 
 List<FieldSpec> buildFieldSpecs({
   required DataEmitterContext ctx,

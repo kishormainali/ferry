@@ -1,6 +1,6 @@
 import "package:gql/ast.dart";
 
-import "naming.dart";
+import "../utils/naming.dart";
 
 class DocumentSource {
   final String url;

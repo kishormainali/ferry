@@ -1,12 +1,12 @@
 import "package:code_builder/code_builder.dart";
 import "package:gql/ast.dart";
 
-import "config.dart";
+import "../config/config.dart";
 import "data_emitter_classes.dart";
 import "data_emitter_context.dart";
 import "data_emitter_fragments.dart";
-import "schema.dart";
-import "selection_resolver.dart";
+import "../schema/schema.dart";
+import "../selection/selection_resolver.dart";
 
 class DataEmitter {
   final DataEmitterContext _ctx;

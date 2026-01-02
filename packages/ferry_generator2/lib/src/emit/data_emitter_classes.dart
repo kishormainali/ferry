@@ -6,8 +6,8 @@ import "data_emitter_fields.dart";
 import "data_emitter_json.dart";
 import "data_emitter_types.dart";
 import "fragment_interface_refs.dart";
-import "naming.dart";
-import "selection_resolver.dart";
+import "../utils/naming.dart";
+import "../selection/selection_resolver.dart";
 
 ({List<Spec> specs, DataEmitterContext ctx}) buildOperationData({
   required DataEmitterContext ctx,

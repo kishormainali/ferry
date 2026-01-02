@@ -1,9 +1,9 @@
 import "package:gql/ast.dart";
 import "package:gql/language.dart";
 
-import "schema.dart";
+import "../schema/schema.dart";
 import "selection_resolver.dart";
-import "type_utils.dart";
+import "../schema/type_utils.dart";
 
 class DocumentValidator {
   final SchemaIndex schema;

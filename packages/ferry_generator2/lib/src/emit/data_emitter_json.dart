@@ -1,7 +1,7 @@
 import "package:code_builder/code_builder.dart";
 import "package:gql/ast.dart";
 
-import "config.dart";
+import "../config/config.dart";
 import "data_emitter_context.dart";
 import "data_emitter_fields.dart";
 import "data_emitter_types.dart";

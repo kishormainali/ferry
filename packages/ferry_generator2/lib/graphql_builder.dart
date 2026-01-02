@@ -5,22 +5,22 @@ import "package:code_builder/code_builder.dart";
 import "package:gql/ast.dart";
 import "package:path/path.dart" as p;
 
-import "src/add_typenames.dart";
-import "src/allocator.dart";
-import "src/ast_builder.dart";
-import "src/config.dart";
-import "src/data_emitter.dart";
-import "src/locations.dart";
-import "src/reader.dart";
-import "src/req_emitter.dart";
-import "src/schema.dart";
-import "src/schema_emitter.dart";
-import "src/selection_resolver.dart";
-import "src/source.dart";
-import "src/utils_emitter.dart";
-import "src/vars_emitter.dart";
-import "src/writer.dart";
-import "src/validation.dart";
+import "src/selection/add_typenames.dart";
+import "src/utils/allocator.dart";
+import "src/emit/ast_builder.dart";
+import "src/config/config.dart";
+import "src/emit/data_emitter.dart";
+import "src/utils/locations.dart";
+import "src/source/reader.dart";
+import "src/emit/req_emitter.dart";
+import "src/schema/schema.dart";
+import "src/emit/schema_emitter.dart";
+import "src/selection/selection_resolver.dart";
+import "src/source/source.dart";
+import "src/emit/utils_emitter.dart";
+import "src/emit/vars_emitter.dart";
+import "src/utils/writer.dart";
+import "src/selection/validation.dart";
 
 Builder graphqlBuilder(BuilderOptions options) =>
     GraphqlBuilder(options.config);

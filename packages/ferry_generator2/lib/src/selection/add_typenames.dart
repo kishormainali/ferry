@@ -1,6 +1,6 @@
 import "package:gql/ast.dart";
 
-import "source.dart";
+import "../source/source.dart";
 
 DocumentSource addTypenamesToSource(DocumentSource source) => DocumentSource(
       url: source.url,

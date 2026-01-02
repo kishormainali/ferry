@@ -1,5 +1,5 @@
 import 'package:build/build.dart';
-import 'package:ferry_generator2/src/config.dart';
+import 'package:ferry_generator2/src/config/config.dart';
 import 'package:logging/logging.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';

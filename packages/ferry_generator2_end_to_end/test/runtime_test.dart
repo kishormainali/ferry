@@ -7,6 +7,9 @@ import 'package:ferry_generator2_end_to_end/directives/__generated__/create_revi
 import 'package:ferry_generator2_end_to_end/directives/__generated__/human_with_directives.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/directives/__generated__/human_with_directives.req.gql.dart';
 import 'package:ferry_generator2_end_to_end/directives/__generated__/human_with_directives.var.gql.dart';
+import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/human_birthday.data.gql.dart';
+import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/search_with_starship.data.gql.dart';
+import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/settings.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/fragment_with_scalar_var.var.gql.dart';
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/hero_with_interface_subtyped_fragments.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/nested_duplicate_fragments.data.gql.dart';
@@ -117,6 +120,47 @@ void main() {
     expect(result.G__typename, 'Starship');
   });
 
+  test('interface unknown fallback preserves typename', () {
+    final data = GHeroWithInterfaceSubTypedFragmentsData.fromJson({
+      '__typename': 'Query',
+      'hero': {
+        '__typename': 'Wookiee',
+        'id': '3000',
+        'name': 'Chewbacca',
+      },
+    });
+
+    final hero = data.hero;
+    expect(hero, isNotNull);
+    expect(hero, isA<GheroFieldsFragmentData__unknown>());
+    expect(hero!.G__typename, 'Wookiee');
+  });
+
+  test('unknown friend variant uses __unknown for interface fragments', () {
+    final data = GHeroWithInterfaceSubTypedFragmentsData.fromJson({
+      '__typename': 'Query',
+      'hero': {
+        '__typename': 'Human',
+        'id': '1000',
+        'name': 'Luke',
+        'homePlanet': 'Tatooine',
+        'friends': [
+          {
+            '__typename': 'Wookiee',
+          },
+        ],
+      },
+    });
+
+    final hero = data.hero;
+    expect(hero, isA<GheroFieldsFragmentData__asHuman>());
+    final friends = (hero as GheroFieldsFragmentData__asHuman).friends!;
+    expect(
+      friends.first,
+      isA<GheroFieldsFragmentData__asHuman_friends__unknown>(),
+    );
+  });
+
   test('nested fragments round-trip through JSON', () {
     final input = {
       '__typename': 'Query',
@@ -157,6 +201,30 @@ void main() {
     expect(data.toJson(), equals(input));
   });
 
+  test('enum list uses unknown fallback for unexpected values', () {
+    final data = GSearchResultsQueryData.fromJson({
+      '__typename': 'Query',
+      'search': [
+        {
+          '__typename': 'Human',
+          'id': '1000',
+          'name': 'Luke',
+          'appearsIn': ['NEWHOPE', 'SURPRISE'],
+          'friends': [],
+        },
+      ],
+    });
+
+    final human =
+        data.search!.first! as GSearchResultsQueryData_search__asHuman;
+    expect(human.appearsIn, contains(_schema.GEpisode.gUnknownEnumValue));
+    final json = data.toJson();
+    final search = json['search'] as List<dynamic>;
+    final first = search.first as Map<String, dynamic>;
+    final appearsIn = first['appearsIn'] as List<dynamic>;
+    expect(appearsIn, contains('gUnknownEnumValue'));
+  });
+
   test('hero_for_episode data round-trips through JSON', () {
     final input = {
       '__typename': 'Query',
@@ -174,6 +242,35 @@ void main() {
     };
 
     final data = GHeroForEpisodeData.fromJson(input);
+    expect(data.toJson(), equals(input));
+  });
+
+  test('union selection includes starship fields', () {
+    final input = {
+      '__typename': 'Query',
+      'search': [
+        {
+          '__typename': 'Starship',
+          'id': '3000',
+          'name': 'Falcon',
+          'length': 34.75,
+          'coordinates': [
+            [1.0, 2.0],
+            [3.0, 4.0],
+          ],
+        },
+      ],
+    };
+
+    final data = GSearchWithStarshipData.fromJson(input);
+    final starship =
+        data.search!.first! as GSearchWithStarshipData_search__asStarship;
+    expect(
+        starship.coordinates,
+        equals([
+          [1.0, 2.0],
+          [3.0, 4.0]
+        ]));
     expect(data.toJson(), equals(input));
   });
 
@@ -200,6 +297,39 @@ void main() {
     expect(fragment, isA<GPostFragmentData>());
     expect(fragment.isFavorited?.totalCount, 2);
     expect(fragment.isLiked?.totalCount, 1);
+  });
+
+  test('date scalar output uses custom converter', () {
+    final input = {
+      '__typename': 'Query',
+      'human': {
+        '__typename': 'Human',
+        'id': '1000',
+        'name': 'Luke',
+        'birthday': '2020-01-01T00:00:00.000Z',
+      },
+    };
+
+    final data = GHumanBirthdayData.fromJson(input);
+    final human = data.human!;
+    expect(human.birthday, isA<CustomDate>());
+    expect(human.birthday.value, DateTime.utc(2020, 1, 1));
+    expect(data.toJson(), equals(input));
+  });
+
+  test('json scalar output maps to Map<String, dynamic>', () {
+    final input = {
+      '__typename': 'Query',
+      'settings': {
+        'theme': 'dark',
+        'flags': [true, false],
+        'nested': {'count': 2},
+      },
+    };
+
+    final data = GSettingsData.fromJson(input);
+    expect(data.settings, isA<Map<String, dynamic>>());
+    expect(data.toJson(), equals(input));
   });
 
   test('issue 610 fragments stay scoped to author selections', () {
@@ -342,6 +472,29 @@ void main() {
   test('review input omits absent optional fields', () {
     final input = _schema.GReviewInput(stars: 4);
     expect(input.toJson(), equals({'stars': 4}));
+  });
+
+  test('review input supports present nulls and custom scalar lists', () {
+    final input = _schema.GReviewInput(
+      stars: 5,
+      commentary: const Value.present(null),
+      favorite_color: const Value.present(null),
+      seenOn: Value.present(
+        [
+          CustomDate(DateTime.utc(2020, 1, 1)),
+          null,
+        ],
+      ),
+    );
+
+    final json = input.toJson();
+    expect(json['commentary'], isNull);
+    expect(json['favorite_color'], isNull);
+    expect(
+      json['seenOn'],
+      equals(['2020-01-01T00:00:00.000Z', null]),
+    );
+    expect(_schema.GReviewInput.fromJson(json).toJson(), equals(json));
   });
 
   test('review added subscription round-trips and vars serialize', () {

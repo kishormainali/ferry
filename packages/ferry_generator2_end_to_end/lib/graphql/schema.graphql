@@ -18,6 +18,7 @@ type Query {
   human(id: ID!): Human
   starship(id: ID!): Starship
   posts(userId: ID!, filter: Json): [Post]
+  settings: Json
   books: [Book!]!
 }
 

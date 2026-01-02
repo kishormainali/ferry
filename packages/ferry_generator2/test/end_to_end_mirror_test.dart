@@ -92,6 +92,7 @@ void main() {
       {
         _assetId(_schemaInput, _schemaExtension),
         _assetId(_aliasedHeroInput, _dataExtension),
+        _assetId(_aliasVarFragmentInput, _reqExtension),
         _assetId(_aliasVarFragmentInput, _varExtension),
         _assetId(_aliasVarFragmentInput, _dataExtension),
         _assetId(_heroNoVarsInput, _reqExtension),
@@ -353,6 +354,18 @@ void main() {
     final reqClass = _classIn(reqLibrary, 'GHeroNoVarsReq');
     expect(_declaresGetter(reqClass, 'execRequest'), isTrue);
     expect(_declaresMethod(reqClass, 'parseData'), isTrue);
+    expect(_declaresMethod(reqClass, 'copyWith'), isTrue);
+    expect(_declaresMethod(reqClass, '=='), isTrue);
+    expect(_declaresGetter(reqClass, 'hashCode'), isTrue);
+    expect(_declaresMethod(reqClass, 'toString'), isTrue);
+
+    final fragmentReqLibrary =
+        _libraryFor(_aliasVarFragmentInput, _reqExtension);
+    final fragmentReq = _classIn(fragmentReqLibrary, 'GPostFragmentReq');
+    expect(_declaresMethod(fragmentReq, 'copyWith'), isTrue);
+    expect(_declaresMethod(fragmentReq, '=='), isTrue);
+    expect(_declaresGetter(fragmentReq, 'hashCode'), isTrue);
+    expect(_declaresMethod(fragmentReq, 'toString'), isTrue);
   });
 
   test('data classes include copyWith and overrides', () async {
@@ -422,6 +435,22 @@ void main() {
     expect(_declaresMethod(heroData, '=='), isFalse);
     expect(_declaresGetter(heroData, 'hashCode'), isFalse);
     expect(_declaresMethod(heroData, 'toString'), isFalse);
+
+    final reqAssetId = _assetId(_heroForEpisodeInput, _reqExtension);
+    final resolvedReqs = await resolveGeneratedLibraries(
+      sources,
+      {reqAssetId},
+      rootPackage: _package,
+    );
+    final reqLibrary = resolvedReqs[reqAssetId];
+    if (reqLibrary == null) {
+      throw StateError('Missing request output for utilities-disabled test.');
+    }
+    final reqClass = _classIn(reqLibrary, 'GHeroForEpisodeReq');
+    expect(_declaresMethod(reqClass, 'copyWith'), isFalse);
+    expect(_declaresMethod(reqClass, '=='), isFalse);
+    expect(_declaresGetter(reqClass, 'hashCode'), isFalse);
+    expect(_declaresMethod(reqClass, 'toString'), isFalse);
   });
 }
 

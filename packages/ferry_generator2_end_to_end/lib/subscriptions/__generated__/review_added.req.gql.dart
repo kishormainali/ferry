@@ -3,6 +3,8 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:ferry_exec/ferry_exec.dart' as _i1;
+import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
+    as _gqlUtils;
 import 'package:ferry_generator2_end_to_end/subscriptions/__generated__/review_added.ast.gql.dart'
     as _i6;
 import 'package:ferry_generator2_end_to_end/subscriptions/__generated__/review_added.data.gql.dart'
@@ -86,5 +88,85 @@ class GReviewAddedReq
       executeOnListen: executeOnListen,
       context: context,
     );
+  }
+
+  GReviewAddedReq copyWith({
+    _i3.GReviewAddedVars? vars,
+    _i4.Operation? operation,
+    String? requestId,
+    bool requestIdIsSet = false,
+    _i2.GReviewAddedData? Function(
+      _i2.GReviewAddedData?,
+      _i2.GReviewAddedData?,
+    )? updateResult,
+    bool updateResultIsSet = false,
+    _i2.GReviewAddedData? optimisticResponse,
+    bool optimisticResponseIsSet = false,
+    String? updateCacheHandlerKey,
+    bool updateCacheHandlerKeyIsSet = false,
+    Map<String, dynamic>? updateCacheHandlerContext,
+    bool updateCacheHandlerContextIsSet = false,
+    _i1.FetchPolicy? fetchPolicy,
+    bool fetchPolicyIsSet = false,
+    bool? executeOnListen,
+    _i4.Context? context,
+    bool contextIsSet = false,
+  }) {
+    return GReviewAddedReq(
+      vars: vars ?? this.vars,
+      operation: operation ?? this.operation,
+      requestId: requestIdIsSet ? requestId : this.requestId,
+      updateResult: updateResultIsSet ? updateResult : this.updateResult,
+      optimisticResponse: optimisticResponseIsSet
+          ? optimisticResponse
+          : this.optimisticResponse,
+      updateCacheHandlerKey: updateCacheHandlerKeyIsSet
+          ? updateCacheHandlerKey
+          : this.updateCacheHandlerKey,
+      updateCacheHandlerContext: updateCacheHandlerContextIsSet
+          ? updateCacheHandlerContext
+          : this.updateCacheHandlerContext,
+      fetchPolicy: fetchPolicyIsSet ? fetchPolicy : this.fetchPolicy,
+      executeOnListen: executeOnListen ?? this.executeOnListen,
+      context: contextIsSet ? context : this.context,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GReviewAddedReq &&
+            vars == other.vars &&
+            operation == other.operation &&
+            requestId == other.requestId &&
+            updateResult == other.updateResult &&
+            optimisticResponse == other.optimisticResponse &&
+            updateCacheHandlerKey == other.updateCacheHandlerKey &&
+            _gqlUtils.deepEquals(
+                updateCacheHandlerContext, other.updateCacheHandlerContext) &&
+            fetchPolicy == other.fetchPolicy &&
+            executeOnListen == other.executeOnListen &&
+            context == other.context);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+        runtimeType,
+        vars,
+        operation,
+        requestId,
+        updateResult,
+        optimisticResponse,
+        updateCacheHandlerKey,
+        _gqlUtils.deepHash(updateCacheHandlerContext),
+        fetchPolicy,
+        executeOnListen,
+        context);
+  }
+
+  @override
+  String toString() {
+    return 'GReviewAddedReq(vars: $vars, operation: $operation, requestId: $requestId, updateResult: $updateResult, optimisticResponse: $optimisticResponse, updateCacheHandlerKey: $updateCacheHandlerKey, updateCacheHandlerContext: $updateCacheHandlerContext, fetchPolicy: $fetchPolicy, executeOnListen: $executeOnListen, context: $context)';
   }
 }

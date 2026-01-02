@@ -9,6 +9,8 @@ import 'package:ferry_generator2_end_to_end/fragments/__generated__/hero_with_in
     as _i2;
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/hero_with_interface_subtyped_fragments.var.gql.dart'
     as _i3;
+import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
+    as _gqlUtils;
 import 'package:gql/ast.dart' as _i5;
 import 'package:gql_exec/gql_exec.dart' as _i4;
 
@@ -96,6 +98,86 @@ class GHeroWithInterfaceSubTypedFragmentsReq
       context: context,
     );
   }
+
+  GHeroWithInterfaceSubTypedFragmentsReq copyWith({
+    _i3.GHeroWithInterfaceSubTypedFragmentsVars? vars,
+    _i4.Operation? operation,
+    String? requestId,
+    bool requestIdIsSet = false,
+    _i2.GHeroWithInterfaceSubTypedFragmentsData? Function(
+      _i2.GHeroWithInterfaceSubTypedFragmentsData?,
+      _i2.GHeroWithInterfaceSubTypedFragmentsData?,
+    )? updateResult,
+    bool updateResultIsSet = false,
+    _i2.GHeroWithInterfaceSubTypedFragmentsData? optimisticResponse,
+    bool optimisticResponseIsSet = false,
+    String? updateCacheHandlerKey,
+    bool updateCacheHandlerKeyIsSet = false,
+    Map<String, dynamic>? updateCacheHandlerContext,
+    bool updateCacheHandlerContextIsSet = false,
+    _i1.FetchPolicy? fetchPolicy,
+    bool fetchPolicyIsSet = false,
+    bool? executeOnListen,
+    _i4.Context? context,
+    bool contextIsSet = false,
+  }) {
+    return GHeroWithInterfaceSubTypedFragmentsReq(
+      vars: vars ?? this.vars,
+      operation: operation ?? this.operation,
+      requestId: requestIdIsSet ? requestId : this.requestId,
+      updateResult: updateResultIsSet ? updateResult : this.updateResult,
+      optimisticResponse: optimisticResponseIsSet
+          ? optimisticResponse
+          : this.optimisticResponse,
+      updateCacheHandlerKey: updateCacheHandlerKeyIsSet
+          ? updateCacheHandlerKey
+          : this.updateCacheHandlerKey,
+      updateCacheHandlerContext: updateCacheHandlerContextIsSet
+          ? updateCacheHandlerContext
+          : this.updateCacheHandlerContext,
+      fetchPolicy: fetchPolicyIsSet ? fetchPolicy : this.fetchPolicy,
+      executeOnListen: executeOnListen ?? this.executeOnListen,
+      context: contextIsSet ? context : this.context,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GHeroWithInterfaceSubTypedFragmentsReq &&
+            vars == other.vars &&
+            operation == other.operation &&
+            requestId == other.requestId &&
+            updateResult == other.updateResult &&
+            optimisticResponse == other.optimisticResponse &&
+            updateCacheHandlerKey == other.updateCacheHandlerKey &&
+            _gqlUtils.deepEquals(
+                updateCacheHandlerContext, other.updateCacheHandlerContext) &&
+            fetchPolicy == other.fetchPolicy &&
+            executeOnListen == other.executeOnListen &&
+            context == other.context);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+        runtimeType,
+        vars,
+        operation,
+        requestId,
+        updateResult,
+        optimisticResponse,
+        updateCacheHandlerKey,
+        _gqlUtils.deepHash(updateCacheHandlerContext),
+        fetchPolicy,
+        executeOnListen,
+        context);
+  }
+
+  @override
+  String toString() {
+    return 'GHeroWithInterfaceSubTypedFragmentsReq(vars: $vars, operation: $operation, requestId: $requestId, updateResult: $updateResult, optimisticResponse: $optimisticResponse, updateCacheHandlerKey: $updateCacheHandlerKey, updateCacheHandlerContext: $updateCacheHandlerContext, fetchPolicy: $fetchPolicy, executeOnListen: $executeOnListen, context: $context)';
+  }
 }
 
 class GheroFieldsFragmentReq
@@ -127,6 +209,40 @@ class GheroFieldsFragmentReq
 
   Map<String, dynamic> dataToJson(_i2.GheroFieldsFragmentData data) =>
       data.toJson();
+
+  GheroFieldsFragmentReq copyWith({
+    _i5.DocumentNode? document,
+    String? fragmentName,
+    bool fragmentNameIsSet = false,
+    Map<String, dynamic>? idFields,
+  }) {
+    return GheroFieldsFragmentReq(
+      document: document ?? this.document,
+      fragmentName: fragmentNameIsSet ? fragmentName : this.fragmentName,
+      idFields: idFields ?? this.idFields,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GheroFieldsFragmentReq &&
+            vars == other.vars &&
+            document == other.document &&
+            fragmentName == other.fragmentName &&
+            _gqlUtils.deepEquals(idFields, other.idFields));
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(runtimeType, vars, document, fragmentName,
+        _gqlUtils.deepHash(idFields));
+  }
+
+  @override
+  String toString() {
+    return 'GheroFieldsFragmentReq(vars: $vars, document: $document, fragmentName: $fragmentName, idFields: $idFields)';
+  }
 }
 
 class GhumanFieldsFragmentReq
@@ -157,6 +273,40 @@ class GhumanFieldsFragmentReq
 
   Map<String, dynamic> dataToJson(_i2.GhumanFieldsFragmentData data) =>
       data.toJson();
+
+  GhumanFieldsFragmentReq copyWith({
+    _i5.DocumentNode? document,
+    String? fragmentName,
+    bool fragmentNameIsSet = false,
+    Map<String, dynamic>? idFields,
+  }) {
+    return GhumanFieldsFragmentReq(
+      document: document ?? this.document,
+      fragmentName: fragmentNameIsSet ? fragmentName : this.fragmentName,
+      idFields: idFields ?? this.idFields,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GhumanFieldsFragmentReq &&
+            vars == other.vars &&
+            document == other.document &&
+            fragmentName == other.fragmentName &&
+            _gqlUtils.deepEquals(idFields, other.idFields));
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(runtimeType, vars, document, fragmentName,
+        _gqlUtils.deepHash(idFields));
+  }
+
+  @override
+  String toString() {
+    return 'GhumanFieldsFragmentReq(vars: $vars, document: $document, fragmentName: $fragmentName, idFields: $idFields)';
+  }
 }
 
 class GdroidFieldsFragmentReq
@@ -185,4 +335,38 @@ class GdroidFieldsFragmentReq
 
   Map<String, dynamic> dataToJson(_i2.GdroidFieldsFragmentData data) =>
       data.toJson();
+
+  GdroidFieldsFragmentReq copyWith({
+    _i5.DocumentNode? document,
+    String? fragmentName,
+    bool fragmentNameIsSet = false,
+    Map<String, dynamic>? idFields,
+  }) {
+    return GdroidFieldsFragmentReq(
+      document: document ?? this.document,
+      fragmentName: fragmentNameIsSet ? fragmentName : this.fragmentName,
+      idFields: idFields ?? this.idFields,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GdroidFieldsFragmentReq &&
+            vars == other.vars &&
+            document == other.document &&
+            fragmentName == other.fragmentName &&
+            _gqlUtils.deepEquals(idFields, other.idFields));
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(runtimeType, vars, document, fragmentName,
+        _gqlUtils.deepHash(idFields));
+  }
+
+  @override
+  String toString() {
+    return 'GdroidFieldsFragmentReq(vars: $vars, document: $document, fragmentName: $fragmentName, idFields: $idFields)';
+  }
 }

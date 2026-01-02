@@ -7,6 +7,8 @@ import 'package:ferry_generator2_end_to_end/fragments/__generated__/nested_dupli
     as _i5;
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/nested_duplicate_fragments.data.gql.dart'
     as _i2;
+import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
+    as _gqlUtils;
 import 'package:gql/ast.dart' as _i4;
 import 'package:gql_exec/gql_exec.dart' as _i3;
 
@@ -87,6 +89,84 @@ class GSearchResultsQueryReq
       context: context,
     );
   }
+
+  GSearchResultsQueryReq copyWith({
+    _i3.Operation? operation,
+    String? requestId,
+    bool requestIdIsSet = false,
+    _i2.GSearchResultsQueryData? Function(
+      _i2.GSearchResultsQueryData?,
+      _i2.GSearchResultsQueryData?,
+    )? updateResult,
+    bool updateResultIsSet = false,
+    _i2.GSearchResultsQueryData? optimisticResponse,
+    bool optimisticResponseIsSet = false,
+    String? updateCacheHandlerKey,
+    bool updateCacheHandlerKeyIsSet = false,
+    Map<String, dynamic>? updateCacheHandlerContext,
+    bool updateCacheHandlerContextIsSet = false,
+    _i1.FetchPolicy? fetchPolicy,
+    bool fetchPolicyIsSet = false,
+    bool? executeOnListen,
+    _i3.Context? context,
+    bool contextIsSet = false,
+  }) {
+    return GSearchResultsQueryReq(
+      operation: operation ?? this.operation,
+      requestId: requestIdIsSet ? requestId : this.requestId,
+      updateResult: updateResultIsSet ? updateResult : this.updateResult,
+      optimisticResponse: optimisticResponseIsSet
+          ? optimisticResponse
+          : this.optimisticResponse,
+      updateCacheHandlerKey: updateCacheHandlerKeyIsSet
+          ? updateCacheHandlerKey
+          : this.updateCacheHandlerKey,
+      updateCacheHandlerContext: updateCacheHandlerContextIsSet
+          ? updateCacheHandlerContext
+          : this.updateCacheHandlerContext,
+      fetchPolicy: fetchPolicyIsSet ? fetchPolicy : this.fetchPolicy,
+      executeOnListen: executeOnListen ?? this.executeOnListen,
+      context: contextIsSet ? context : this.context,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GSearchResultsQueryReq &&
+            vars == other.vars &&
+            operation == other.operation &&
+            requestId == other.requestId &&
+            updateResult == other.updateResult &&
+            optimisticResponse == other.optimisticResponse &&
+            updateCacheHandlerKey == other.updateCacheHandlerKey &&
+            _gqlUtils.deepEquals(
+                updateCacheHandlerContext, other.updateCacheHandlerContext) &&
+            fetchPolicy == other.fetchPolicy &&
+            executeOnListen == other.executeOnListen &&
+            context == other.context);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(
+        runtimeType,
+        vars,
+        operation,
+        requestId,
+        updateResult,
+        optimisticResponse,
+        updateCacheHandlerKey,
+        _gqlUtils.deepHash(updateCacheHandlerContext),
+        fetchPolicy,
+        executeOnListen,
+        context);
+  }
+
+  @override
+  String toString() {
+    return 'GSearchResultsQueryReq(vars: $vars, operation: $operation, requestId: $requestId, updateResult: $updateResult, optimisticResponse: $optimisticResponse, updateCacheHandlerKey: $updateCacheHandlerKey, updateCacheHandlerContext: $updateCacheHandlerContext, fetchPolicy: $fetchPolicy, executeOnListen: $executeOnListen, context: $context)';
+  }
 }
 
 class GCharacterDetailsReq
@@ -118,6 +198,40 @@ class GCharacterDetailsReq
 
   Map<String, dynamic> dataToJson(_i2.GCharacterDetailsData data) =>
       data.toJson();
+
+  GCharacterDetailsReq copyWith({
+    _i4.DocumentNode? document,
+    String? fragmentName,
+    bool fragmentNameIsSet = false,
+    Map<String, dynamic>? idFields,
+  }) {
+    return GCharacterDetailsReq(
+      document: document ?? this.document,
+      fragmentName: fragmentNameIsSet ? fragmentName : this.fragmentName,
+      idFields: idFields ?? this.idFields,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GCharacterDetailsReq &&
+            vars == other.vars &&
+            document == other.document &&
+            fragmentName == other.fragmentName &&
+            _gqlUtils.deepEquals(idFields, other.idFields));
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(runtimeType, vars, document, fragmentName,
+        _gqlUtils.deepHash(idFields));
+  }
+
+  @override
+  String toString() {
+    return 'GCharacterDetailsReq(vars: $vars, document: $document, fragmentName: $fragmentName, idFields: $idFields)';
+  }
 }
 
 class GFriendInfoReq implements _i1.FragmentRequest<_i2.GFriendInfoData, Null> {
@@ -146,6 +260,40 @@ class GFriendInfoReq implements _i1.FragmentRequest<_i2.GFriendInfoData, Null> {
   Map<String, dynamic> varsToJson() => const <String, dynamic>{};
 
   Map<String, dynamic> dataToJson(_i2.GFriendInfoData data) => data.toJson();
+
+  GFriendInfoReq copyWith({
+    _i4.DocumentNode? document,
+    String? fragmentName,
+    bool fragmentNameIsSet = false,
+    Map<String, dynamic>? idFields,
+  }) {
+    return GFriendInfoReq(
+      document: document ?? this.document,
+      fragmentName: fragmentNameIsSet ? fragmentName : this.fragmentName,
+      idFields: idFields ?? this.idFields,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GFriendInfoReq &&
+            vars == other.vars &&
+            document == other.document &&
+            fragmentName == other.fragmentName &&
+            _gqlUtils.deepEquals(idFields, other.idFields));
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(runtimeType, vars, document, fragmentName,
+        _gqlUtils.deepHash(idFields));
+  }
+
+  @override
+  String toString() {
+    return 'GFriendInfoReq(vars: $vars, document: $document, fragmentName: $fragmentName, idFields: $idFields)';
+  }
 }
 
 class GCharacterBasicReq
@@ -174,4 +322,38 @@ class GCharacterBasicReq
 
   Map<String, dynamic> dataToJson(_i2.GCharacterBasicData data) =>
       data.toJson();
+
+  GCharacterBasicReq copyWith({
+    _i4.DocumentNode? document,
+    String? fragmentName,
+    bool fragmentNameIsSet = false,
+    Map<String, dynamic>? idFields,
+  }) {
+    return GCharacterBasicReq(
+      document: document ?? this.document,
+      fragmentName: fragmentNameIsSet ? fragmentName : this.fragmentName,
+      idFields: idFields ?? this.idFields,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GCharacterBasicReq &&
+            vars == other.vars &&
+            document == other.document &&
+            fragmentName == other.fragmentName &&
+            _gqlUtils.deepEquals(idFields, other.idFields));
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(runtimeType, vars, document, fragmentName,
+        _gqlUtils.deepHash(idFields));
+  }
+
+  @override
+  String toString() {
+    return 'GCharacterBasicReq(vars: $vars, document: $document, fragmentName: $fragmentName, idFields: $idFields)';
+  }
 }

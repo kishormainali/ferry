@@ -172,6 +172,7 @@ class GraphqlBuilder implements Builder {
       fragmentsWithVars: fragmentsWithVars,
       documentIndex: documentIndex,
       fragmentSourceUrls: fragmentSourceUrls,
+      utilsUrl: utilsUrl,
     );
 
     final sourceUrl = buildStep.inputId.uri.toString();

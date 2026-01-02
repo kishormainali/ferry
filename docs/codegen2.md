@@ -199,7 +199,3 @@ scalars:
 - All models are plain Dart classes with `const` constructors and direct `toJson`/`fromJson`.
 - Equality/hash/toString/copyWith are **opt-in**.
 - `schema.files` is **not supported**.
-
----
-
-If you want a side-by-side comparison with the original generator or a migration checklist, let me know and I'll add it.

@@ -11,7 +11,6 @@ const utilsExtension = ".utils.gql.dart";
 
 class BuilderConfig {
   final AssetId? schemaId;
-  final List<AssetId>? schemaIds;
   final bool shouldAddTypenames;
   final bool shouldGeneratePossibleTypes;
   final Map<String, TypeOverrideConfig> typeOverrides;
@@ -39,13 +38,20 @@ class BuilderConfig {
       throw ArgumentError.value(
         schemaValue,
         "schema",
-        "Expected a map with keys like file, files, add_typenames",
+        "Expected a map with keys like file, add_typenames",
       );
     }
 
     final schemaReader = _ConfigReader("schema", schemaConfig);
     final schemaFile = schemaReader.raw("file");
     final schemaFiles = schemaReader.raw("files");
+    if (schemaFiles != null) {
+      throw ArgumentError.value(
+        schemaFiles,
+        "schema.files",
+        "Multiple schemas are no longer supported. Use schema.file.",
+      );
+    }
 
     final outputsReader = _ConfigReader("outputs", root.map("outputs"));
     final dataClassesReader =
@@ -83,7 +89,6 @@ class BuilderConfig {
     final scalarWarnings = <String>[];
     final builderConfig = BuilderConfig._(
       schemaId: _parseSchemaId(schemaFile),
-      schemaIds: _parseSchemaIds(schemaFiles),
       shouldAddTypenames: _readBool(
         schemaReader.raw("add_typenames"),
         true,
@@ -153,7 +158,6 @@ class BuilderConfig {
 
   const BuilderConfig._({
     required this.schemaId,
-    required this.schemaIds,
     required this.shouldAddTypenames,
     required this.shouldGeneratePossibleTypes,
     required this.typeOverrides,
@@ -239,13 +243,6 @@ enum TriStateValueConfig { onAllNullableFields, never }
 AssetId? _parseSchemaId(Object? value) {
   if (value == null) return null;
   return AssetId.parse(value as String);
-}
-
-List<AssetId>? _parseSchemaIds(Object? value) {
-  if (value == null) return null;
-  final list = value is YamlList ? value : (value is List ? value : null);
-  if (list == null) return null;
-  return list.map((entry) => AssetId.parse(entry as String)).toList();
 }
 
 bool _readBool(Object? value, bool defaultValue) =>

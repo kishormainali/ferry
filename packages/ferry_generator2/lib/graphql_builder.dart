@@ -3,7 +3,6 @@ import "dart:async";
 import "package:build/build.dart";
 import "package:code_builder/code_builder.dart";
 import "package:gql/ast.dart";
-import "package:path/path.dart" as p;
 
 import "src/selection/add_typenames.dart";
 import "src/utils/allocator.dart";
@@ -72,40 +71,16 @@ class GraphqlBuilder implements Builder {
       return;
     }
 
-    DocumentSource? schemaSource;
-    AssetId? schemaId;
-
-    if (config.schemaIds != null) {
-      for (final candidate in config.schemaIds!) {
-        if (buildStep.inputId.package != candidate.package) {
-          continue;
-        }
-        final docPath = p.url.normalize(buildStep.inputId.path);
-        final schemaDir = p.url.dirname(candidate.path);
-        if (p.url.isWithin(schemaDir, docPath)) {
-          schemaSource = await readDocument(
-            buildStep,
-            config.sourceExtension,
-            candidate,
-          );
-          schemaId = candidate;
-          break;
-        }
-      }
+    final schemaId = config.schemaId;
+    if (schemaId == null) {
+      throw StateError("No schema configured for ${buildStep.inputId}");
     }
 
-    if (schemaSource == null && config.schemaId != null) {
-      schemaSource = await readDocument(
-        buildStep,
-        config.sourceExtension,
-        config.schemaId,
-      );
-      schemaId = config.schemaId;
-    }
-
-    if (schemaSource == null || schemaId == null) {
-      throw StateError("No schema found for ${buildStep.inputId}");
-    }
+    final schemaSource = await readDocument(
+      buildStep,
+      config.sourceExtension,
+      schemaId,
+    );
 
     if ((config.whenExtensionConfig.generateMaybeWhenExtensionMethod ||
             config.whenExtensionConfig.generateWhenExtensionMethod) &&

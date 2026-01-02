@@ -45,7 +45,7 @@ dependencies:
 ### 2) Download your schema (SDL)
 
 ```sh
-get-graphql-schema [ENDPOINT_URL] > lib/graphql/schema.graphql
+npx get-graphql-schema [ENDPOINT_URL] > lib/graphql/schema.graphql
 ```
 
 ### 3) Create `.graphql` files

@@ -7,8 +7,9 @@ import 'package:ferry_generator2_end_to_end/directives/__generated__/create_revi
 import 'package:ferry_generator2_end_to_end/directives/__generated__/human_with_directives.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/directives/__generated__/human_with_directives.req.gql.dart';
 import 'package:ferry_generator2_end_to_end/directives/__generated__/human_with_directives.var.gql.dart';
-import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/fragment_directives.data.gql.dart';
+import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/conditional_type_fragment.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/deep_fragments.data.gql.dart';
+import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/fragment_directives.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/human_birthday.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/posts_by_likes.var.gql.dart';
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/reviews_with_defaults.var.gql.dart';
@@ -318,6 +319,24 @@ void main() {
     expect(data.toJson(), equals(input));
   });
 
+  test('conditional inline fragment does not add interface implements', () {
+    final input = {
+      '__typename': 'Query',
+      'hero': {
+        '__typename': 'Human',
+        'id': '1000',
+        'name': 'Luke',
+      },
+    };
+
+    final data = GHeroConditionalTypeFragmentData.fromJson(input);
+    expect(
+      data.hero,
+      isA<GHeroConditionalTypeFragmentData_hero__asHuman>(),
+    );
+    expect(data.hero is GHumanName, isFalse);
+  });
+
   test('hero_for_episode data round-trips through JSON', () {
     final input = {
       '__typename': 'Query',
@@ -335,6 +354,7 @@ void main() {
     };
 
     final data = GHeroForEpisodeData.fromJson(input);
+    expect(data.hero, isA<GDroidFragment>());
     expect(data.toJson(), equals(input));
   });
 

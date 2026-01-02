@@ -8,6 +8,7 @@ import 'package:ferry_generator2_end_to_end/directives/__generated__/human_with_
 import 'package:ferry_generator2_end_to_end/directives/__generated__/human_with_directives.req.gql.dart';
 import 'package:ferry_generator2_end_to_end/directives/__generated__/human_with_directives.var.gql.dart';
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/fragment_directives.data.gql.dart';
+import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/deep_fragments.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/human_birthday.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/posts_by_likes.var.gql.dart';
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/reviews_with_defaults.var.gql.dart';
@@ -290,6 +291,29 @@ void main() {
     expect(hero.id, '1000');
     expect(hero.name, isNull);
     expect(data.toJson()['hero']['name'], isNull);
+  });
+
+  test('deep fragments round-trip through JSON', () {
+    final input = {
+      '__typename': 'Query',
+      'hero': {
+        '__typename': 'Human',
+        'id': '1000',
+        'name': 'Luke',
+        'friends': [
+          {
+            '__typename': 'Droid',
+            'id': '2000',
+            'name': 'R2-D2',
+          },
+        ],
+      },
+    };
+
+    final data = GDeepFragmentsData.fromJson(input);
+    expect(data.hero, isA<GFragLevel1Data>());
+    expect(data.hero!.friends!.first, isA<GFragLevel4Data>());
+    expect(data.toJson(), equals(input));
   });
 
   test('hero_for_episode data round-trips through JSON', () {

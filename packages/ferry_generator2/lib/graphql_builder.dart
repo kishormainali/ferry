@@ -72,13 +72,6 @@ class GraphqlBuilder implements Builder {
       return;
     }
 
-    final docSource = await readDocument(
-      buildStep,
-      config.sourceExtension,
-    );
-    final sourceWithTypenames =
-        config.shouldAddTypenames ? addTypenamesToSource(docSource) : docSource;
-
     DocumentSource? schemaSource;
     AssetId? schemaId;
 
@@ -122,9 +115,70 @@ class GraphqlBuilder implements Builder {
       );
     }
 
-    final schemaIndex = SchemaIndex.fromDocuments(
-      [schemaSource.flatDocument],
+    final schemaIndex = SchemaIndex.fromDocuments([schemaSource.flatDocument]);
+    final sourceUrl = buildStep.inputId.uri.toString();
+    final schemaUrl = schemaId.uri.toString();
+
+    Future<void> writeOutput(
+      String extension,
+      Library library,
+      AssetId outputId,
+    ) {
+      final allocator = GeneratorAllocator(
+        sourceUrl: sourceUrl,
+        sourceExtension: config.sourceExtension,
+        currentUrl: outputId.uri.toString(),
+        outputDir: config.outputDir,
+        schemaUrl: schemaUrl,
+      );
+      return writeLibrary(
+        outputId: outputId,
+        library: library,
+        buildStep: buildStep,
+        config: config,
+        allocator: allocator,
+      );
+    }
+
+    if (buildStep.inputId == schemaId) {
+      if (config.outputs.schema) {
+        final outputId = outputAssetId(
+          buildStep.inputId,
+          schemaExtension,
+          config.outputDir,
+        );
+        await writeOutput(
+          schemaExtension,
+          buildSchemaLibrary(
+            schema: schemaIndex,
+            config: config,
+          ),
+          outputId,
+        );
+      }
+
+      if (config.generateEquals || config.generateHashCode) {
+        final outputId = outputAssetId(
+          buildStep.inputId,
+          utilsExtension,
+          config.outputDir,
+        );
+        await writeOutput(
+          utilsExtension,
+          buildUtilsLibrary(),
+          outputId,
+        );
+      }
+      return;
+    }
+
+    final docSource = await readDocument(
+      buildStep,
+      config.sourceExtension,
     );
+    final sourceWithTypenames =
+        config.shouldAddTypenames ? addTypenamesToSource(docSource) : docSource;
+
     final documentIndex = DocumentIndex(sourceWithTypenames.flatDocument);
     final resolver = SelectionResolver(
       schema: schemaIndex,
@@ -174,30 +228,6 @@ class GraphqlBuilder implements Builder {
       fragmentSourceUrls: fragmentSourceUrls,
       utilsUrl: utilsUrl,
     );
-
-    final sourceUrl = buildStep.inputId.uri.toString();
-    final schemaUrl = schemaId.uri.toString();
-
-    Future<void> writeOutput(
-      String extension,
-      Library library,
-      AssetId outputId,
-    ) {
-      final allocator = GeneratorAllocator(
-        sourceUrl: sourceUrl,
-        sourceExtension: config.sourceExtension,
-        currentUrl: outputId.uri.toString(),
-        outputDir: config.outputDir,
-        schemaUrl: schemaUrl,
-      );
-      return writeLibrary(
-        outputId: outputId,
-        library: library,
-        buildStep: buildStep,
-        config: config,
-        allocator: allocator,
-      );
-    }
 
     if (config.outputs.ast) {
       final outputId = outputAssetId(
@@ -263,35 +293,6 @@ class GraphqlBuilder implements Builder {
       );
     }
 
-    if (config.outputs.schema && buildStep.inputId == schemaId) {
-      final outputId = outputAssetId(
-        buildStep.inputId,
-        schemaExtension,
-        config.outputDir,
-      );
-      await writeOutput(
-        schemaExtension,
-        buildSchemaLibrary(
-          schema: schemaIndex,
-          config: config,
-        ),
-        outputId,
-      );
-    }
-
-    if ((config.generateEquals || config.generateHashCode) &&
-        buildStep.inputId == schemaId) {
-      final outputId = outputAssetId(
-        buildStep.inputId,
-        utilsExtension,
-        config.outputDir,
-      );
-      await writeOutput(
-        utilsExtension,
-        buildUtilsLibrary(),
-        outputId,
-      );
-    }
   }
 }
 

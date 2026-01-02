@@ -305,7 +305,6 @@ class GraphqlBuilder implements Builder {
         outputId,
       );
     }
-
   }
 }
 

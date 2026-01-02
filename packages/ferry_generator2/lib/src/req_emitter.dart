@@ -830,7 +830,7 @@ ${hasVars ? "  vars: vars," : ""}
     if (!config.generateEquals && !config.generateHashCode) {
       return;
     }
-    if (fieldsList.any((field) => field.isMap || field.isList)) {
+    if (fieldsList.any((field) => field.isMap)) {
       _needsUtilsImport = true;
     }
   }
@@ -841,14 +841,12 @@ class _ReqFieldSpec {
   final Reference typeRef;
   final bool isNullable;
   final bool isMap;
-  final bool isList;
 
   const _ReqFieldSpec({
     required this.name,
     required this.typeRef,
     required this.isNullable,
     this.isMap = false,
-    this.isList = false,
   });
 }
 
@@ -1007,14 +1005,14 @@ String _equalsExpressionForField(
   _ReqFieldSpec field,
   String right,
 ) {
-  if (field.isList || field.isMap) {
+  if (field.isMap) {
     return "${utilsPrefix}deepEquals(${field.name}, $right)";
   }
   return "${field.name} == $right";
 }
 
 String _hashExpressionForField(_ReqFieldSpec field) {
-  if (field.isList || field.isMap) {
+  if (field.isMap) {
     return "${utilsPrefix}deepHash(${field.name})";
   }
   return field.name;

@@ -19,6 +19,8 @@ type Query {
   starship(id: ID!): Starship
   posts(userId: ID!, filter: Json): [Post]
   settings: Json
+  postsByLikes(likes: [PostLikesInput]): [Post]
+  weirdNames: WeirdNames
   books: [Book!]!
 }
 
@@ -195,6 +197,17 @@ type PostLikes {
 
 type PostFavorites {
   totalCount: Int!
+}
+
+type WeirdNames {
+  class: String
+  toJson: String
+  fromJson: String
+  copyWith: String
+  hashCode: String
+  values: [String]
+  result: String
+  runtimeType: String
 }
 
 input PostLikesInput {

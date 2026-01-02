@@ -47,6 +47,7 @@ const _reserved = <String>[
   "toString",
   "hashCode",
   "copyWith",
+  "runtimeType",
   "toJson",
   "fromJson",
   "serializer",

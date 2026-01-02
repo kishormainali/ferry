@@ -7,9 +7,14 @@ import 'package:ferry_generator2_end_to_end/directives/__generated__/create_revi
 import 'package:ferry_generator2_end_to_end/directives/__generated__/human_with_directives.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/directives/__generated__/human_with_directives.req.gql.dart';
 import 'package:ferry_generator2_end_to_end/directives/__generated__/human_with_directives.var.gql.dart';
+import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/fragment_directives.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/human_birthday.data.gql.dart';
+import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/posts_by_likes.var.gql.dart';
+import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/reviews_with_defaults.var.gql.dart';
+import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/search_with_default.var.gql.dart';
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/search_with_starship.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/settings.data.gql.dart';
+import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/weird_names.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/fragment_with_scalar_var.var.gql.dart';
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/hero_with_interface_subtyped_fragments.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/nested_duplicate_fragments.data.gql.dart';
@@ -161,6 +166,31 @@ void main() {
     );
   });
 
+  test('interface friends preserve null entries', () {
+    final data = GHeroWithInterfaceSubTypedFragmentsData.fromJson({
+      '__typename': 'Query',
+      'hero': {
+        '__typename': 'Human',
+        'id': '1000',
+        'name': 'Luke',
+        'homePlanet': 'Tatooine',
+        'friends': [
+          null,
+          {
+            '__typename': 'Droid',
+            'id': '2000',
+            'name': 'R2-D2',
+            'primaryFunction': 'Astromech',
+          },
+        ],
+      },
+    });
+
+    final hero = data.hero as GheroFieldsFragmentData__asHuman;
+    expect(hero.friends, isNotNull);
+    expect(hero.friends!.first, isNull);
+  });
+
   test('nested fragments round-trip through JSON', () {
     final input = {
       '__typename': 'Query',
@@ -201,6 +231,28 @@ void main() {
     expect(data.toJson(), equals(input));
   });
 
+  test('union list preserves null entries', () {
+    final input = {
+      '__typename': 'Query',
+      'search': [
+        null,
+        {
+          '__typename': 'Starship',
+          'id': '3000',
+          'name': 'Falcon',
+          'length': 34.75,
+          'coordinates': [
+            [1.0, 2.0],
+          ],
+        },
+      ],
+    };
+
+    final data = GSearchWithStarshipData.fromJson(input);
+    expect(data.search?.first, isNull);
+    expect(data.toJson(), equals(input));
+  });
+
   test('enum list uses unknown fallback for unexpected values', () {
     final data = GSearchResultsQueryData.fromJson({
       '__typename': 'Query',
@@ -223,6 +275,21 @@ void main() {
     final first = search.first as Map<String, dynamic>;
     final appearsIn = first['appearsIn'] as List<dynamic>;
     expect(appearsIn, contains('gUnknownEnumValue'));
+  });
+
+  test('fragment directives allow skipped fields', () {
+    final data = GHeroFragmentDirectivesData.fromJson({
+      '__typename': 'Query',
+      'hero': {
+        '__typename': 'Human',
+        'id': '1000',
+      },
+    });
+
+    final hero = data.hero!;
+    expect(hero.id, '1000');
+    expect(hero.name, isNull);
+    expect(data.toJson()['hero']['name'], isNull);
   });
 
   test('hero_for_episode data round-trips through JSON', () {
@@ -274,6 +341,35 @@ void main() {
     expect(data.toJson(), equals(input));
   });
 
+  test('weird names are escaped and round-trip', () {
+    final input = {
+      '__typename': 'Query',
+      'weirdNames': {
+        '__typename': 'WeirdNames',
+        'class': 'klass',
+        'toJson': 'to',
+        'fromJson': 'from',
+        'copyWith': 'copy',
+        'hashCode': 'hash',
+        'values': ['a', null],
+        'result': 'ok',
+        'runtimeType': 'type',
+      },
+    };
+
+    final data = GWeirdNamesData.fromJson(input);
+    final weird = data.weirdNames!;
+    expect(weird.Gclass, 'klass');
+    expect(weird.GtoJson, 'to');
+    expect(weird.GfromJson, 'from');
+    expect(weird.GcopyWith, 'copy');
+    expect(weird.GhashCode, 'hash');
+    expect(weird.Gvalues, equals(['a', null]));
+    expect(weird.result, 'ok');
+    expect(weird.GruntimeType, 'type');
+    expect(data.toJson(), equals(input));
+  });
+
   test('fragment reuse keeps selection types compact', () {
     final data = GPostsData.fromJson({
       '__typename': 'Query',
@@ -297,6 +393,49 @@ void main() {
     expect(fragment, isA<GPostFragmentData>());
     expect(fragment.isFavorited?.totalCount, 2);
     expect(fragment.isLiked?.totalCount, 1);
+  });
+
+  test('postsByLikes vars serialize with null items', () {
+    final vars = GPostsByLikesVars(
+      likes: Value.present([
+        null,
+        const _schema.GPostLikesInput(id: '1'),
+      ]),
+    );
+    expect(
+      vars.toJson(),
+      equals({
+        'likes': [
+          null,
+          {'id': '1'},
+        ],
+      }),
+    );
+    expect(GPostsByLikesVars.fromJson(vars.toJson()).toJson(), vars.toJson());
+  });
+
+  test('searchWithDefault vars omit absent values', () {
+    final vars = GSearchWithDefaultVars();
+    expect(vars.toJson(), isEmpty);
+
+    final withNull = GSearchWithDefaultVars(text: const Value.present(null));
+    expect(withNull.toJson(), equals({'text': null}));
+  });
+
+  test('reviewsWithDefaults vars omit default stars', () {
+    final vars = GReviewsWithDefaultsVars(episode: _schema.GEpisode.JEDI);
+    expect(vars.toJson(), equals({'episode': 'JEDI'}));
+
+    final withStars = GReviewsWithDefaultsVars(
+      episode: _schema.GEpisode.JEDI,
+      stars: const Value.present([5, 4]),
+    );
+    expect(
+        withStars.toJson(),
+        equals({
+          'episode': 'JEDI',
+          'stars': [5, 4]
+        }));
   });
 
   test('date scalar output uses custom converter', () {

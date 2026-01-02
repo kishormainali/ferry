@@ -26,6 +26,8 @@ const _aliasedHeroInput = 'lib/aliases/aliased_hero.graphql';
 const _aliasVarFragmentInput = 'lib/aliases/alias_var_fragment.graphql';
 const _heroNoVarsInput = 'lib/no_vars/hero_no_vars.graphql';
 const _heroForEpisodeInput = 'lib/interfaces/hero_for_episode.graphql';
+const _conditionalTypeFragmentInput =
+    'lib/interfaces/conditional_type_fragment.graphql';
 const _nestedDuplicateFragmentsInput =
     'lib/fragments/nested_duplicate_fragments.graphql';
 const _multipleFragmentsInput = 'lib/fragments/multiple_fragments.graphql';
@@ -99,6 +101,7 @@ void main() {
         _assetId(_aliasVarFragmentInput, _dataExtension),
         _assetId(_heroNoVarsInput, _reqExtension),
         _assetId(_heroForEpisodeInput, _dataExtension),
+        _assetId(_conditionalTypeFragmentInput, _dataExtension),
         _assetId(_nestedDuplicateFragmentsInput, _dataExtension),
         _assetId(_multipleFragmentsInput, _dataExtension),
         _assetId(_conditionalFragmentInput, _dataExtension),
@@ -282,6 +285,24 @@ void main() {
     final implementsDroid =
         asDroid.interfaces.any((type) => type.element.name == 'GDroidFragment');
     expect(implementsDroid, isTrue);
+  });
+
+  test(
+      'conditional type fragment does not add interface implements to base or variant',
+      () async {
+    final library = _libraryFor(_conditionalTypeFragmentInput, _dataExtension);
+    final heroClass =
+        _classIn(library, 'GHeroConditionalTypeFragmentData_hero');
+    final heroVariant =
+        _classIn(library, 'GHeroConditionalTypeFragmentData_hero__asHuman');
+    final baseImplements = heroClass.interfaces.any(
+      (type) => type.element.name == 'GHumanName',
+    );
+    final variantImplements = heroVariant.interfaces.any(
+      (type) => type.element.name == 'GHumanName',
+    );
+    expect(baseImplements, isFalse);
+    expect(variantImplements, isFalse);
   });
 
   test('nested duplicate fragments reuse child fragment data', () async {

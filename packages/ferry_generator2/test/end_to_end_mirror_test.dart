@@ -30,6 +30,7 @@ const _nestedDuplicateFragmentsInput =
     'lib/fragments/nested_duplicate_fragments.graphql';
 const _multipleFragmentsInput = 'lib/fragments/multiple_fragments.graphql';
 const _heroWithFragmentsInput = 'lib/fragments/hero_with_fragments.graphql';
+const _conditionalFragmentInput = 'lib/fragments/conditional_fragment.graphql';
 const _listArgumentInput = 'lib/variables/list_argument.graphql';
 const _createReviewInput = 'lib/variables/create_review.graphql';
 const _createCustomFieldInput = 'lib/variables/create_custom_field.graphql';
@@ -100,6 +101,7 @@ void main() {
         _assetId(_heroForEpisodeInput, _dataExtension),
         _assetId(_nestedDuplicateFragmentsInput, _dataExtension),
         _assetId(_multipleFragmentsInput, _dataExtension),
+        _assetId(_conditionalFragmentInput, _dataExtension),
         _assetId(_heroWithFragmentsInput, _varExtension),
         _assetId(_heroWithFragmentsInput, _dataExtension),
         _assetId(_listArgumentInput, _varExtension),
@@ -294,6 +296,16 @@ void main() {
     final heroClass = _classIn(library, 'GHeroWith2FragmentsData_hero');
     expect(heroClass.fields.any((field) => field.name == 'id'), isTrue);
     expect(heroClass.fields.any((field) => field.name == 'name'), isTrue);
+  });
+
+  test('conditional fragment spread does not add interface implements',
+      () async {
+    final library = _libraryFor(_conditionalFragmentInput, _dataExtension);
+    final heroClass = _classIn(library, 'GHeroConditionalFragmentData_hero');
+    final implementsFragment = heroClass.interfaces.any(
+      (type) => type.element.name == 'GHeroName',
+    );
+    expect(implementsFragment, isFalse);
   });
 
   test('fragment variables propagate to fragment vars', () async {

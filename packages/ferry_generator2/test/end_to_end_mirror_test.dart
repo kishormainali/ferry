@@ -10,6 +10,7 @@ import 'package:build_test/build_test.dart';
 import 'package:ferry_generator2/graphql_builder.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
+import 'test_ast_utils.dart' as ast_utils;
 import 'test_utils.dart';
 
 const _package = 'end_to_end_test';
@@ -195,12 +196,14 @@ void main() {
     expect(_classIn(library, 'GAliasedHeroData'), isNotNull);
 
     final unit = await _resolvedUnit(library);
-    final empireClass = _classDecl(unit, 'GAliasedHeroData_empireHero');
-    final jediClass = _classDecl(unit, 'GAliasedHeroData_jediHero');
+    final empireClass =
+        ast_utils.classDecl(unit, 'GAliasedHeroData_empireHero');
+    final jediClass = ast_utils.classDecl(unit, 'GAliasedHeroData_jediHero');
 
-    final empireFromJson = _factoryConstructor(empireClass, 'fromJson');
+    final empireFromJson =
+        ast_utils.factoryConstructor(empireClass, 'fromJson');
     final empireToJson = _methodDecl(empireClass, 'toJson');
-    final jediFromJson = _factoryConstructor(jediClass, 'fromJson');
+    final jediFromJson = ast_utils.factoryConstructor(jediClass, 'fromJson');
     final jediToJson = _methodDecl(jediClass, 'toJson');
 
     expect(_containsIndexWithString(empireFromJson, 'from'), isTrue);
@@ -328,17 +331,18 @@ void main() {
   test('custom scalar overrides appear in vars and data', () async {
     final varsLibrary = _libraryFor(_reviewWithDateInput, _varExtension);
     final varsUnit = await _resolvedUnit(varsLibrary);
-    final varsClass = _classDecl(varsUnit, 'GReviewWithDateVars');
+    final varsClass = ast_utils.classDecl(varsUnit, 'GReviewWithDateVars');
     final createdAtType = _fieldTypeAnnotation(varsClass, 'createdAt');
     expect(createdAtType.toSource(), contains('CustomDate'));
     expect(createdAtType.toSource(), contains('Value'));
 
     final dataLibrary = _libraryFor(_reviewWithDateInput, _dataExtension);
     final unit = await _resolvedUnit(dataLibrary);
-    final reviewClass = _classDecl(unit, 'GReviewWithDateData_createReview');
+    final reviewClass =
+        ast_utils.classDecl(unit, 'GReviewWithDateData_createReview');
     final createdAtDataType = _fieldTypeAnnotation(reviewClass, 'createdAt');
     expect(createdAtDataType.toSource(), contains('CustomDate'));
-    final fromJson = _factoryConstructor(reviewClass, 'fromJson');
+    final fromJson = ast_utils.factoryConstructor(reviewClass, 'fromJson');
     final toJson = _methodDecl(reviewClass, 'toJson');
     expect(_containsMethodInvocation(fromJson, 'customDateFromJson'), isTrue);
     expect(_containsMethodInvocation(toJson, 'customDateToJson'), isTrue);
@@ -585,12 +589,6 @@ EnumDeclaration _enumDecl(CompilationUnit unit, String name) {
       .firstWhere((decl) => decl.name.lexeme == name);
 }
 
-ClassDeclaration _classDecl(CompilationUnit unit, String name) {
-  return unit.declarations
-      .whereType<ClassDeclaration>()
-      .firstWhere((decl) => decl.name.lexeme == name);
-}
-
 MethodDeclaration _enumMethod(EnumDeclaration enumDecl, String name) {
   return enumDecl.members
       .whereType<MethodDeclaration>()
@@ -601,15 +599,6 @@ MethodDeclaration _methodDecl(ClassDeclaration classDecl, String name) {
   return classDecl.members
       .whereType<MethodDeclaration>()
       .firstWhere((member) => member.name.lexeme == name);
-}
-
-ConstructorDeclaration _factoryConstructor(
-  ClassDeclaration classDecl,
-  String name,
-) {
-  return classDecl.members
-      .whereType<ConstructorDeclaration>()
-      .firstWhere((ctor) => ctor.name?.lexeme == name);
 }
 
 TypeAnnotation _fieldTypeAnnotation(

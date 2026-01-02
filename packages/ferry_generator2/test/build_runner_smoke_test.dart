@@ -7,6 +7,7 @@ import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
+import 'test_ast_utils.dart' as ast_utils;
 
 const _compileSmokeSource = '''
 import 'package:ferry_generator2_smoke/__generated__/operations.data.gql.dart';
@@ -144,21 +145,6 @@ Future<void> _copyDirectory(Directory source, Directory destination) async {
   }
 }
 
-ClassDeclaration _classDecl(CompilationUnit unit, String name) {
-  return unit.declarations
-      .whereType<ClassDeclaration>()
-      .firstWhere((decl) => decl.name.lexeme == name);
-}
-
-ConstructorDeclaration _factoryConstructor(
-  ClassDeclaration classDecl,
-  String name,
-) {
-  return classDecl.members
-      .whereType<ConstructorDeclaration>()
-      .firstWhere((ctor) => ctor.name?.lexeme == name);
-}
-
 Set<String> _implementsNames(ClassDeclaration classDecl) {
   final clause = classDecl.implementsClause;
   if (clause == null) return const {};
@@ -175,25 +161,22 @@ Set<String> _switchCaseStrings(ConstructorDeclaration ctor) {
       .firstWhere((_) => true);
   final labels = <String>{};
   for (final member in switchStmt.members) {
-    if (member is SwitchCase) {
-      final value = member.expression;
-      if (value is StringLiteral) {
-        final stringValue = value.stringValue;
-        if (stringValue != null) {
-          labels.add(stringValue);
-        }
-      }
-    } else if (member is SwitchPatternCase) {
-      final pattern = member.guardedPattern.pattern;
-      if (pattern is ConstantPattern) {
-        final value = pattern.expression;
-        if (value is StringLiteral) {
-          final stringValue = value.stringValue;
-          if (stringValue != null) {
-            labels.add(stringValue);
-          }
-        }
-      }
+    if (member
+        case SwitchCase(
+          expression: StringLiteral(stringValue: final value?),
+        )) {
+      labels.add(value);
+      continue;
+    }
+    if (member
+        case SwitchPatternCase(
+          guardedPattern: GuardedPattern(
+            pattern: ConstantPattern(
+              expression: StringLiteral(stringValue: final value?),
+            ),
+          ),
+        )) {
+      labels.add(value);
     }
   }
   return labels;
@@ -339,19 +322,19 @@ void main() {
       expect(classNames.contains('GCharacterDetails__asHuman'), isFalse);
       expect(classNames.contains('GCharacterDetails__asDroid'), isFalse);
 
-      final baseClass = _classDecl(unit, 'GFriendInfoData');
-      final fromJson = _factoryConstructor(baseClass, 'fromJson');
+      final baseClass = ast_utils.classDecl(unit, 'GFriendInfoData');
+      final fromJson = ast_utils.factoryConstructor(baseClass, 'fromJson');
       final caseLabels = _switchCaseStrings(fromJson);
       expect(caseLabels, containsAll(<String>['Human', 'Droid']));
 
-      final humanClass = _classDecl(unit, 'GFriendInfoData__asHuman');
+      final humanClass = ast_utils.classDecl(unit, 'GFriendInfoData__asHuman');
       final humanImplements = _implementsNames(humanClass);
       expect(
         humanImplements,
         containsAll(<String>['GFriendInfo', 'GFriendInfo__asHuman']),
       );
 
-      final droidClass = _classDecl(unit, 'GFriendInfoData__asDroid');
+      final droidClass = ast_utils.classDecl(unit, 'GFriendInfoData__asDroid');
       final droidImplements = _implementsNames(droidClass);
       expect(
         droidImplements,

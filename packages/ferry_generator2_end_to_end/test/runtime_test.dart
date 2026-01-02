@@ -389,6 +389,86 @@ void main() {
     expect(request.dataToJson(parsed), equals(input));
   });
 
+  test('request equality and hashCode compare deep maps', () {
+    final vars = GCreateReviewVars(
+      episode: Value.present(_schema.GEpisode.JEDI),
+      review: const _schema.GReviewInput(stars: 5),
+    );
+    final first = GCreateReviewReq(
+      vars: vars,
+      requestId: 'req-1',
+      updateCacheHandlerContext: <String, dynamic>{
+        'tags': ['a', 'b'],
+      },
+    );
+    final second = GCreateReviewReq(
+      vars: vars,
+      requestId: 'req-1',
+      updateCacheHandlerContext: <String, dynamic>{
+        'tags': ['a', 'b'],
+      },
+    );
+
+    expect(identical(first, second), isFalse);
+    expect(first, equals(second));
+    expect(first.hashCode, equals(second.hashCode));
+
+    final different = GCreateReviewReq(
+      vars: vars,
+      requestId: 'req-1',
+      updateCacheHandlerContext: <String, dynamic>{
+        'tags': ['a'],
+      },
+    );
+    expect(first, isNot(equals(different)));
+  });
+
+  test('request copyWith updates nullable fields', () {
+    final vars = GCreateReviewVars(
+      episode: Value.present(_schema.GEpisode.JEDI),
+      review: const _schema.GReviewInput(stars: 5),
+    );
+    final original = GCreateReviewReq(
+      vars: vars,
+      requestId: 'req-1',
+      updateCacheHandlerContext: <String, dynamic>{
+        'count': 1,
+      },
+    );
+
+    final updated = original.copyWith(
+      requestId: 'req-2',
+      requestIdIsSet: true,
+      updateCacheHandlerContext: <String, dynamic>{
+        'count': 2,
+      },
+      updateCacheHandlerContextIsSet: true,
+    );
+    expect(updated.requestId, 'req-2');
+    expect(
+      updated.updateCacheHandlerContext,
+      equals(<String, dynamic>{'count': 2}),
+    );
+
+    final cleared = updated.copyWith(
+      requestId: null,
+      requestIdIsSet: true,
+    );
+    expect(cleared.requestId, isNull);
+  });
+
+  test('no-vars request copyWith preserves vars', () {
+    final original = GHeroNoVarsReq(
+      requestId: 'req-1',
+    );
+    final updated = original.copyWith(
+      requestId: 'req-2',
+      requestIdIsSet: true,
+    );
+    expect(updated.vars, isNull);
+    expect(updated.requestId, 'req-2');
+  });
+
   test('operation vars round-trip and execRequest variables', () {
     final vars = GHeroForEpisodeVars(ep: _schema.GEpisode.EMPIRE);
     final request = GHeroForEpisodeReq(vars: vars);

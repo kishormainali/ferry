@@ -28,6 +28,8 @@ const _heroNoVarsInput = 'lib/no_vars/hero_no_vars.graphql';
 const _heroForEpisodeInput = 'lib/interfaces/hero_for_episode.graphql';
 const _conditionalTypeFragmentInput =
     'lib/interfaces/conditional_type_fragment.graphql';
+const _unconditionalTypeFragmentInput =
+    'lib/interfaces/unconditional_type_fragment.graphql';
 const _nestedDuplicateFragmentsInput =
     'lib/fragments/nested_duplicate_fragments.graphql';
 const _multipleFragmentsInput = 'lib/fragments/multiple_fragments.graphql';
@@ -102,6 +104,7 @@ void main() {
         _assetId(_heroNoVarsInput, _reqExtension),
         _assetId(_heroForEpisodeInput, _dataExtension),
         _assetId(_conditionalTypeFragmentInput, _dataExtension),
+        _assetId(_unconditionalTypeFragmentInput, _dataExtension),
         _assetId(_nestedDuplicateFragmentsInput, _dataExtension),
         _assetId(_multipleFragmentsInput, _dataExtension),
         _assetId(_conditionalFragmentInput, _dataExtension),
@@ -303,6 +306,23 @@ void main() {
     );
     expect(baseImplements, isFalse);
     expect(variantImplements, isFalse);
+  });
+
+  test('unconditional type fragment implements on variant only', () async {
+    final library =
+        _libraryFor(_unconditionalTypeFragmentInput, _dataExtension);
+    final heroClass =
+        _classIn(library, 'GHeroUnconditionalTypeFragmentData_hero');
+    final heroVariant =
+        _classIn(library, 'GHeroUnconditionalTypeFragmentData_hero__asHuman');
+    final baseImplements = heroClass.interfaces.any(
+      (type) => type.element.name == 'GHumanName',
+    );
+    final variantImplements = heroVariant.interfaces.any(
+      (type) => type.element.name == 'GHumanName',
+    );
+    expect(baseImplements, isFalse);
+    expect(variantImplements, isTrue);
   });
 
   test('nested duplicate fragments reuse child fragment data', () async {

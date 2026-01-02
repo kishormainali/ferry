@@ -7,7 +7,8 @@ import 'package:ferry_generator2_end_to_end/directives/__generated__/create_revi
 import 'package:ferry_generator2_end_to_end/directives/__generated__/human_with_directives.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/directives/__generated__/human_with_directives.req.gql.dart';
 import 'package:ferry_generator2_end_to_end/directives/__generated__/human_with_directives.var.gql.dart';
-import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/conditional_type_fragment.data.gql.dart';
+import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/conditional_type_fragment.data.gql.dart'
+    as conditional;
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/deep_fragments.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/fragment_directives.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/human_birthday.data.gql.dart';
@@ -16,6 +17,8 @@ import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/reviews_wit
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/search_with_default.var.gql.dart';
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/search_with_starship.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/settings.data.gql.dart';
+import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/unconditional_type_fragment.data.gql.dart'
+    as unconditional;
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/weird_names.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/fragment_with_scalar_var.var.gql.dart';
 import 'package:ferry_generator2_end_to_end/fragments/__generated__/hero_with_interface_subtyped_fragments.data.gql.dart';
@@ -329,12 +332,31 @@ void main() {
       },
     };
 
-    final data = GHeroConditionalTypeFragmentData.fromJson(input);
+    final data = conditional.GHeroConditionalTypeFragmentData.fromJson(input);
     expect(
       data.hero,
-      isA<GHeroConditionalTypeFragmentData_hero__asHuman>(),
+      isA<conditional.GHeroConditionalTypeFragmentData_hero__asHuman>(),
     );
-    expect(data.hero is GHumanName, isFalse);
+    expect(data.hero is conditional.GHumanName, isFalse);
+  });
+
+  test('unconditional inline fragment adds interface on variant', () {
+    final input = {
+      '__typename': 'Query',
+      'hero': {
+        '__typename': 'Human',
+        'id': '1000',
+        'name': 'Luke',
+      },
+    };
+
+    final data =
+        unconditional.GHeroUnconditionalTypeFragmentData.fromJson(input);
+    expect(
+      data.hero,
+      isA<unconditional.GHeroUnconditionalTypeFragmentData_hero__asHuman>(),
+    );
+    expect(data.hero, isA<unconditional.GHumanName>());
   });
 
   test('hero_for_episode data round-trips through JSON', () {

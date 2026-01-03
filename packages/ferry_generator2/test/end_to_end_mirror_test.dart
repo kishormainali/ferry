@@ -597,21 +597,6 @@ FieldElement _fieldIn(ClassElement element, String name) {
   return field;
 }
 
-FieldElement _fieldInOrInherited(ClassElement element, String name) {
-  final direct = element.fields.where((field) => field.name == name).toList();
-  if (direct.isNotEmpty) {
-    return direct.first;
-  }
-  for (final supertype in element.allSupertypes) {
-    final match =
-        supertype.element.fields.where((field) => field.name == name).toList();
-    if (match.isNotEmpty) {
-      return match.first;
-    }
-  }
-  throw StateError('Missing field $name on ${element.name} or supertypes');
-}
-
 bool _declaresMethod(ClassElement element, String name) {
   return element.methods.any((method) => method.name == name);
 }

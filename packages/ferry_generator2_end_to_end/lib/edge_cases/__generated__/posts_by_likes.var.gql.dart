@@ -4,6 +4,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.schema.gql.dart'
     as _i1;
+import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
+    as _gqlUtils;
 import 'package:gql_tristate_value/gql_tristate_value.dart';
 
 class GPostsByLikesVars {
@@ -37,5 +39,26 @@ class GPostsByLikesVars {
               .toList();
     }
     return _$result;
+  }
+
+  GPostsByLikesVars copyWith({Value<List<_i1.GPostLikesInput?>>? likes}) {
+    return GPostsByLikesVars(likes: likes ?? this.likes);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GPostsByLikesVars &&
+            _gqlUtils.deepEquals(toJson(), other.toJson()));
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(runtimeType, _gqlUtils.deepHash(toJson()));
+  }
+
+  @override
+  String toString() {
+    return 'GPostsByLikesVars(likes: $likes)';
   }
 }

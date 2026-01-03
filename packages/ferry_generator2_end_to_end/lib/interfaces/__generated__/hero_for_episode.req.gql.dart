@@ -139,7 +139,7 @@ class GHeroForEpisodeReq
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GHeroForEpisodeReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             operation == other.operation &&
             requestId == other.requestId &&
             updateResult == other.updateResult &&
@@ -156,7 +156,7 @@ class GHeroForEpisodeReq
   int get hashCode {
     return Object.hash(
         runtimeType,
-        vars,
+        _gqlUtils.deepHash(varsToJson()),
         operation,
         requestId,
         updateResult,
@@ -217,7 +217,7 @@ class GDroidFragmentReq
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GDroidFragmentReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             document == other.document &&
             fragmentName == other.fragmentName &&
             _gqlUtils.deepEquals(idFields, other.idFields));
@@ -225,8 +225,8 @@ class GDroidFragmentReq
 
   @override
   int get hashCode {
-    return Object.hash(runtimeType, vars, document, fragmentName,
-        _gqlUtils.deepHash(idFields));
+    return Object.hash(runtimeType, _gqlUtils.deepHash(varsToJson()), document,
+        fragmentName, _gqlUtils.deepHash(idFields));
   }
 
   @override

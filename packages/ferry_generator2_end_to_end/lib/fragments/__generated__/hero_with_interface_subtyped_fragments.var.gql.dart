@@ -4,6 +4,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.schema.gql.dart'
     as _i1;
+import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
+    as _gqlUtils;
 
 class GHeroWithInterfaceSubTypedFragmentsVars {
   const GHeroWithInterfaceSubTypedFragmentsVars({required this.episode});
@@ -21,5 +23,27 @@ class GHeroWithInterfaceSubTypedFragmentsVars {
     final _$episodeValue = this.episode;
     _$result['episode'] = _$episodeValue.toJson();
     return _$result;
+  }
+
+  GHeroWithInterfaceSubTypedFragmentsVars copyWith({_i1.GEpisode? episode}) {
+    return GHeroWithInterfaceSubTypedFragmentsVars(
+        episode: episode ?? this.episode);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GHeroWithInterfaceSubTypedFragmentsVars &&
+            _gqlUtils.deepEquals(toJson(), other.toJson()));
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(runtimeType, _gqlUtils.deepHash(toJson()));
+  }
+
+  @override
+  String toString() {
+    return 'GHeroWithInterfaceSubTypedFragmentsVars(episode: $episode)';
   }
 }

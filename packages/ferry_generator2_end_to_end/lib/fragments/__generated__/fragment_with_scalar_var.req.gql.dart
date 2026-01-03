@@ -141,7 +141,7 @@ class GPostsWithFixedVariableReq
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GPostsWithFixedVariableReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             operation == other.operation &&
             requestId == other.requestId &&
             updateResult == other.updateResult &&
@@ -158,7 +158,7 @@ class GPostsWithFixedVariableReq
   int get hashCode {
     return Object.hash(
         runtimeType,
-        vars,
+        _gqlUtils.deepHash(varsToJson()),
         operation,
         requestId,
         updateResult,
@@ -220,7 +220,7 @@ class GPostFragmentForUser1Req
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GPostFragmentForUser1Req &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             document == other.document &&
             fragmentName == other.fragmentName &&
             _gqlUtils.deepEquals(idFields, other.idFields));
@@ -228,8 +228,8 @@ class GPostFragmentForUser1Req
 
   @override
   int get hashCode {
-    return Object.hash(runtimeType, vars, document, fragmentName,
-        _gqlUtils.deepHash(idFields));
+    return Object.hash(runtimeType, _gqlUtils.deepHash(varsToJson()), document,
+        fragmentName, _gqlUtils.deepHash(idFields));
   }
 
   @override

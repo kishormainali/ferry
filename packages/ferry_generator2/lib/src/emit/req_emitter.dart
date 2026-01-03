@@ -3,7 +3,7 @@ import "package:gql/ast.dart";
 
 import "../config/config.dart";
 import "data_emitter_context.dart";
-import "data_emitter_types.dart";
+import "emitter_helpers.dart";
 import "../utils/naming.dart";
 import "../selection/selection_resolver.dart";
 
@@ -28,7 +28,7 @@ class ReqEmitter {
     required Iterable<FragmentDefinitionNode> ownedFragments,
   }) {
     final specs = <Spec>[];
-    _needsUtilsImport = false;
+    _needsUtilsImport = config.generateEquals || config.generateHashCode;
 
     for (final operation in ownedOperations) {
       if (operation.name == null) continue;
@@ -74,7 +74,7 @@ class ReqEmitter {
 
     final documentExpr = _documentForOperation(operation);
 
-    final fields = <Field>[
+    final instanceFields = <Field>[
       Field(
         (b) => b
           ..name = "vars"
@@ -171,6 +171,10 @@ class ReqEmitter {
               ..isNullable = true,
           ),
       ),
+    ];
+
+    final fields = <Field>[
+      ...instanceFields,
       Field(
         (b) => b
           ..name = "_document"
@@ -359,6 +363,10 @@ class ReqEmitter {
       ),
     ];
 
+    final constructorInitializers = <Code>[
+      const Code("operation = operation ?? _operation"),
+    ];
+
     return Class(
       (b) => b
         ..name = className
@@ -368,9 +376,7 @@ class ReqEmitter {
           Constructor(
             (b) => b
               ..optionalParameters.addAll(constructorParams)
-              ..initializers.add(
-                Code("operation = operation ?? _operation"),
-              ),
+              ..initializers.addAll(constructorInitializers),
           ),
         )
         ..methods.addAll([
@@ -458,23 +464,39 @@ class ReqEmitter {
                   Code(_transformOperationBody(className, hasVars: hasVars)),
           ),
           if (config.generateCopyWith)
-            _buildCopyWithMethod(
+            buildCopyWithMethod(
               className,
-              copyWithFields,
+              copyWithFields
+                  .map(
+                    (field) => EmitterField(
+                      name: field.name,
+                      typeRef: field.typeRef,
+                      isNullable: field.isNullable,
+                    ),
+                  )
+                  .toList(),
             ),
           if (config.generateEquals)
-            _buildEqualsMethod(
+            buildEqualsMethod(
               className,
-              fieldSpecs,
+              fieldSpecs
+                  .map(
+                    (field) => _equalsExpressionForField(
+                      field,
+                      "other.${field.name}",
+                    ),
+                  )
+                  .toList(),
             ),
           if (config.generateHashCode)
-            _buildHashCodeGetter(
-              fieldSpecs,
-            ),
+            buildHashCodeGetter([
+              "runtimeType",
+              ...fieldSpecs.map(_hashExpressionForField),
+            ]),
           if (config.generateToString)
-            _buildToStringMethod(
+            buildToStringMethod(
               className,
-              fieldSpecs,
+              fieldSpecs.map((field) => field.name).toList(),
             ),
         ]),
     );
@@ -559,47 +581,55 @@ ${hasVars ? "  vars: vars," : ""}
         ? fieldSpecs
         : fieldSpecs.where((f) => f.name != "vars").toList();
 
+    final instanceFields = [
+      Field(
+        (b) => b
+          ..name = "vars"
+          ..modifier = FieldModifier.final$
+          ..type = varsTypeRef
+          ..assignment = hasVars ? null : const Code("null"),
+      ),
+      Field(
+        (b) => b
+          ..name = "document"
+          ..modifier = FieldModifier.final$
+          ..type = refer("DocumentNode", "package:gql/ast.dart"),
+      ),
+      Field(
+        (b) => b
+          ..name = "fragmentName"
+          ..modifier = FieldModifier.final$
+          ..type = TypeReference(
+            (b) => b
+              ..symbol = "String"
+              ..isNullable = true,
+          ),
+      ),
+      Field(
+        (b) => b
+          ..name = "idFields"
+          ..modifier = FieldModifier.final$
+          ..type = TypeReference(
+            (b) => b
+              ..symbol = "Map"
+              ..types.addAll([
+                refer("String"),
+                refer("dynamic"),
+              ]),
+          ),
+      ),
+    ];
+
+    final constructorInitializers = <Code>[
+      const Code("document = document ?? _document"),
+    ];
+
     return Class(
       (b) => b
         ..name = className
         ..implements.add(reqTypeRef)
         ..fields.addAll([
-          Field(
-            (b) => b
-              ..name = "vars"
-              ..modifier = FieldModifier.final$
-              ..type = varsTypeRef
-              ..assignment = hasVars ? null : const Code("null"),
-          ),
-          Field(
-            (b) => b
-              ..name = "document"
-              ..modifier = FieldModifier.final$
-              ..type = refer("DocumentNode", "package:gql/ast.dart"),
-          ),
-          Field(
-            (b) => b
-              ..name = "fragmentName"
-              ..modifier = FieldModifier.final$
-              ..type = TypeReference(
-                (b) => b
-                  ..symbol = "String"
-                  ..isNullable = true,
-              ),
-          ),
-          Field(
-            (b) => b
-              ..name = "idFields"
-              ..modifier = FieldModifier.final$
-              ..type = TypeReference(
-                (b) => b
-                  ..symbol = "Map"
-                  ..types.addAll([
-                    refer("String"),
-                    refer("dynamic"),
-                  ]),
-              ),
-          ),
+          ...instanceFields,
           Field(
             (b) => b
               ..name = "_document"
@@ -644,9 +674,7 @@ ${hasVars ? "  vars: vars," : ""}
                     ..defaultTo = const Code("const <String, dynamic>{}"),
                 ),
               ])
-              ..initializers.add(
-                Code("document = document ?? _document"),
-              ),
+              ..initializers.addAll(constructorInitializers),
           ),
         )
         ..methods.addAll([
@@ -689,23 +717,39 @@ ${hasVars ? "  vars: vars," : ""}
               ..body = refer("data").property("toJson").call([]).code,
           ),
           if (config.generateCopyWith)
-            _buildCopyWithMethod(
+            buildCopyWithMethod(
               className,
-              copyWithFields,
+              copyWithFields
+                  .map(
+                    (field) => EmitterField(
+                      name: field.name,
+                      typeRef: field.typeRef,
+                      isNullable: field.isNullable,
+                    ),
+                  )
+                  .toList(),
             ),
           if (config.generateEquals)
-            _buildEqualsMethod(
+            buildEqualsMethod(
               className,
-              fieldSpecs,
+              fieldSpecs
+                  .map(
+                    (field) => _equalsExpressionForField(
+                      field,
+                      "other.${field.name}",
+                    ),
+                  )
+                  .toList(),
             ),
           if (config.generateHashCode)
-            _buildHashCodeGetter(
-              fieldSpecs,
-            ),
+            buildHashCodeGetter([
+              "runtimeType",
+              ...fieldSpecs.map(_hashExpressionForField),
+            ]),
           if (config.generateToString)
-            _buildToStringMethod(
+            buildToStringMethod(
               className,
-              fieldSpecs,
+              fieldSpecs.map((field) => field.name).toList(),
             ),
         ]),
     );
@@ -830,7 +874,7 @@ ${hasVars ? "  vars: vars," : ""}
     if (!config.generateEquals && !config.generateHashCode) {
       return;
     }
-    if (fieldsList.any((field) => field.isMap)) {
+    if (fieldsList.any((field) => field.isMap || field.name == "vars")) {
       _needsUtilsImport = true;
     }
   }
@@ -850,147 +894,6 @@ class _ReqFieldSpec {
   });
 }
 
-Method _buildCopyWithMethod(
-  String className,
-  List<_ReqFieldSpec> fieldsList,
-) {
-  final parameters = <Parameter>[];
-  final args = <String, Expression>{};
-
-  for (final field in fieldsList) {
-    final paramType = field.isNullable
-        ? field.typeRef
-        : _nullableTypeReference(field.typeRef);
-    parameters.add(
-      Parameter(
-        (b) => b
-          ..name = field.name
-          ..type = paramType
-          ..named = true,
-      ),
-    );
-
-    if (field.isNullable) {
-      final isSetName = _copyWithIsSetName(field.name);
-      parameters.add(
-        Parameter(
-          (b) => b
-            ..name = isSetName
-            ..type = refer("bool")
-            ..named = true
-            ..defaultTo = const Code("false"),
-        ),
-      );
-      args[field.name] = conditionalExpression(
-        refer(isSetName),
-        refer(field.name),
-        refer("this").property(field.name),
-      );
-    } else {
-      args[field.name] =
-          refer(field.name).ifNullThen(refer("this").property(field.name));
-    }
-  }
-
-  final constructorCall = refer(className).call([], args);
-  return Method(
-    (b) => b
-      ..name = "copyWith"
-      ..returns = refer(className)
-      ..optionalParameters.addAll(parameters)
-      ..body = Block.of([constructorCall.returned.statement]),
-  );
-}
-
-Method _buildEqualsMethod(
-  String className,
-  List<_ReqFieldSpec> fieldsList,
-) {
-  final comparisons = fieldsList
-      .map(
-        (field) => _equalsExpressionForField(
-          field,
-          "other.${field.name}",
-        ),
-      )
-      .join(" && ");
-  final body = fieldsList.isEmpty
-      ? "return identical(this, other) || other is $className;"
-      : "return identical(this, other) || "
-          "(other is $className && $comparisons);";
-
-  return Method(
-    (b) => b
-      ..name = "operator =="
-      ..annotations.add(refer("override"))
-      ..returns = refer("bool")
-      ..requiredParameters.add(
-        Parameter(
-          (b) => b
-            ..name = "other"
-            ..type = refer("Object"),
-        ),
-      )
-      ..body = Code(body),
-  );
-}
-
-Method _buildHashCodeGetter(List<_ReqFieldSpec> fieldsList) {
-  final entries = [
-    "runtimeType",
-    ...fieldsList.map(_hashExpressionForField),
-  ];
-  final body = entries.length == 1
-      ? const Code("return runtimeType.hashCode;")
-      : entries.length <= 20
-          ? Code("return Object.hash(${entries.join(", ")});")
-          : Code("return Object.hashAll([${entries.join(", ")}]);");
-  return Method(
-    (b) => b
-      ..annotations.add(refer("override"))
-      ..name = "hashCode"
-      ..type = MethodType.getter
-      ..returns = refer("int")
-      ..body = body,
-  );
-}
-
-Method _buildToStringMethod(
-  String className,
-  List<_ReqFieldSpec> fieldsList,
-) {
-  final parts =
-      fieldsList.map((field) => "${field.name}: \$${field.name}").join(
-            ", ",
-          );
-  final value = fieldsList.isEmpty ? "$className()" : "$className($parts)";
-  return Method(
-    (b) => b
-      ..annotations.add(refer("override"))
-      ..name = "toString"
-      ..returns = refer("String")
-      ..body = Code("return '$value';"),
-  );
-}
-
-String _copyWithIsSetName(String propertyName) =>
-    identifier("${propertyName}IsSet");
-
-Reference _nullableTypeReference(Reference reference) {
-  if (reference is FunctionType) {
-    return reference.rebuild((b) => b..isNullable = true);
-  }
-  if (reference is TypeReference) {
-    return reference.rebuild((b) => b..isNullable = true);
-  }
-  return TypeReference(
-    (b) => b
-      ..symbol = reference.symbol
-      ..url = reference.url
-      ..isNullable = true,
-  );
-}
-
 bool _isNullableReference(Reference reference) {
   if (reference is FunctionType) {
     return reference.isNullable ?? false;
@@ -1005,6 +908,9 @@ String _equalsExpressionForField(
   _ReqFieldSpec field,
   String right,
 ) {
+  if (field.name == "vars") {
+    return "${utilsPrefix}deepEquals(varsToJson(), other.varsToJson())";
+  }
   if (field.isMap) {
     return "${utilsPrefix}deepEquals(${field.name}, $right)";
   }
@@ -1012,6 +918,9 @@ String _equalsExpressionForField(
 }
 
 String _hashExpressionForField(_ReqFieldSpec field) {
+  if (field.name == "vars") {
+    return "${utilsPrefix}deepHash(varsToJson())";
+  }
   if (field.isMap) {
     return "${utilsPrefix}deepHash(${field.name})";
   }

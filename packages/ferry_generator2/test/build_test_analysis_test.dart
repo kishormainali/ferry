@@ -1,6 +1,7 @@
 @TestOn('vm')
 
 import 'package:analyzer/dart/analysis/results.dart';
+import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
@@ -195,6 +196,7 @@ void main() {
       );
       _expectReqGenerics(resolved.req);
       _expectDataToJsonSignature(resolved.req);
+      _expectReqDocumentDefinitions(resolved.req);
     });
   }
 }
@@ -356,6 +358,59 @@ void _expectDataToJsonSignature(LibraryElement library) {
   final parameter = method!.formalParameters.single;
   final type = parameter.type;
   _expectInterfaceType(type, name: 'GBookByIdData', nullable: false);
+}
+
+void _expectReqDocumentDefinitions(LibraryElement library) {
+  final booksDefs = _reqDefinitionNames(library, 'GBooksReq');
+  final booksExpected = {
+    'AuthorFragment',
+    'BookFragment',
+    'Books',
+  };
+  expect(
+    booksDefs.toSet(),
+    booksExpected,
+  );
+  expect(booksDefs.length, booksExpected.length);
+
+  final bookByIdDefs = _reqDefinitionNames(library, 'GBookByIdReq');
+  final bookByIdExpected = {
+    'AuthorFragment',
+    'BookFragment',
+    'BookById',
+  };
+  expect(
+    bookByIdDefs.toSet(),
+    bookByIdExpected,
+  );
+  expect(bookByIdDefs.length, bookByIdExpected.length);
+}
+
+List<String> _reqDefinitionNames(
+  LibraryElement library,
+  String reqClassName,
+) {
+  final reqClass = _classByName(library, reqClassName);
+  final documentField = reqClass.fields.firstWhere(
+    (field) => field.name == '_document',
+  );
+  final documentValue = documentField.computeConstantValue();
+  if (documentValue == null) {
+    throw StateError('Missing const _document on $reqClassName');
+  }
+  final definitionsValue = documentValue.getField('definitions');
+  final definitions = definitionsValue?.toListValue() ?? const <DartObject>[];
+  return [
+    for (final definition in definitions) _definitionName(definition),
+  ];
+}
+
+String _definitionName(DartObject definition) {
+  final nameValue = definition.getField('name');
+  if (nameValue == null || nameValue.isNull) {
+    return '<unnamed>';
+  }
+  return nameValue.getField('value')?.toStringValue() ?? '<unnamed>';
 }
 
 ClassElement _classByName(LibraryElement library, String name) {

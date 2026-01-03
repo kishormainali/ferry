@@ -27,14 +27,15 @@ Future<void> writeLibrary({
     useNullSafetySyntax: true,
   );
   final generated = library.accept(emitter).toString();
-  final formatted = _formatterFor(config).format(generated);
+  final formatted =
+      config.format ? _formatterFor(config).format(generated) : generated;
   final hasBody = formatted.trim().isNotEmpty;
 
   final buffer = StringBuffer()
     ..writeln("// GENERATED CODE - DO NOT MODIFY BY HAND")
     ..writeln("// ignore_for_file: type=lint");
 
-  if (!config.format) {
+  if (config.emitFormatOff) {
     buffer
       ..writeln()
       ..writeln("// dart format off");

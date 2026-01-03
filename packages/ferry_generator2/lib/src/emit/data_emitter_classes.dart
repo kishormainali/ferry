@@ -5,6 +5,7 @@ import "data_emitter_context.dart";
 import "data_emitter_fields.dart";
 import "data_emitter_json.dart";
 import "data_emitter_types.dart";
+import "emitter_helpers.dart";
 import "fragment_interface_refs.dart";
 import "../utils/naming.dart";
 import "../selection/selection_resolver.dart";
@@ -435,16 +436,54 @@ Class _buildConcreteClass({
     _buildToJsonMethod(ctx, toJsonFields, usesSuper: usesSuperToJson),
   ];
   if (ctx.config.generateCopyWith) {
-    methods.add(_buildCopyWithMethod(className, fields));
+    methods.add(
+      buildCopyWithMethod(
+        className,
+        fields
+            .map(
+              (field) => EmitterField(
+                name: field.propertyName,
+                typeRef: field.typeRef,
+                isNullable: isNullableField(field),
+              ),
+            )
+            .toList(),
+      ),
+    );
   }
   if (ctx.config.generateEquals) {
-    methods.add(_buildEqualsMethod(ctx, className, fields));
+    final comparisons = fields
+        .map(
+          (field) => _equalsExpressionForTypeNode(
+            ctx,
+            field.typeNode,
+            field.propertyName,
+            "other.${field.propertyName}",
+          ),
+        )
+        .toList();
+    methods.add(buildEqualsMethod(className, comparisons));
   }
   if (ctx.config.generateHashCode) {
-    methods.add(_buildHashCodeGetter(ctx, fields));
+    final entries = [
+      "runtimeType",
+      ...fields.map(
+        (field) => _hashExpressionForTypeNode(
+          ctx,
+          field.typeNode,
+          field.propertyName,
+        ),
+      ),
+    ];
+    methods.add(buildHashCodeGetter(entries));
   }
   if (ctx.config.generateToString) {
-    methods.add(_buildToStringMethod(className, fields));
+    methods.add(
+      buildToStringMethod(
+        className,
+        fields.map((field) => field.propertyName).toList(),
+      ),
+    );
   }
 
   return Class(
@@ -588,147 +627,6 @@ Method _buildToJsonMethod(
       ..name = "toJson"
       ..returns = mapStringDynamicType()
       ..body = Block.of(statements),
-  );
-}
-
-Method _buildCopyWithMethod(String className, List<FieldSpec> fieldsList) {
-  final parameters = <Parameter>[];
-  final args = <String, Expression>{};
-
-  for (final field in fieldsList) {
-    final isNullable = isNullableField(field);
-    final paramType =
-        isNullable ? field.typeRef : _nullableTypeReference(field.typeRef);
-    parameters.add(
-      Parameter(
-        (b) => b
-          ..name = field.propertyName
-          ..type = paramType
-          ..named = true,
-      ),
-    );
-
-    if (isNullable) {
-      final isSetName = _copyWithIsSetName(field.propertyName);
-      parameters.add(
-        Parameter(
-          (b) => b
-            ..name = isSetName
-            ..type = refer("bool")
-            ..named = true
-            ..defaultTo = const Code("false"),
-        ),
-      );
-      args[field.propertyName] = conditionalExpression(
-        refer(isSetName),
-        refer(field.propertyName),
-        refer("this").property(field.propertyName),
-      );
-    } else {
-      args[field.propertyName] = refer(field.propertyName)
-          .ifNullThen(refer("this").property(field.propertyName));
-    }
-  }
-
-  final constructorCall = refer(className).call([], args);
-  return Method(
-    (b) => b
-      ..name = "copyWith"
-      ..returns = refer(className)
-      ..optionalParameters.addAll(parameters)
-      ..body = Block.of([constructorCall.returned.statement]),
-  );
-}
-
-Method _buildEqualsMethod(
-  DataEmitterContext ctx,
-  String className,
-  List<FieldSpec> fieldsList,
-) {
-  final comparisons = fieldsList
-      .map(
-        (field) => _equalsExpressionForTypeNode(
-          ctx,
-          field.typeNode,
-          field.propertyName,
-          "other.${field.propertyName}",
-        ),
-      )
-      .join(" && ");
-  final body = fieldsList.isEmpty
-      ? "return identical(this, other) || other is $className;"
-      : "return identical(this, other) || "
-          "(other is $className && $comparisons);";
-
-  return Method(
-    (b) => b
-      ..name = "operator =="
-      ..annotations.add(refer("override"))
-      ..returns = refer("bool")
-      ..requiredParameters.add(
-        Parameter(
-          (b) => b
-            ..name = "other"
-            ..type = refer("Object"),
-        ),
-      )
-      ..body = Code(body),
-  );
-}
-
-Method _buildHashCodeGetter(
-    DataEmitterContext ctx, List<FieldSpec> fieldsList) {
-  final entries = [
-    "runtimeType",
-    ...fieldsList.map(
-      (field) => _hashExpressionForTypeNode(
-        ctx,
-        field.typeNode,
-        field.propertyName,
-      ),
-    ),
-  ];
-  final body = entries.length == 1
-      ? const Code("return runtimeType.hashCode;")
-      : entries.length <= 20
-          ? Code("return Object.hash(${entries.join(", ")});")
-          : Code("return Object.hashAll([${entries.join(", ")}]);");
-  return Method(
-    (b) => b
-      ..annotations.add(refer("override"))
-      ..name = "hashCode"
-      ..type = MethodType.getter
-      ..returns = refer("int")
-      ..body = body,
-  );
-}
-
-Method _buildToStringMethod(String className, List<FieldSpec> fieldsList) {
-  final parts = fieldsList
-      .map((field) => "${field.propertyName}: \$${field.propertyName}")
-      .join(", ");
-  final value = fieldsList.isEmpty ? "$className()" : "$className($parts)";
-  return Method(
-    (b) => b
-      ..annotations.add(refer("override"))
-      ..name = "toString"
-      ..returns = refer("String")
-      ..body = Code("return '$value';"),
-  );
-}
-
-String _copyWithIsSetName(String propertyName) =>
-    identifier("${propertyName}IsSet");
-
-Reference _nullableTypeReference(Reference typeRef) {
-  if (typeRef is TypeReference) {
-    return typeRef.rebuild((b) => b..isNullable = true);
-  }
-  return TypeReference(
-    (b) => b
-      ..symbol = typeRef.symbol
-      ..url = typeRef.url
-      ..isNullable = true,
   );
 }
 

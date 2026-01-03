@@ -6,19 +6,24 @@ import "../utils/naming.dart";
 import "../schema/schema.dart";
 import "../selection/selection_resolver.dart";
 import "../schema/type_utils.dart";
+import "data_emitter_context.dart" show utilsImportAlias, utilsPrefix;
+import "emitter_helpers.dart";
 
 class VarsEmitter {
   final SchemaIndex schema;
   final BuilderConfig config;
   final DocumentIndex documentIndex;
+  final String? utilsUrl;
   final Set<String> extraImports = {};
 
   bool _usesTriStateValue = false;
+  bool _needsUtilsImport = false;
 
   VarsEmitter({
     required this.schema,
     required this.config,
     required this.documentIndex,
+    required this.utilsUrl,
   });
 
   Library? buildLibrary({
@@ -77,11 +82,15 @@ class VarsEmitter {
       );
     }
 
+    _needsUtilsImport = config.generateEquals || config.generateHashCode;
+
     return Library(
       (b) => b
-        ..directives.addAll(
-          extraImports.map(Directive.import),
-        )
+        ..directives.addAll([
+          if (_needsUtilsImport && utilsUrl != null)
+            Directive.import(utilsUrl!, as: utilsImportAlias),
+          ...extraImports.map(Directive.import),
+        ])
         ..body.addAll(specs),
     );
   }
@@ -101,9 +110,40 @@ class VarsEmitter {
             _buildConstructor(fields),
             _buildFromJsonFactory(className, fields),
           ])
-          ..methods.add(
+          ..methods.addAll([
             _buildToJsonMethod(fields),
-          ),
+            if (config.generateCopyWith)
+              buildCopyWithMethod(
+                className,
+                fields
+                    .map(
+                      (field) => EmitterField(
+                        name: field.propertyName,
+                        typeRef: field.typeRef,
+                        isNullable: _isNullableField(field),
+                      ),
+                    )
+                    .toList(),
+              ),
+            if (config.generateEquals)
+              buildEqualsMethod(
+                className,
+                fields.isEmpty
+                    ? const []
+                    : ["${utilsPrefix}deepEquals(toJson(), other.toJson())"],
+              ),
+            if (config.generateHashCode)
+              buildHashCodeGetter(
+                fields.isEmpty
+                    ? ["runtimeType"]
+                    : ["runtimeType", "${utilsPrefix}deepHash(toJson())"],
+              ),
+            if (config.generateToString)
+              buildToStringMethod(
+                className,
+                fields.map((field) => field.propertyName).toList(),
+              ),
+          ]),
       ),
     ];
   }
@@ -211,6 +251,14 @@ class VarsEmitter {
           ..type = field.typeRef
           ..modifier = FieldModifier.final$,
       );
+
+  bool _isNullableField(InputFieldSpec field) {
+    final typeRef = field.typeRef;
+    if (typeRef is TypeReference) {
+      return typeRef.isNullable ?? false;
+    }
+    return false;
+  }
 
   InputFieldSpec _fieldSpecFromDefinition(String name, TypeNode typeNode) {
     final responseKey = name;

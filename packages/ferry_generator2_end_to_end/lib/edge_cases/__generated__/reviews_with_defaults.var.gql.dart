@@ -4,6 +4,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.schema.gql.dart'
     as _i1;
+import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
+    as _gqlUtils;
 import 'package:gql_tristate_value/gql_tristate_value.dart';
 
 class GReviewsWithDefaultsVars {
@@ -39,5 +41,32 @@ class GReviewsWithDefaultsVars {
           : _$starsRequired.map((_$e) => _$e).toList();
     }
     return _$result;
+  }
+
+  GReviewsWithDefaultsVars copyWith({
+    _i1.GEpisode? episode,
+    Value<List<int>>? stars,
+  }) {
+    return GReviewsWithDefaultsVars(
+      episode: episode ?? this.episode,
+      stars: stars ?? this.stars,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GReviewsWithDefaultsVars &&
+            _gqlUtils.deepEquals(toJson(), other.toJson()));
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(runtimeType, _gqlUtils.deepHash(toJson()));
+  }
+
+  @override
+  String toString() {
+    return 'GReviewsWithDefaultsVars(episode: $episode, stars: $stars)';
   }
 }

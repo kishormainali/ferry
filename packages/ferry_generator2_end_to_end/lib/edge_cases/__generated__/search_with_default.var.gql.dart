@@ -1,6 +1,9 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
 
+// ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
+    as _gqlUtils;
 import 'package:gql_tristate_value/gql_tristate_value.dart';
 
 class GSearchWithDefaultVars {
@@ -24,5 +27,26 @@ class GSearchWithDefaultVars {
       _$result['text'] = _$textRequired == null ? null : _$textRequired;
     }
     return _$result;
+  }
+
+  GSearchWithDefaultVars copyWith({Value<String>? text}) {
+    return GSearchWithDefaultVars(text: text ?? this.text);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GSearchWithDefaultVars &&
+            _gqlUtils.deepEquals(toJson(), other.toJson()));
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(runtimeType, _gqlUtils.deepHash(toJson()));
+  }
+
+  @override
+  String toString() {
+    return 'GSearchWithDefaultVars(text: $text)';
   }
 }

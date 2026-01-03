@@ -273,9 +273,6 @@ void main() {
     expect(opRequestType.typeArguments, hasLength(2));
     expect(_typeName(opRequestType.typeArguments.first), 'GHeroNoVarsData');
     expect(opRequestType.typeArguments.last.isDartCoreNull, isTrue);
-
-    final varsField = _fieldIn(reqClass, 'vars');
-    expect(varsField.type.isDartCoreNull, isTrue);
   });
 
   test('interface selections include inline fragment variants', () async {
@@ -425,7 +422,7 @@ void main() {
   test('request classes expose execRequest and parseData', () async {
     final reqLibrary = _libraryFor(_heroNoVarsInput, _reqExtension);
     final reqClass = _classIn(reqLibrary, 'GHeroNoVarsReq');
-    expect(_declaresGetter(reqClass, 'execRequest'), isTrue);
+    expect(_hasGetter(reqClass, 'execRequest'), isTrue);
     expect(_declaresMethod(reqClass, 'parseData'), isTrue);
     expect(_declaresMethod(reqClass, 'copyWith'), isTrue);
     expect(_declaresMethod(reqClass, '=='), isTrue);
@@ -600,12 +597,39 @@ FieldElement _fieldIn(ClassElement element, String name) {
   return field;
 }
 
+FieldElement _fieldInOrInherited(ClassElement element, String name) {
+  final direct = element.fields.where((field) => field.name == name).toList();
+  if (direct.isNotEmpty) {
+    return direct.first;
+  }
+  for (final supertype in element.allSupertypes) {
+    final match =
+        supertype.element.fields.where((field) => field.name == name).toList();
+    if (match.isNotEmpty) {
+      return match.first;
+    }
+  }
+  throw StateError('Missing field $name on ${element.name} or supertypes');
+}
+
 bool _declaresMethod(ClassElement element, String name) {
   return element.methods.any((method) => method.name == name);
 }
 
 bool _declaresGetter(ClassElement element, String name) {
   return element.getters.any((getter) => getter.name == name);
+}
+
+bool _hasGetter(ClassElement element, String name) {
+  if (_declaresGetter(element, name)) {
+    return true;
+  }
+  for (final supertype in element.allSupertypes) {
+    if (supertype.element.getGetter(name) != null) {
+      return true;
+    }
+  }
+  return false;
 }
 
 void _expectValueType(

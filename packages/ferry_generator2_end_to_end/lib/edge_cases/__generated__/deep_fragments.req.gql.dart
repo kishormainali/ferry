@@ -134,7 +134,7 @@ class GDeepFragmentsReq
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GDeepFragmentsReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             operation == other.operation &&
             requestId == other.requestId &&
             updateResult == other.updateResult &&
@@ -151,7 +151,7 @@ class GDeepFragmentsReq
   int get hashCode {
     return Object.hash(
         runtimeType,
-        vars,
+        _gqlUtils.deepHash(varsToJson()),
         operation,
         requestId,
         updateResult,
@@ -215,7 +215,7 @@ class GFragLevel1Req implements _i1.FragmentRequest<_i2.GFragLevel1Data, Null> {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GFragLevel1Req &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             document == other.document &&
             fragmentName == other.fragmentName &&
             _gqlUtils.deepEquals(idFields, other.idFields));
@@ -223,8 +223,8 @@ class GFragLevel1Req implements _i1.FragmentRequest<_i2.GFragLevel1Data, Null> {
 
   @override
   int get hashCode {
-    return Object.hash(runtimeType, vars, document, fragmentName,
-        _gqlUtils.deepHash(idFields));
+    return Object.hash(runtimeType, _gqlUtils.deepHash(varsToJson()), document,
+        fragmentName, _gqlUtils.deepHash(idFields));
   }
 
   @override
@@ -278,7 +278,7 @@ class GFragLevel2Req implements _i1.FragmentRequest<_i2.GFragLevel2Data, Null> {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GFragLevel2Req &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             document == other.document &&
             fragmentName == other.fragmentName &&
             _gqlUtils.deepEquals(idFields, other.idFields));
@@ -286,8 +286,8 @@ class GFragLevel2Req implements _i1.FragmentRequest<_i2.GFragLevel2Data, Null> {
 
   @override
   int get hashCode {
-    return Object.hash(runtimeType, vars, document, fragmentName,
-        _gqlUtils.deepHash(idFields));
+    return Object.hash(runtimeType, _gqlUtils.deepHash(varsToJson()), document,
+        fragmentName, _gqlUtils.deepHash(idFields));
   }
 
   @override
@@ -340,7 +340,7 @@ class GFragLevel3Req implements _i1.FragmentRequest<_i2.GFragLevel3Data, Null> {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GFragLevel3Req &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             document == other.document &&
             fragmentName == other.fragmentName &&
             _gqlUtils.deepEquals(idFields, other.idFields));
@@ -348,8 +348,8 @@ class GFragLevel3Req implements _i1.FragmentRequest<_i2.GFragLevel3Data, Null> {
 
   @override
   int get hashCode {
-    return Object.hash(runtimeType, vars, document, fragmentName,
-        _gqlUtils.deepHash(idFields));
+    return Object.hash(runtimeType, _gqlUtils.deepHash(varsToJson()), document,
+        fragmentName, _gqlUtils.deepHash(idFields));
   }
 
   @override
@@ -400,7 +400,7 @@ class GFragLevel4Req implements _i1.FragmentRequest<_i2.GFragLevel4Data, Null> {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GFragLevel4Req &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             document == other.document &&
             fragmentName == other.fragmentName &&
             _gqlUtils.deepEquals(idFields, other.idFields));
@@ -408,8 +408,8 @@ class GFragLevel4Req implements _i1.FragmentRequest<_i2.GFragLevel4Data, Null> {
 
   @override
   int get hashCode {
-    return Object.hash(runtimeType, vars, document, fragmentName,
-        _gqlUtils.deepHash(idFields));
+    return Object.hash(runtimeType, _gqlUtils.deepHash(varsToJson()), document,
+        fragmentName, _gqlUtils.deepHash(idFields));
   }
 
   @override

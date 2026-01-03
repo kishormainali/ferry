@@ -133,7 +133,7 @@ class GHeroWith2FragmentsReq
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GHeroWith2FragmentsReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             operation == other.operation &&
             requestId == other.requestId &&
             updateResult == other.updateResult &&
@@ -150,7 +150,7 @@ class GHeroWith2FragmentsReq
   int get hashCode {
     return Object.hash(
         runtimeType,
-        vars,
+        _gqlUtils.deepHash(varsToJson()),
         operation,
         requestId,
         updateResult,
@@ -210,7 +210,7 @@ class GheroNameReq implements _i1.FragmentRequest<_i2.GheroNameData, Null> {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GheroNameReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             document == other.document &&
             fragmentName == other.fragmentName &&
             _gqlUtils.deepEquals(idFields, other.idFields));
@@ -218,8 +218,8 @@ class GheroNameReq implements _i1.FragmentRequest<_i2.GheroNameData, Null> {
 
   @override
   int get hashCode {
-    return Object.hash(runtimeType, vars, document, fragmentName,
-        _gqlUtils.deepHash(idFields));
+    return Object.hash(runtimeType, _gqlUtils.deepHash(varsToJson()), document,
+        fragmentName, _gqlUtils.deepHash(idFields));
   }
 
   @override
@@ -270,7 +270,7 @@ class GheroIdReq implements _i1.FragmentRequest<_i2.GheroIdData, Null> {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GheroIdReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             document == other.document &&
             fragmentName == other.fragmentName &&
             _gqlUtils.deepEquals(idFields, other.idFields));
@@ -278,8 +278,8 @@ class GheroIdReq implements _i1.FragmentRequest<_i2.GheroIdData, Null> {
 
   @override
   int get hashCode {
-    return Object.hash(runtimeType, vars, document, fragmentName,
-        _gqlUtils.deepHash(idFields));
+    return Object.hash(runtimeType, _gqlUtils.deepHash(varsToJson()), document,
+        fragmentName, _gqlUtils.deepHash(idFields));
   }
 
   @override

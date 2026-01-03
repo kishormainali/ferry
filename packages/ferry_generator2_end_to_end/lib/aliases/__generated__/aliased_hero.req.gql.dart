@@ -129,7 +129,7 @@ class GAliasedHeroReq
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GAliasedHeroReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             operation == other.operation &&
             requestId == other.requestId &&
             updateResult == other.updateResult &&
@@ -146,7 +146,7 @@ class GAliasedHeroReq
   int get hashCode {
     return Object.hash(
         runtimeType,
-        vars,
+        _gqlUtils.deepHash(varsToJson()),
         operation,
         requestId,
         updateResult,

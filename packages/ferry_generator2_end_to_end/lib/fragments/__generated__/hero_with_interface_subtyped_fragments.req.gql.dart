@@ -145,7 +145,7 @@ class GHeroWithInterfaceSubTypedFragmentsReq
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GHeroWithInterfaceSubTypedFragmentsReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             operation == other.operation &&
             requestId == other.requestId &&
             updateResult == other.updateResult &&
@@ -162,7 +162,7 @@ class GHeroWithInterfaceSubTypedFragmentsReq
   int get hashCode {
     return Object.hash(
         runtimeType,
-        vars,
+        _gqlUtils.deepHash(varsToJson()),
         operation,
         requestId,
         updateResult,
@@ -227,7 +227,7 @@ class GheroFieldsFragmentReq
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GheroFieldsFragmentReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             document == other.document &&
             fragmentName == other.fragmentName &&
             _gqlUtils.deepEquals(idFields, other.idFields));
@@ -235,8 +235,8 @@ class GheroFieldsFragmentReq
 
   @override
   int get hashCode {
-    return Object.hash(runtimeType, vars, document, fragmentName,
-        _gqlUtils.deepHash(idFields));
+    return Object.hash(runtimeType, _gqlUtils.deepHash(varsToJson()), document,
+        fragmentName, _gqlUtils.deepHash(idFields));
   }
 
   @override
@@ -291,7 +291,7 @@ class GhumanFieldsFragmentReq
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GhumanFieldsFragmentReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             document == other.document &&
             fragmentName == other.fragmentName &&
             _gqlUtils.deepEquals(idFields, other.idFields));
@@ -299,8 +299,8 @@ class GhumanFieldsFragmentReq
 
   @override
   int get hashCode {
-    return Object.hash(runtimeType, vars, document, fragmentName,
-        _gqlUtils.deepHash(idFields));
+    return Object.hash(runtimeType, _gqlUtils.deepHash(varsToJson()), document,
+        fragmentName, _gqlUtils.deepHash(idFields));
   }
 
   @override
@@ -353,7 +353,7 @@ class GdroidFieldsFragmentReq
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GdroidFieldsFragmentReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             document == other.document &&
             fragmentName == other.fragmentName &&
             _gqlUtils.deepEquals(idFields, other.idFields));
@@ -361,8 +361,8 @@ class GdroidFieldsFragmentReq
 
   @override
   int get hashCode {
-    return Object.hash(runtimeType, vars, document, fragmentName,
-        _gqlUtils.deepHash(idFields));
+    return Object.hash(runtimeType, _gqlUtils.deepHash(varsToJson()), document,
+        fragmentName, _gqlUtils.deepHash(idFields));
   }
 
   @override

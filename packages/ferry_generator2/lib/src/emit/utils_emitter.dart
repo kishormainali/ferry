@@ -10,7 +10,9 @@ Library buildUtilsLibrary() {
     _buildDeepHashHelper(),
   ];
 
-  return Library((b) => b..body.addAll(specs));
+  return Library(
+    (b) => b..body.addAll(specs),
+  );
 }
 
 Expression _pragmaPreferInline() =>

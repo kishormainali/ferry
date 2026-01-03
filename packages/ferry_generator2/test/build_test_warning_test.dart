@@ -21,6 +21,10 @@ type Book {
 type Query {
   books: [Book!]!
 }
+
+enum Episode {
+  NEWHOPE
+}
 ''';
 
 const _document = r'''
@@ -83,5 +87,47 @@ void main() {
     expect(messages, contains('enums: extra'));
     expect(messages, contains('enums.fallback: extra'));
     expect(messages, contains('scalars.Date: unknown'));
+  });
+
+  test('logs warning when language_version set but formatting disabled',
+      () async {
+    final logs = <LogRecord>[];
+    final config = <String, dynamic>{
+      'schema': {
+        'file': _schemaPath,
+        'add_typenames': true,
+      },
+      'formatting': {
+        'enabled': false,
+        'language_version': '3.6',
+      },
+    };
+
+    final assets = <String, Object>{
+      _schemaPath: _schema,
+      _queryPath: _document,
+    };
+
+    final result = await testBuilderFactories(
+      [(options) => GraphqlBuilder(config)],
+      assets,
+      rootPackage: _package,
+      generateFor: {_queryPath},
+      onLog: logs.add,
+    );
+
+    expect(result.succeeded, isTrue);
+
+    final messages = logs
+        .where((record) => record.level >= Level.WARNING)
+        .map((record) => record.message)
+        .join('\n');
+
+    expect(
+      messages,
+      contains(
+        'formatting.language_version is ignored when formatting.enabled is false.',
+      ),
+    );
   });
 }

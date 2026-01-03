@@ -5,6 +5,8 @@
 import 'package:ferry_generator2_end_to_end/custom/date.dart';
 import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.schema.gql.dart'
     as _i1;
+import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
+    as _gqlUtils;
 import 'package:gql_tristate_value/gql_tristate_value.dart';
 
 class GReviewWithDateVars {
@@ -55,5 +57,34 @@ class GReviewWithDateVars {
           : customDateToJson(_$createdAtRequired);
     }
     return _$result;
+  }
+
+  GReviewWithDateVars copyWith({
+    Value<_i1.GEpisode>? episode,
+    _i1.GReviewInput? review,
+    Value<CustomDate>? createdAt,
+  }) {
+    return GReviewWithDateVars(
+      episode: episode ?? this.episode,
+      review: review ?? this.review,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GReviewWithDateVars &&
+            _gqlUtils.deepEquals(toJson(), other.toJson()));
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(runtimeType, _gqlUtils.deepHash(toJson()));
+  }
+
+  @override
+  String toString() {
+    return 'GReviewWithDateVars(episode: $episode, review: $review, createdAt: $createdAt)';
   }
 }

@@ -35,6 +35,16 @@ void main() {
     expect(config.formatterLanguageVersion, Version(3, 6, 1));
   });
 
+  test('formatter emit_format_off parses', () {
+    final config = BuilderConfig({
+      'formatting': {
+        'emit_format_off': true,
+      },
+    });
+
+    expect(config.emitFormatOff, isTrue);
+  });
+
   test('per-enum fallback config parses', () {
     final config = BuilderConfig({
       'enums': {
@@ -91,5 +101,39 @@ void main() {
     expect(messages, contains('enums: extra'));
     expect(messages, contains('enums.fallback: extra'));
     expect(messages, contains('scalars.Date: unknown'));
+  });
+
+  test('throws with path for invalid bool config', () {
+    expect(
+      () => BuilderConfig({
+        'vars': {
+          'tristate_optionals': 'nope',
+        },
+      }),
+      throwsA(
+        isA<ArgumentError>().having(
+          (error) => error.name,
+          'name',
+          'vars.tristate_optionals',
+        ),
+      ),
+    );
+  });
+
+  test('throws with path for invalid scalar config', () {
+    expect(
+      () => BuilderConfig({
+        'scalars': {
+          'Date': 'String',
+        },
+      }),
+      throwsA(
+        isA<ArgumentError>().having(
+          (error) => error.name,
+          'name',
+          'scalars.Date',
+        ),
+      ),
+    );
   });
 }

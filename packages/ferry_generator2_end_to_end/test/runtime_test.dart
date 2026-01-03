@@ -829,6 +829,51 @@ void main() {
     expect(updated.requestId, 'req-2');
   });
 
+  test('vars equality and hashCode compare deep maps', () {
+    final first = GCreateReviewVars(
+      episode: Value.present(_schema.GEpisode.JEDI),
+      review: const _schema.GReviewInput(
+        stars: 5,
+        commentary: Value.present('Nice'),
+      ),
+    );
+    final second = GCreateReviewVars(
+      episode: Value.present(_schema.GEpisode.JEDI),
+      review: const _schema.GReviewInput(
+        stars: 5,
+        commentary: Value.present('Nice'),
+      ),
+    );
+
+    expect(identical(first, second), isFalse);
+    expect(first, equals(second));
+    expect(first.hashCode, equals(second.hashCode));
+  });
+
+  test('vars copyWith updates fields', () {
+    final original = GCreateReviewVars(
+      episode: Value.present(_schema.GEpisode.NEWHOPE),
+      review: const _schema.GReviewInput(stars: 3),
+    );
+    final updated = original.copyWith(
+      episode: Value.present(_schema.GEpisode.JEDI),
+    );
+
+    expect(updated.toJson()['episode'], 'JEDI');
+    expect(updated.review.stars, 3);
+  });
+
+  test('vars toString includes class name and fields', () {
+    final vars = GCreateReviewVars(
+      episode: Value.present(_schema.GEpisode.JEDI),
+      review: const _schema.GReviewInput(stars: 4),
+    );
+    final value = vars.toString();
+    expect(value, contains('GCreateReviewVars'));
+    expect(value, contains('episode'));
+    expect(value, contains('review'));
+  });
+
   test('operation vars round-trip and execRequest variables', () {
     final vars = GHeroForEpisodeVars(ep: _schema.GEpisode.EMPIRE);
     final request = GHeroForEpisodeReq(vars: vars);

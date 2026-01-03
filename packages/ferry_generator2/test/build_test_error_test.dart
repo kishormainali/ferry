@@ -98,6 +98,78 @@ fragment BookFragment on Book {
     );
   });
 
+  test('fails when req output enabled without ast output', () async {
+    const document = r'''
+query Books {
+  books {
+    id
+  }
+}
+''';
+
+    await _expectBuildFailure(
+      document: document,
+      expectedMessage: 'outputs.req requires outputs.ast to be true.',
+      config: const {
+        'outputs': {
+          'req': true,
+          'ast': false,
+          'data': true,
+          'vars': true,
+          'schema': true,
+        },
+      },
+    );
+  });
+
+  test('fails when req output enabled without data output', () async {
+    const document = r'''
+query Books {
+  books {
+    id
+  }
+}
+''';
+
+    await _expectBuildFailure(
+      document: document,
+      expectedMessage: 'outputs.req requires outputs.data to be true.',
+      config: const {
+        'outputs': {
+          'req': true,
+          'ast': true,
+          'data': false,
+          'vars': true,
+          'schema': true,
+        },
+      },
+    );
+  });
+
+  test('fails when req output enabled without vars output', () async {
+    const document = r'''
+query Books {
+  books {
+    id
+  }
+}
+''';
+
+    await _expectBuildFailure(
+      document: document,
+      expectedMessage: 'outputs.req requires outputs.vars to be true.',
+      config: const {
+        'outputs': {
+          'req': true,
+          'ast': true,
+          'data': true,
+          'vars': false,
+          'schema': true,
+        },
+      },
+    );
+  });
+
   test('fails on inline fragment with unknown type condition', () async {
     const document = r'''
 query Books {
@@ -524,6 +596,31 @@ query Books {
           'Conflicting fields for response key value on Book: title vs author',
     );
   });
+
+  test('fails on unknown enum fallback names', () async {
+    const document = r'''
+query Books {
+  books {
+    id
+  }
+}
+''';
+
+    await _expectBuildFailure(
+      document: document,
+      expectedMessage:
+          'Unknown enum(s) in enums.fallback.per_enum: MissingEnum',
+      config: const {
+        'enums': {
+          'fallback': {
+            'per_enum': {
+              'MissingEnum': 'gUnknownMissingEnum',
+            },
+          },
+        },
+      },
+    );
+  });
 }
 
 Future<void> _expectBuildFailure({
@@ -533,15 +630,24 @@ Future<void> _expectBuildFailure({
   Map<String, Object?> config = const {},
   String schema = _schema,
 }) async {
-  final builder = graphqlBuilder(
-    BuilderOptions({
-      'schema': {
-        'file': _schemaPath,
-        'add_typenames': true,
-      },
-      ...config,
-    }),
-  );
+  final builderConfig = {
+    'schema': {
+      'file': _schemaPath,
+      'add_typenames': true,
+    },
+    ...config,
+  };
+  final builder = () {
+    try {
+      return graphqlBuilder(BuilderOptions(builderConfig));
+    } catch (error) {
+      expect(error.toString(), contains(expectedMessage));
+      return null;
+    }
+  }();
+  if (builder == null) {
+    return;
+  }
 
   final assets = <String, Object>{
     _schemaPath: schema,

@@ -91,6 +91,7 @@ class GraphqlBuilder implements Builder {
     }
 
     final schemaIndex = SchemaIndex.fromDocuments([schemaSource.flatDocument]);
+    _validateEnumFallbacks(schemaIndex, config.enumFallbackConfig);
     final sourceUrl = buildStep.inputId.uri.toString();
     final schemaUrl = schemaId.uri.toString();
 
@@ -202,6 +203,7 @@ class GraphqlBuilder implements Builder {
       schema: schemaIndex,
       config: config,
       documentIndex: documentIndex,
+      utilsUrl: utilsUrl,
     );
     final fragmentsWithVars = <String>{};
     for (final fragment in ownedFragments) {
@@ -280,6 +282,27 @@ class GraphqlBuilder implements Builder {
         outputId,
       );
     }
+  }
+}
+
+void _validateEnumFallbacks(
+  SchemaIndex schema,
+  EnumFallbackConfig config,
+) {
+  if (config.fallbackValueMap.isEmpty) return;
+  final unknown = config.fallbackValueMap.keys
+      .where(
+        (name) =>
+            schema
+                .lookupTypeAs<EnumTypeDefinitionNode>(NameNode(value: name)) ==
+            null,
+      )
+      .toList()
+    ..sort();
+  if (unknown.isNotEmpty) {
+    throw StateError(
+      "Unknown enum(s) in enums.fallback.per_enum: ${unknown.join(', ')}",
+    );
   }
 }
 

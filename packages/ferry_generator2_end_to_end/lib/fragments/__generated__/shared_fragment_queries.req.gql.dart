@@ -132,7 +132,7 @@ class GSharedBooksAReq
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GSharedBooksAReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             operation == other.operation &&
             requestId == other.requestId &&
             updateResult == other.updateResult &&
@@ -149,7 +149,7 @@ class GSharedBooksAReq
   int get hashCode {
     return Object.hash(
         runtimeType,
-        vars,
+        _gqlUtils.deepHash(varsToJson()),
         operation,
         requestId,
         updateResult,
@@ -287,7 +287,7 @@ class GSharedBooksBReq
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GSharedBooksBReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             operation == other.operation &&
             requestId == other.requestId &&
             updateResult == other.updateResult &&
@@ -304,7 +304,7 @@ class GSharedBooksBReq
   int get hashCode {
     return Object.hash(
         runtimeType,
-        vars,
+        _gqlUtils.deepHash(varsToJson()),
         operation,
         requestId,
         updateResult,
@@ -366,7 +366,7 @@ class GSharedAuthorFragmentReq
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GSharedAuthorFragmentReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             document == other.document &&
             fragmentName == other.fragmentName &&
             _gqlUtils.deepEquals(idFields, other.idFields));
@@ -374,8 +374,8 @@ class GSharedAuthorFragmentReq
 
   @override
   int get hashCode {
-    return Object.hash(runtimeType, vars, document, fragmentName,
-        _gqlUtils.deepHash(idFields));
+    return Object.hash(runtimeType, _gqlUtils.deepHash(varsToJson()), document,
+        fragmentName, _gqlUtils.deepHash(idFields));
   }
 
   @override
@@ -430,7 +430,7 @@ class GSharedBookFragmentReq
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GSharedBookFragmentReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             document == other.document &&
             fragmentName == other.fragmentName &&
             _gqlUtils.deepEquals(idFields, other.idFields));
@@ -438,8 +438,8 @@ class GSharedBookFragmentReq
 
   @override
   int get hashCode {
-    return Object.hash(runtimeType, vars, document, fragmentName,
-        _gqlUtils.deepHash(idFields));
+    return Object.hash(runtimeType, _gqlUtils.deepHash(varsToJson()), document,
+        fragmentName, _gqlUtils.deepHash(idFields));
   }
 
   @override

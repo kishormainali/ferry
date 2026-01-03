@@ -128,7 +128,7 @@ class GSettingsReq implements _i1.OperationRequest<_i2.GSettingsData, Null> {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GSettingsReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             operation == other.operation &&
             requestId == other.requestId &&
             updateResult == other.updateResult &&
@@ -145,7 +145,7 @@ class GSettingsReq implements _i1.OperationRequest<_i2.GSettingsData, Null> {
   int get hashCode {
     return Object.hash(
         runtimeType,
-        vars,
+        _gqlUtils.deepHash(varsToJson()),
         operation,
         requestId,
         updateResult,

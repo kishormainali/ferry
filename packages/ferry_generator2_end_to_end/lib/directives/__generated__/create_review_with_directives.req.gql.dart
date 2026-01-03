@@ -139,7 +139,7 @@ class GCreateReviewWithDirectivesReq
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GCreateReviewWithDirectivesReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             operation == other.operation &&
             requestId == other.requestId &&
             updateResult == other.updateResult &&
@@ -156,7 +156,7 @@ class GCreateReviewWithDirectivesReq
   int get hashCode {
     return Object.hash(
         runtimeType,
-        vars,
+        _gqlUtils.deepHash(varsToJson()),
         operation,
         requestId,
         updateResult,

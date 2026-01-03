@@ -131,7 +131,7 @@ class GGetBooksReq implements _i1.OperationRequest<_i2.GGetBooksData, Null> {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GGetBooksReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             operation == other.operation &&
             requestId == other.requestId &&
             updateResult == other.updateResult &&
@@ -148,7 +148,7 @@ class GGetBooksReq implements _i1.OperationRequest<_i2.GGetBooksData, Null> {
   int get hashCode {
     return Object.hash(
         runtimeType,
-        vars,
+        _gqlUtils.deepHash(varsToJson()),
         operation,
         requestId,
         updateResult,
@@ -210,7 +210,7 @@ class GAuthorFragmentReq
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GAuthorFragmentReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             document == other.document &&
             fragmentName == other.fragmentName &&
             _gqlUtils.deepEquals(idFields, other.idFields));
@@ -218,8 +218,8 @@ class GAuthorFragmentReq
 
   @override
   int get hashCode {
-    return Object.hash(runtimeType, vars, document, fragmentName,
-        _gqlUtils.deepHash(idFields));
+    return Object.hash(runtimeType, _gqlUtils.deepHash(varsToJson()), document,
+        fragmentName, _gqlUtils.deepHash(idFields));
   }
 
   @override
@@ -273,7 +273,7 @@ class GBookFragmentReq
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GBookFragmentReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             document == other.document &&
             fragmentName == other.fragmentName &&
             _gqlUtils.deepEquals(idFields, other.idFields));
@@ -281,8 +281,8 @@ class GBookFragmentReq
 
   @override
   int get hashCode {
-    return Object.hash(runtimeType, vars, document, fragmentName,
-        _gqlUtils.deepHash(idFields));
+    return Object.hash(runtimeType, _gqlUtils.deepHash(varsToJson()), document,
+        fragmentName, _gqlUtils.deepHash(idFields));
   }
 
   @override

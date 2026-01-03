@@ -6,6 +6,8 @@ sidebar_label: Generate Classes (v2)
 
 Ferry Generator 2 is the next-gen code generator focused on **small output**, **fast builds**, and **plain Dart classes** (no `built_value`). It's designed to be easy to read, fast to compile, and friendly to tree-shaking and runtime performance.
 
+Migrating from the original generator? See [Migrate to Generator 2](migration-generator2).
+
 ## Motivation
 
 Generator 2 exists because the original generator optimized for `built_value`-based models and serializers. That approach is stable, but it produces a lot of boilerplate. Generator 2 targets:
@@ -152,6 +154,7 @@ Top-level options:
 
 ### `outputs`
 - `ast`, `data`, `vars`, `req`, `schema` (all default `true`)
+  - `req` requires `ast`, `data`, and `vars` to be enabled.
 
 ### `data_classes`
 - `reuse_fragments` (default `true`)
@@ -192,6 +195,7 @@ scalars:
 ### `formatting`
 - `enabled` (default `true`)
 - `language_version` (optional, e.g. `3.6`)
+- `emit_format_off` (default `false`): add `// dart format off` to generated files (still formats once if `enabled: true`).
 
 ## Migration notes (v1 -> v2)
 

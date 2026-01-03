@@ -135,7 +135,7 @@ class GHeroUnconditionalTypeFragmentReq
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GHeroUnconditionalTypeFragmentReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             operation == other.operation &&
             requestId == other.requestId &&
             updateResult == other.updateResult &&
@@ -152,7 +152,7 @@ class GHeroUnconditionalTypeFragmentReq
   int get hashCode {
     return Object.hash(
         runtimeType,
-        vars,
+        _gqlUtils.deepHash(varsToJson()),
         operation,
         requestId,
         updateResult,
@@ -212,7 +212,7 @@ class GHumanNameReq implements _i1.FragmentRequest<_i2.GHumanNameData, Null> {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other is GHumanNameReq &&
-            vars == other.vars &&
+            _gqlUtils.deepEquals(varsToJson(), other.varsToJson()) &&
             document == other.document &&
             fragmentName == other.fragmentName &&
             _gqlUtils.deepEquals(idFields, other.idFields));
@@ -220,8 +220,8 @@ class GHumanNameReq implements _i1.FragmentRequest<_i2.GHumanNameData, Null> {
 
   @override
   int get hashCode {
-    return Object.hash(runtimeType, vars, document, fragmentName,
-        _gqlUtils.deepHash(idFields));
+    return Object.hash(runtimeType, _gqlUtils.deepHash(varsToJson()), document,
+        fragmentName, _gqlUtils.deepHash(idFields));
   }
 
   @override

@@ -62,6 +62,16 @@ class FieldSelection {
       isSynthetic: isSynthetic && other.isSynthetic,
     );
   }
+
+  FieldSelection clone() => FieldSelection(
+        responseKey: responseKey,
+        fieldName: fieldName,
+        argumentsKey: argumentsKey,
+        typeNode: typeNode,
+        selectionSet: selectionSet?.clone(),
+        fragmentSpreadOnlyName: fragmentSpreadOnlyName,
+        isSynthetic: isSynthetic,
+      );
 }
 
 class ResolvedSelectionSet {
@@ -111,6 +121,19 @@ class ResolvedSelectionSet {
   void mergeInlineFrom(ResolvedSelectionSet other) {
     mergeFrom(other);
   }
+
+  ResolvedSelectionSet clone() {
+    final copy = ResolvedSelectionSet(parentTypeName: parentTypeName);
+    for (final entry in fields.entries) {
+      copy.fields[entry.key] = entry.value.clone();
+    }
+    for (final entry in inlineFragments.entries) {
+      copy.inlineFragments[entry.key] = entry.value.clone();
+    }
+    copy.fragmentSpreads.addAll(fragmentSpreads);
+    copy.unconditionalFragmentSpreads.addAll(unconditionalFragmentSpreads);
+    return copy;
+  }
 }
 
 ResolvedSelectionSet? _mergeSelectionSets(
@@ -127,6 +150,7 @@ class SelectionResolver {
   final SchemaIndex schema;
   final DocumentIndex documentIndex;
   final bool addTypenames;
+  final Map<_SelectionCacheKey, ResolvedSelectionSet> _cache = {};
 
   SelectionResolver({
     required this.schema,
@@ -159,6 +183,11 @@ class SelectionResolver {
     String parentTypeName, {
     required Set<String> fragmentStack,
   }) {
+    final cacheKey = _SelectionCacheKey(selectionSet, parentTypeName);
+    final cached = _cache[cacheKey];
+    if (cached != null) {
+      return cached.clone();
+    }
     final parentType = schema.lookupType(NameNode(value: parentTypeName));
     if (parentType == null) {
       throw StateError("Missing type definition for $parentTypeName");
@@ -187,7 +216,7 @@ class SelectionResolver {
       }
       _ensureTypenameField(result);
     }
-
+    _cache[cacheKey] = result.clone();
     return result;
   }
 
@@ -363,6 +392,23 @@ class SelectionResolver {
       isSynthetic: true,
     );
   }
+}
+
+class _SelectionCacheKey {
+  final SelectionSetNode selectionSet;
+  final String parentTypeName;
+
+  const _SelectionCacheKey(this.selectionSet, this.parentTypeName);
+
+  @override
+  bool operator ==(Object other) {
+    return other is _SelectionCacheKey &&
+        identical(selectionSet, other.selectionSet) &&
+        parentTypeName == other.parentTypeName;
+  }
+
+  @override
+  int get hashCode => Object.hash(identityHashCode(selectionSet), parentTypeName);
 }
 
 void _clearUnconditionalFragmentSpreads(ResolvedSelectionSet selectionSet) {

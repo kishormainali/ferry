@@ -2,13 +2,14 @@ import "package:code_builder/code_builder.dart";
 import "package:gql/ast.dart";
 
 import "../ir/model.dart";
+import "../ir/names.dart";
 import "../ir/types.dart";
 
 class FragmentInfo {
-  final String name;
-  final String typeCondition;
+  final FragmentName name;
+  final TypeName typeCondition;
   final SelectionSetIR selectionSet;
-  final Set<String> inlineTypes;
+  final Set<TypeName> inlineTypes;
 
   const FragmentInfo({
     required this.name,

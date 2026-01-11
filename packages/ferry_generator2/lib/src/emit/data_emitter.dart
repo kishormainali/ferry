@@ -6,6 +6,7 @@ import "data_emitter_classes.dart";
 import "data_emitter_context.dart";
 import "data_emitter_fragments.dart";
 import "../ir/model.dart";
+import "../ir/names.dart";
 
 class DataEmitter {
   final DataEmitterContext _ctx;
@@ -15,7 +16,7 @@ class DataEmitter {
   factory DataEmitter({
     required BuilderConfig config,
     required DocumentIR document,
-    required Map<String, String> fragmentSourceUrls,
+    required Map<FragmentName, String> fragmentSourceUrls,
     required String? utilsUrl,
   }) {
     final ctx = DataEmitterContext(

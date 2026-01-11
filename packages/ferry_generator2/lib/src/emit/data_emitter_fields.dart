@@ -5,6 +5,7 @@ import "../config/config.dart";
 import "data_emitter_context.dart";
 import "data_emitter_types.dart";
 import "../ir/model.dart";
+import "../ir/names.dart";
 import "../ir/types.dart";
 import "../utils/naming.dart";
 
@@ -15,13 +16,13 @@ List<FieldSpec> buildFieldSpecs({
 }) {
   final fields = <FieldSpec>[];
   for (final selection in selectionSet.fields.values) {
-    final fieldName = selection.responseKey;
+    final fieldName = selection.responseKey.value;
     final propertyName = identifier(fieldName);
     final nestedBaseName = "${baseName}_$fieldName";
-    final namedTypeName = selection.namedType.name;
+    final namedTypeName = selection.namedType.name.value;
     final namedTypeKind = selection.namedType.kind;
 
-    String? fragmentName = ctx.config.dataClassConfig.reuseFragments
+    FragmentName? fragmentName = ctx.config.dataClassConfig.reuseFragments
         ? selection.fragmentSpreadOnlyName
         : null;
     Reference? namedTypeRef;
@@ -62,7 +63,7 @@ List<FieldSpec> buildFieldSpecs({
         typeRef: typeRef,
         namedTypeRef: namedTypeRef,
         selectionSet: selection.selectionSet,
-        fragmentSpreadOnlyName: fragmentName,
+        fragmentSpreadOnlyName: fragmentName?.value,
       ),
     );
   }
@@ -71,24 +72,24 @@ List<FieldSpec> buildFieldSpecs({
 
 Reference fragmentDataReference({
   required DataEmitterContext ctx,
-  required String fragmentName,
+  required FragmentName fragmentName,
 }) {
   final url = ctx.fragmentSourceUrls[fragmentName];
   if (url == null) {
-    return Reference(builtClassName("${fragmentName}Data"), "#data");
+    return Reference(builtClassName("${fragmentName.value}Data"), "#data");
   }
-  return Reference(builtClassName("${fragmentName}Data"), "$url#data");
+  return Reference(builtClassName("${fragmentName.value}Data"), "$url#data");
 }
 
 Reference fragmentInterfaceReference({
   required DataEmitterContext ctx,
-  required String fragmentName,
+  required FragmentName fragmentName,
 }) {
   final url = ctx.fragmentSourceUrls[fragmentName];
   if (url == null) {
-    return Reference(builtClassName(fragmentName), "#data");
+    return Reference(builtClassName(fragmentName.value), "#data");
   }
-  return Reference(builtClassName(fragmentName), "$url#data");
+  return Reference(builtClassName(fragmentName.value), "$url#data");
 }
 
 Reference scalarReference({

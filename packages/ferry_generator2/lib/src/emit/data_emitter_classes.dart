@@ -7,8 +7,9 @@ import "data_emitter_json.dart";
 import "data_emitter_types.dart";
 import "emitter_helpers.dart";
 import "fragment_interface_refs.dart";
-import "../utils/naming.dart";
 import "../ir/model.dart";
+import "../ir/names.dart";
+import "../utils/naming.dart";
 
 ({List<Spec> specs, DataEmitterContext ctx}) buildOperationData({
   required DataEmitterContext ctx,
@@ -17,7 +18,8 @@ import "../ir/model.dart";
   if (operation.name == null) {
     return (specs: const <Spec>[], ctx: ctx);
   }
-  final operationIr = ctx.document.operations[operation.name!.value];
+  final operationIr =
+      ctx.document.operations[OperationName(operation.name!.value)];
   if (operationIr == null) {
     return (specs: const <Spec>[], ctx: ctx);
   }
@@ -95,14 +97,18 @@ List<Spec> buildSelectionSetClasses({
       ctx: ctx,
       className: className,
       baseFields: baseFields,
-      inlineTypeNames: selectionSet.inlineFragments.keys.toList(),
+      inlineTypeNames: selectionSet.inlineFragments.keys
+          .map((typeName) => typeName.value)
+          .toList(),
       implementsRefs: baseImplements,
     ),
   );
   final whenExtension = _buildWhenExtension(
     ctx: ctx,
     baseName: baseName,
-    inlineTypeNames: selectionSet.inlineFragments.keys.toList(),
+    inlineTypeNames: selectionSet.inlineFragments.keys
+        .map((typeName) => typeName.value)
+        .toList(),
   );
   if (whenExtension != null) {
     specs.add(whenExtension);
@@ -110,7 +116,7 @@ List<Spec> buildSelectionSetClasses({
   specs.addAll(_buildNestedClasses(ctx, baseName, baseFields, baseImplements));
 
   for (final entry in selectionSet.inlineFragments.entries) {
-    final typeName = entry.key;
+    final typeName = entry.key.value;
     final inlineBaseName = "${baseName}__as$typeName";
     final inlineFields = buildFieldSpecs(
       ctx: ctx,
@@ -127,12 +133,14 @@ List<Spec> buildSelectionSetClasses({
     final inlineImplements = _interfaceRefs(
       ctx: ctx,
       fragmentSpreads: entry.value.unconditionalFragmentSpreads,
-      parentTypeName: typeName,
+      parentTypeName: TypeName(typeName),
       baseImplements: classImplements,
     );
-    final fragmentInfo =
-        fragmentName == null ? null : ctx.fragmentInfo[fragmentName];
-    if (fragmentInfo != null && fragmentInfo.inlineTypes.contains(typeName)) {
+    final fragmentInfo = fragmentName == null
+        ? null
+        : ctx.fragmentInfo[FragmentName(fragmentName)];
+    if (fragmentInfo != null &&
+        fragmentInfo.inlineTypes.contains(TypeName(typeName))) {
       inlineImplements.add(
         refer(builtClassName("${fragmentName}__as$typeName")),
       );
@@ -356,7 +364,7 @@ List<Reference> _nestedInterfaceRefsForField(
     final interfaceKey = symbol.substring(1);
     final selectionSet = ctx.fragmentInterfaceSelections[interfaceKey];
     if (selectionSet == null) continue;
-    final nestedField = selectionSet.fields[field.responseKey];
+    final nestedField = selectionSet.fields[ResponseKey(field.responseKey)];
     if (nestedField?.selectionSet == null) continue;
     if (ctx.config.dataClassConfig.reuseFragments &&
         nestedField!.fragmentSpreadOnlyName != null) {
@@ -379,8 +387,8 @@ List<Reference> _nestedInterfaceRefsForField(
 
 List<Reference> _interfaceRefs({
   required DataEmitterContext ctx,
-  required Set<String> fragmentSpreads,
-  required String parentTypeName,
+  required Set<FragmentName> fragmentSpreads,
+  required TypeName parentTypeName,
   required List<Reference> baseImplements,
 }) {
   return fragmentInterfaceRefs(

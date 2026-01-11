@@ -7,12 +7,13 @@ import "emitter_helpers.dart";
 import "../utils/naming.dart";
 import "../selection/selection_resolver.dart";
 import "../ir/model.dart";
+import "../ir/names.dart";
 
 class ReqEmitter {
   final BuilderConfig config;
   final DocumentIndex documentIndex;
   final DocumentIR document;
-  final Map<String, String> fragmentSourceUrls;
+  final Map<FragmentName, String> fragmentSourceUrls;
   final String? utilsUrl;
   bool _needsUtilsImport = false;
 
@@ -53,7 +54,7 @@ class ReqEmitter {
 
   Class _buildOperationReq(OperationDefinitionNode operation) {
     final operationName = operation.name!.value;
-    final operationIr = document.operations[operationName];
+    final operationIr = document.operations[OperationName(operationName)];
     final hasVars = operationIr?.variables.isNotEmpty ??
         operation.variableDefinitions.isNotEmpty;
     final className = builtClassName("${operationName}Req");
@@ -77,7 +78,7 @@ class ReqEmitter {
 
     final documentExpr = _documentForOperation(
       operationName: operationName,
-      fragmentNames: operationIr?.usedFragments ?? const <String>{},
+      fragmentNames: operationIr?.usedFragments ?? const <FragmentName>{},
     );
 
     final instanceFields = <Field>[
@@ -526,7 +527,7 @@ ${hasVars ? "  vars: vars," : ""}
 
   Class _buildFragmentReq(FragmentDefinitionNode fragment) {
     final fragmentName = fragment.name.value;
-    final fragmentIr = document.fragments[fragmentName];
+    final fragmentIr = document.fragments[FragmentName(fragmentName)];
     final hasVars = fragmentIr?.variables.isNotEmpty ?? false;
     final className = builtClassName("${fragmentName}Req");
     final dataTypeRef = Reference(
@@ -549,7 +550,7 @@ ${hasVars ? "  vars: vars," : ""}
 
     final documentExpr = _documentForFragment(
       fragmentName: fragmentName,
-      fragmentNames: fragmentIr?.usedFragments ?? const <String>{},
+      fragmentNames: fragmentIr?.usedFragments ?? const <FragmentName>{},
     );
 
     final fieldSpecs = [
@@ -767,7 +768,7 @@ ${hasVars ? "  vars: vars," : ""}
 
   Expression _documentForOperation({
     required String operationName,
-    required Set<String> fragmentNames,
+    required Set<FragmentName> fragmentNames,
   }) {
     final definitionRefs = _definitionRefsForOperation(
       operationName: operationName,
@@ -778,11 +779,11 @@ ${hasVars ? "  vars: vars," : ""}
 
   Expression _documentForFragment({
     required String fragmentName,
-    required Set<String> fragmentNames,
+    required Set<FragmentName> fragmentNames,
   }) {
     final definitionRefs = _definitionRefsForOperation(
       operationName: null,
-      fragmentNames: {...fragmentNames, fragmentName},
+      fragmentNames: {...fragmentNames, FragmentName(fragmentName)},
     );
     return _documentExpression(definitionRefs);
   }
@@ -797,7 +798,7 @@ ${hasVars ? "  vars: vars," : ""}
 
   List<Expression> _definitionRefsForOperation({
     required String? operationName,
-    required Set<String> fragmentNames,
+    required Set<FragmentName> fragmentNames,
   }) {
     final refs = <Expression>[];
     var foundOperation = false;
@@ -811,10 +812,16 @@ ${hasVars ? "  vars: vars," : ""}
         foundOperation = true;
       } else if (definition is FragmentDefinitionNode) {
         final name = definition.name.value;
-        if (!fragmentNames.contains(name)) {
+        if (!fragmentNames.contains(FragmentName(name))) {
           continue;
         }
-        refs.add(_definitionRef(name, sourceUrl: fragmentSourceUrls[name]));
+        final fragmentKey = FragmentName(name);
+        refs.add(
+          _definitionRef(
+            name,
+            sourceUrl: fragmentSourceUrls[fragmentKey],
+          ),
+        );
       }
     }
 

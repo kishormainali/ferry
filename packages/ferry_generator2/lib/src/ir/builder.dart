@@ -5,6 +5,7 @@ import "../schema/schema.dart";
 import "../schema/type_utils.dart";
 import "../selection/selection_resolver.dart";
 import "model.dart";
+import "names.dart";
 import "types.dart";
 
 DocumentIR buildDocumentIr({
@@ -18,7 +19,7 @@ DocumentIR buildDocumentIr({
     addTypenames: config.shouldAddTypenames,
   );
 
-  final fragments = <String, FragmentIR>{};
+  final fragments = <FragmentName, FragmentIR>{};
   for (final fragment in documentIndex.fragments.values) {
     final selection = _buildSelectionSetIr(
       schema: schema,
@@ -30,9 +31,10 @@ DocumentIR buildDocumentIr({
       fragment: fragment,
     );
 
-    fragments[fragment.name.value] = FragmentIR(
-      name: fragment.name.value,
-      typeCondition: fragment.typeCondition.on.name.value,
+    final fragmentName = FragmentName(fragment.name.value);
+    fragments[fragmentName] = FragmentIR(
+      name: fragmentName,
+      typeCondition: TypeName(fragment.typeCondition.on.name.value),
       selection: selection,
       usedFragments: const {},
       inlineTypes: selection.inlineFragments.keys.toSet(),
@@ -55,7 +57,7 @@ DocumentIR buildDocumentIr({
     );
   }
 
-  final operations = <String, OperationIR>{};
+  final operations = <OperationName, OperationIR>{};
   for (final operation in documentIndex.operations.values) {
     final selection = _buildSelectionSetIr(
       schema: schema,
@@ -75,10 +77,13 @@ DocumentIR buildDocumentIr({
         )
         .toList(growable: false);
 
-    operations[operation.name!.value] = OperationIR(
-      name: operation.name!.value,
+    final operationName = OperationName(operation.name!.value);
+    operations[operationName] = OperationIR(
+      name: operationName,
       type: operation.type,
-      rootTypeName: schema.determineOperationTypeName(operation.type),
+      rootTypeName: TypeName(
+        schema.determineOperationTypeName(operation.type),
+      ),
       selection: selection,
       variables: variables,
       usedFragments: usedFragments,
@@ -95,17 +100,17 @@ SelectionSetIR _buildSelectionSetIr({
   required SchemaIndex schema,
   required ResolvedSelectionSet selectionSet,
 }) {
-  final fields = <String, FieldIR>{};
+  final fields = <ResponseKey, FieldIR>{};
   for (final entry in selectionSet.fields.entries) {
     final selection = entry.value;
     final namedTypeName = unwrapNamedTypeName(selection.typeNode) ?? "Object";
     final namedType = NamedTypeInfo(
-      name: namedTypeName,
-      kind: typeKindFor(schema, namedTypeName),
+      name: TypeName(namedTypeName),
+      kind: typeKindFor(schema, TypeName(namedTypeName)),
     );
-    fields[entry.key] = FieldIR(
-      responseKey: selection.responseKey,
-      fieldName: selection.fieldName,
+    fields[ResponseKey(entry.key)] = FieldIR(
+      responseKey: ResponseKey(selection.responseKey),
+      fieldName: FieldName(selection.fieldName),
       typeNode: selection.typeNode,
       namedType: namedType,
       selectionSet: selection.selectionSet == null
@@ -114,35 +119,40 @@ SelectionSetIR _buildSelectionSetIr({
               schema: schema,
               selectionSet: selection.selectionSet!,
             ),
-      fragmentSpreadOnlyName: selection.fragmentSpreadOnlyName,
+      fragmentSpreadOnlyName: selection.fragmentSpreadOnlyName == null
+          ? null
+          : FragmentName(selection.fragmentSpreadOnlyName!),
       isSynthetic: selection.isSynthetic,
     );
   }
 
-  final inlineFragments = <String, SelectionSetIR>{};
+  final inlineFragments = <TypeName, SelectionSetIR>{};
   for (final entry in selectionSet.inlineFragments.entries) {
-    inlineFragments[entry.key] = _buildSelectionSetIr(
+    inlineFragments[TypeName(entry.key)] = _buildSelectionSetIr(
       schema: schema,
       selectionSet: entry.value,
     );
   }
 
   return SelectionSetIR(
-    parentTypeName: selectionSet.parentTypeName,
+    parentTypeName: TypeName(selectionSet.parentTypeName),
     fields: fields,
     inlineFragments: inlineFragments,
-    fragmentSpreads: {...selectionSet.fragmentSpreads},
+    fragmentSpreads: {
+      for (final name in selectionSet.fragmentSpreads) FragmentName(name),
+    },
     unconditionalFragmentSpreads: {
-      ...selectionSet.unconditionalFragmentSpreads
+      for (final name in selectionSet.unconditionalFragmentSpreads)
+        FragmentName(name),
     },
   );
 }
 
-Set<String> _collectUsedFragments(
+Set<FragmentName> _collectUsedFragments(
   SelectionSetIR selection, {
-  required Map<String, FragmentIR> fragments,
+  required Map<FragmentName, FragmentIR> fragments,
 }) {
-  final result = <String>{};
+  final result = <FragmentName>{};
 
   void visitSelection(SelectionSetIR current) {
     for (final name in current.fragmentSpreads) {
@@ -174,11 +184,11 @@ VariableIR _variableFromDefinition({
 }) {
   final namedTypeName = unwrapNamedTypeName(typeNode) ?? "Object";
   final namedType = NamedTypeInfo(
-    name: namedTypeName,
-    kind: typeKindFor(schema, namedTypeName),
+    name: TypeName(namedTypeName),
+    kind: typeKindFor(schema, TypeName(namedTypeName)),
   );
   return VariableIR(
-    name: name,
+    name: VariableName(name),
     typeNode: typeNode,
     namedType: namedType,
   );

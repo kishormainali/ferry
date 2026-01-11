@@ -1,12 +1,13 @@
 import "package:code_builder/code_builder.dart";
 
 import "data_emitter_context.dart";
+import "../ir/names.dart";
 import "../utils/naming.dart";
 
 List<Reference> fragmentInterfaceRefs({
   required DataEmitterContext ctx,
-  required Set<String> fragmentSpreads,
-  required String parentTypeName,
+  required Set<FragmentName> fragmentSpreads,
+  required TypeName parentTypeName,
   required List<Reference> baseImplements,
 }) {
   final refs = <Reference>[...baseImplements];
@@ -37,14 +38,14 @@ List<Reference> fragmentInterfaceRefs({
   return refs;
 }
 
-List<String> _expandFragmentSpreads({
+List<FragmentName> _expandFragmentSpreads({
   required DataEmitterContext ctx,
-  required Set<String> fragmentSpreads,
+  required Set<FragmentName> fragmentSpreads,
 }) {
-  final ordered = <String>[];
-  final seen = <String>{};
+  final ordered = <FragmentName>[];
+  final seen = <FragmentName>{};
 
-  void visit(String name) {
+  void visit(FragmentName name) {
     if (!seen.add(name)) return;
     ordered.add(name);
     final info = ctx.fragmentInfo[name];
@@ -63,13 +64,15 @@ List<String> _expandFragmentSpreads({
 
 String _fragmentInterfaceForType({
   required DataEmitterContext ctx,
-  required String fragmentName,
-  required String typeName,
+  required FragmentName fragmentName,
+  required TypeName typeName,
 }) {
   final info = ctx.fragmentInfo[fragmentName];
-  if (info == null) return builtClassName(fragmentName);
+  if (info == null) return builtClassName(fragmentName.value);
   if (info.inlineTypes.contains(typeName)) {
-    return builtClassName("${fragmentName}__as$typeName");
+    return builtClassName(
+      "${fragmentName.value}__as${typeName.value}",
+    );
   }
-  return builtClassName(fragmentName);
+  return builtClassName(fragmentName.value);
 }

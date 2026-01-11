@@ -1,6 +1,7 @@
 import "package:gql/ast.dart";
 
 import "../schema/schema.dart";
+import "names.dart";
 
 enum GraphQLTypeKind {
   object,
@@ -13,7 +14,7 @@ enum GraphQLTypeKind {
 }
 
 class NamedTypeInfo {
-  final String name;
+  final TypeName name;
   final GraphQLTypeKind kind;
 
   const NamedTypeInfo({
@@ -22,8 +23,8 @@ class NamedTypeInfo {
   });
 }
 
-GraphQLTypeKind typeKindFor(SchemaIndex schema, String typeName) {
-  final def = schema.lookupType(NameNode(value: typeName));
+GraphQLTypeKind typeKindFor(SchemaIndex schema, TypeName typeName) {
+  final def = schema.lookupType(NameNode(value: typeName.value));
   return switch (def) {
     ObjectTypeDefinitionNode() => GraphQLTypeKind.object,
     InterfaceTypeDefinitionNode() => GraphQLTypeKind.interface,

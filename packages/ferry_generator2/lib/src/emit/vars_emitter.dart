@@ -3,6 +3,7 @@ import "package:gql/ast.dart";
 
 import "../config/config.dart";
 import "../ir/model.dart";
+import "../ir/names.dart";
 import "../ir/types.dart";
 import "../utils/naming.dart";
 import "data_emitter_context.dart" show utilsImportAlias, utilsPrefix;
@@ -31,7 +32,7 @@ class VarsEmitter {
 
     for (final operation in ownedOperations) {
       if (operation.name == null) continue;
-      final op = document.operations[operation.name!.value];
+      final op = document.operations[OperationName(operation.name!.value)];
       if (op == null || op.variables.isEmpty) {
         continue;
       }
@@ -48,7 +49,7 @@ class VarsEmitter {
     }
 
     for (final fragment in ownedFragments) {
-      final frag = document.fragments[fragment.name.value];
+      final frag = document.fragments[FragmentName(fragment.name.value)];
       if (frag == null || frag.variables.isEmpty) {
         continue;
       }
@@ -249,9 +250,9 @@ class VarsEmitter {
   }
 
   InputFieldSpec _fieldSpecFromVariable(VariableIR variable) {
-    final responseKey = variable.name;
-    final propertyName = identifier(variable.name);
-    final namedTypeName = variable.namedType.name;
+    final responseKey = variable.name.value;
+    final propertyName = identifier(variable.name.value);
+    final namedTypeName = variable.namedType.name.value;
     final namedTypeKind = variable.namedType.kind;
 
     Reference namedTypeRef;

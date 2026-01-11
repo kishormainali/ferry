@@ -16,6 +16,7 @@ import "src/schema/schema.dart";
 import "src/emit/schema_emitter.dart";
 import "src/selection/selection_resolver.dart";
 import "src/ir/builder.dart";
+import "src/ir/names.dart";
 import "src/source/source.dart";
 import "src/emit/utils_emitter.dart";
 import "src/emit/vars_emitter.dart";
@@ -299,13 +300,13 @@ void _validateEnumFallbacks(
   }
 }
 
-Map<String, String> _fragmentSourceUrls(DocumentSource source) {
-  final urls = <String, String>{};
+Map<FragmentName, String> _fragmentSourceUrls(DocumentSource source) {
+  final urls = <FragmentName, String>{};
 
   void collect(DocumentSource current) {
     for (final fragment
         in current.document.definitions.whereType<FragmentDefinitionNode>()) {
-      urls[fragment.name.value] = current.url;
+      urls[FragmentName(fragment.name.value)] = current.url;
     }
     for (final entry in current.imports) {
       collect(entry);

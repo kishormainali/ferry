@@ -1,10 +1,11 @@
 import "package:gql/ast.dart";
 
+import "names.dart";
 import "types.dart";
 
 class DocumentIR {
-  final Map<String, OperationIR> operations;
-  final Map<String, FragmentIR> fragments;
+  final Map<OperationName, OperationIR> operations;
+  final Map<FragmentName, FragmentIR> fragments;
 
   const DocumentIR({
     required this.operations,
@@ -13,12 +14,12 @@ class DocumentIR {
 }
 
 class OperationIR {
-  final String name;
+  final OperationName name;
   final OperationType type;
-  final String rootTypeName;
+  final TypeName rootTypeName;
   final SelectionSetIR selection;
   final List<VariableIR> variables;
-  final Set<String> usedFragments;
+  final Set<FragmentName> usedFragments;
 
   const OperationIR({
     required this.name,
@@ -31,11 +32,11 @@ class OperationIR {
 }
 
 class FragmentIR {
-  final String name;
-  final String typeCondition;
+  final FragmentName name;
+  final TypeName typeCondition;
   final SelectionSetIR selection;
-  final Set<String> usedFragments;
-  final Set<String> inlineTypes;
+  final Set<FragmentName> usedFragments;
+  final Set<TypeName> inlineTypes;
   final List<VariableIR> variables;
 
   const FragmentIR({
@@ -49,11 +50,28 @@ class FragmentIR {
 }
 
 class SelectionSetIR {
-  final String parentTypeName;
-  final Map<String, FieldIR> fields;
-  final Map<String, SelectionSetIR> inlineFragments;
-  final Set<String> fragmentSpreads;
-  final Set<String> unconditionalFragmentSpreads;
+  /// GraphQL parent type name for this selection set (object/interface/union).
+  final TypeName parentTypeName;
+
+  /// Concrete field selections keyed by response key.
+  final Map<ResponseKey, FieldIR> fields;
+
+  /// Type-conditioned branches that cannot be merged into the base selection.
+  ///
+  /// Keys are concrete type names (e.g. "Human", "Droid") and values are the
+  /// selections that apply only when __typename matches that type.
+  final Map<TypeName, SelectionSetIR> inlineFragments;
+
+  /// All fragment spreads referenced anywhere in this selection set.
+  ///
+  /// This is a dependency list and includes conditional spreads.
+  final Set<FragmentName> fragmentSpreads;
+
+  /// Fragment spreads that are unconditionally applied (no @skip/@include).
+  ///
+  /// This is used for interface typing: conditional spreads are excluded to
+  /// avoid claiming fields that may not be present.
+  final Set<FragmentName> unconditionalFragmentSpreads;
 
   const SelectionSetIR({
     required this.parentTypeName,
@@ -65,12 +83,12 @@ class SelectionSetIR {
 }
 
 class FieldIR {
-  final String responseKey;
-  final String fieldName;
+  final ResponseKey responseKey;
+  final FieldName fieldName;
   final TypeNode typeNode;
   final NamedTypeInfo namedType;
   final SelectionSetIR? selectionSet;
-  final String? fragmentSpreadOnlyName;
+  final FragmentName? fragmentSpreadOnlyName;
   final bool isSynthetic;
 
   const FieldIR({
@@ -85,7 +103,7 @@ class FieldIR {
 }
 
 class VariableIR {
-  final String name;
+  final VariableName name;
   final TypeNode typeNode;
   final NamedTypeInfo namedType;
 

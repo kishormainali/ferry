@@ -5,9 +5,10 @@ import "data_emitter_classes.dart";
 import "data_emitter_context.dart";
 import "data_emitter_fields.dart";
 import "data_emitter_types.dart";
+import "../ir/model.dart";
+import "../ir/names.dart";
 import "../ir/types.dart";
 import "../utils/naming.dart";
-import "../ir/model.dart";
 
 void indexFragments({required DataEmitterContext ctx}) {
   for (final fragment in ctx.document.fragments.values) {
@@ -30,11 +31,12 @@ void indexFragments({required DataEmitterContext ctx}) {
   required DataEmitterContext ctx,
   required FragmentDefinitionNode fragment,
 }) {
-  final info = ctx.fragmentInfo[fragment.name.value];
+  final fragmentName = FragmentName(fragment.name.value);
+  final info = ctx.fragmentInfo[fragmentName];
   if (info == null) return (specs: const <Spec>[], ctx: ctx);
 
   final specs = <Spec>[];
-  final baseKey = fragment.name.value;
+  final baseKey = fragmentName.value;
   specs.add(
     _buildFragmentInterfaceClass(
       ctx: ctx,
@@ -52,14 +54,14 @@ void indexFragments({required DataEmitterContext ctx}) {
   );
 
   for (final entry in info.selectionSet.inlineFragments.entries) {
-    final typeName = entry.key;
-    final inlineKey = "${fragment.name.value}__as$typeName";
+    final typeName = entry.key.value;
+    final inlineKey = "${fragmentName.value}__as$typeName";
     specs.add(
       _buildFragmentInterfaceClass(
         ctx: ctx,
         interfaceKey: inlineKey,
         selectionSet: entry.value,
-        implementsRefs: [refer(builtClassName(fragment.name.value))],
+        implementsRefs: [refer(builtClassName(fragmentName.value))],
       ),
     );
     specs.addAll(
@@ -78,18 +80,19 @@ void indexFragments({required DataEmitterContext ctx}) {
   required DataEmitterContext ctx,
   required FragmentDefinitionNode fragment,
 }) {
-  final resolved = ctx.fragmentInfo[fragment.name.value]?.selectionSet;
+  final fragmentName = FragmentName(fragment.name.value);
+  final resolved = ctx.fragmentInfo[fragmentName]?.selectionSet;
   if (resolved == null) return (specs: const <Spec>[], ctx: ctx);
 
-  final baseName = "${fragment.name.value}Data";
+  final baseName = "${fragmentName.value}Data";
   final specs = buildSelectionSetClasses(
     ctx: ctx,
     baseName: baseName,
     selectionSet: resolved,
     classImplements: [
-      refer(builtClassName(fragment.name.value)),
+      refer(builtClassName(fragmentName.value)),
     ],
-    fragmentName: fragment.name.value,
+    fragmentName: fragmentName.value,
   );
 
   return (specs: specs, ctx: ctx);
@@ -97,20 +100,20 @@ void indexFragments({required DataEmitterContext ctx}) {
 
 void _indexFragmentInterfaceSelections({
   required DataEmitterContext ctx,
-  required String fragmentName,
+  required FragmentName fragmentName,
   required SelectionSetIR selectionSet,
 }) {
   _registerInterfaceSelection(
     ctx: ctx,
     fragmentName: fragmentName,
-    interfaceKey: fragmentName,
+    interfaceKey: fragmentName.value,
     selectionSet: selectionSet,
   );
   for (final entry in selectionSet.inlineFragments.entries) {
     _registerInterfaceSelection(
       ctx: ctx,
       fragmentName: fragmentName,
-      interfaceKey: "${fragmentName}__as${entry.key}",
+      interfaceKey: "${fragmentName.value}__as${entry.key.value}",
       selectionSet: entry.value,
     );
   }
@@ -118,7 +121,7 @@ void _indexFragmentInterfaceSelections({
 
 void _registerInterfaceSelection({
   required DataEmitterContext ctx,
-  required String fragmentName,
+  required FragmentName fragmentName,
   required String interfaceKey,
   required SelectionSetIR selectionSet,
 }) {
@@ -134,7 +137,7 @@ void _registerInterfaceSelection({
         field.fragmentSpreadOnlyName != null) {
       continue;
     }
-    final nestedKey = "${interfaceKey}_${field.responseKey}";
+    final nestedKey = "${interfaceKey}_${field.responseKey.value}";
     _registerInterfaceSelection(
       ctx: ctx,
       fragmentName: fragmentName,
@@ -179,7 +182,7 @@ List<Spec> _buildFragmentNestedInterfaces({
         field.fragmentSpreadOnlyName != null) {
       continue;
     }
-    final nestedKey = "${interfaceKey}_${field.responseKey}";
+    final nestedKey = "${interfaceKey}_${field.responseKey.value}";
     if (ctx.generatedInterfaces.add(nestedKey)) {
       specs.add(
         _buildFragmentInterfaceClass(
@@ -208,9 +211,9 @@ List<FieldSpec> _buildFragmentInterfaceFieldSpecs({
 }) {
   final fieldsList = <FieldSpec>[];
   for (final selection in selectionSet.fields.values) {
-    final fieldName = selection.responseKey;
+    final fieldName = selection.responseKey.value;
     final propertyName = identifier(fieldName);
-    final namedTypeName = selection.namedType.name;
+    final namedTypeName = selection.namedType.name.value;
     final namedTypeKind = selection.namedType.kind;
 
     final fragmentName = ctx.config.dataClassConfig.reuseFragments
@@ -253,7 +256,7 @@ List<FieldSpec> _buildFragmentInterfaceFieldSpecs({
         typeRef: typeRef,
         namedTypeRef: namedTypeRef,
         selectionSet: selection.selectionSet,
-        fragmentSpreadOnlyName: fragmentName,
+        fragmentSpreadOnlyName: fragmentName?.value,
       ),
     );
   }

@@ -110,8 +110,7 @@ class ConfigMapOf extends ConfigField<Map<String, Object?>> {
     final warnings = <String>[];
     final output = <String, Object?>{};
     for (final entry in map.entries) {
-      if (entry.key is! String) continue;
-      final key = entry.key as String;
+      final key = entry.key;
       final entryValue = entry.value;
       if (valueField == null) {
         output[key] = entryValue;

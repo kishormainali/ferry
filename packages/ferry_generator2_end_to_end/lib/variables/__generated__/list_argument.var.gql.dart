@@ -25,6 +25,7 @@ class GreviewsWithListArgumentVars {
     );
   }
 
+  /// The episodes in the Star Wars trilogy.
   final _i1.GEpisode episode;
 
   final Value<List<int>> stars;

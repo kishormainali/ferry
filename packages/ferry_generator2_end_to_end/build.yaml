@@ -26,6 +26,8 @@ targets:
               equals: true
               hash_code: true
               to_string: true
+          docs:
+            enabled: true
           scalars:
             Date:
               type: CustomDate
@@ -36,3 +38,6 @@ targets:
               type: String
             Json:
               type: 'Map<String, dynamic>'
+          logging:
+            level: info
+            format: text

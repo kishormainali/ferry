@@ -7,6 +7,7 @@ import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.schema.
 import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
     as _gqlUtils;
 
+/// The query type for the schema.
 class GAliasedHeroData {
   const GAliasedHeroData({
     this.empireHero,
@@ -28,8 +29,10 @@ class GAliasedHeroData {
     );
   }
 
+  /// Hero for a given episode.
   final GAliasedHeroData_empireHero? empireHero;
 
+  /// Hero for a given episode.
   final GAliasedHeroData_jediHero? jediHero;
 
   final String G__typename;
@@ -80,6 +83,7 @@ class GAliasedHeroData {
   }
 }
 
+/// A character from the Star Wars universe.
 class GAliasedHeroData_empireHero {
   const GAliasedHeroData_empireHero({
     required this.id,
@@ -154,6 +158,7 @@ class GAliasedHeroData_empireHero {
   }
 }
 
+/// A character from the Star Wars universe.
 class GAliasedHeroData_jediHero {
   const GAliasedHeroData_jediHero({
     required this.id,

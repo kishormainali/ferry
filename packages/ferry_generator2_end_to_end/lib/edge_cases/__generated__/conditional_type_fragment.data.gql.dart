@@ -59,6 +59,7 @@ class GHumanNameData implements GHumanName {
   }
 }
 
+/// The query type for the schema.
 class GHeroConditionalTypeFragmentData {
   const GHeroConditionalTypeFragmentData({
     this.hero,
@@ -75,6 +76,7 @@ class GHeroConditionalTypeFragmentData {
     );
   }
 
+  /// Hero for a given episode.
   final GHeroConditionalTypeFragmentData_hero? hero;
 
   final String G__typename;
@@ -117,6 +119,7 @@ class GHeroConditionalTypeFragmentData {
   }
 }
 
+/// A character from the Star Wars universe.
 sealed class GHeroConditionalTypeFragmentData_hero {
   const GHeroConditionalTypeFragmentData_hero({
     required this.G__typename,
@@ -231,6 +234,7 @@ class GHeroConditionalTypeFragmentData_hero__asHuman
   }
 }
 
+/// A character from the Star Wars universe.
 class GHeroConditionalTypeFragmentData_hero__unknown
     extends GHeroConditionalTypeFragmentData_hero {
   const GHeroConditionalTypeFragmentData_hero__unknown({

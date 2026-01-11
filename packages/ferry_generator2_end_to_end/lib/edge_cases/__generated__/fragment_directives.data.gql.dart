@@ -1,11 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
 
+/// A character from the Star Wars universe.
 abstract class GHeroName {
   String? get name;
   String get G__typename;
 }
 
+/// A character from the Star Wars universe.
 class GHeroNameData implements GHeroName {
   const GHeroNameData({
     this.name,
@@ -61,6 +63,7 @@ class GHeroNameData implements GHeroName {
   }
 }
 
+/// The query type for the schema.
 class GHeroFragmentDirectivesData {
   const GHeroFragmentDirectivesData({
     this.hero,
@@ -77,6 +80,7 @@ class GHeroFragmentDirectivesData {
     );
   }
 
+  /// Hero for a given episode.
   final GHeroFragmentDirectivesData_hero? hero;
 
   final String G__typename;
@@ -119,6 +123,7 @@ class GHeroFragmentDirectivesData {
   }
 }
 
+/// A character from the Star Wars universe.
 class GHeroFragmentDirectivesData_hero {
   const GHeroFragmentDirectivesData_hero({
     required this.G__typename,

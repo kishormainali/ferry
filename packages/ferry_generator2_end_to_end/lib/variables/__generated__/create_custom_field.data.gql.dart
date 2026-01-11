@@ -1,6 +1,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
 
+/// The mutation type for the schema.
 class GCreateCustomFieldData {
   const GCreateCustomFieldData({
     this.createCustomField,

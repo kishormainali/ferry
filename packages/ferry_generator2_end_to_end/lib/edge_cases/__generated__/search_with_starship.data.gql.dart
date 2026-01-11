@@ -7,6 +7,7 @@ import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.schema.
 import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
     as _gqlUtils;
 
+/// The query type for the schema.
 class GSearchWithStarshipData {
   const GSearchWithStarshipData({
     this.search,

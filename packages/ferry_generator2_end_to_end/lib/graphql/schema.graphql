@@ -8,9 +8,11 @@ schema {
 
 directive @extends on OBJECT | INTERFACE
 
-# The query type, represents all of the entry points into our object graph
+"""The query type for the schema."""
 type Query {
+  "Hero for a given episode."
   hero(episode: Episode): Character
+  "Reviews for a given episode."
   reviews(episode: Episode!, stars: [Int!]): [Review]
   search(text: String): [SearchResult]
   character(id: ID!): Character
@@ -24,20 +26,21 @@ type Query {
   books: [Book!]!
 }
 
-# The mutation type, represents all updates we can make to our data
+"""The mutation type for the schema."""
 type Mutation {
+  "Create a new review."
   createReview(episode: Episode, review: ReviewInput!, createdAt: Date): Review
   createCustomField(input: CustomFieldInput!): CustomField
 }
 
-# The subscription type, represents all subscriptions we can make to our data
+"""The subscription type for the schema."""
 type Subscription {
   reviewAdded(episode: Episode): Review
 }
 
-# The episodes in the Star Wars trilogy
+"""The episodes in the Star Wars trilogy."""
 enum Episode {
-  # Star Wars Episode IV: A New Hope, released in 1977.
+  "Star Wars Episode IV: A New Hope, released in 1977."
   NEWHOPE
   # Star Wars Episode V: The Empire Strikes Back, released in 1980.
   EMPIRE
@@ -45,7 +48,7 @@ enum Episode {
   JEDI
 }
 
-# A character from the Star Wars universe
+"""A character from the Star Wars universe."""
 interface Character {
   # The ID of the character
   id: ID!
@@ -150,9 +153,9 @@ type Review {
   custom: [CustomField!]!
 }
 
-# The input object sent when someone is creating a new review
+"""Input object sent when creating a new review."""
 input ReviewInput {
-  # 0-5 stars
+  "0-5 stars."
   stars: Int!
   # Comment about the movie, optional
   commentary: String
@@ -218,7 +221,9 @@ input PostFavoritesInput {
   id: ID!
 }
 
+"""Author interface."""
 interface Author {
+    "Display name for the author."
     displayName: String!
 }
 
@@ -233,7 +238,9 @@ type Company implements Author {
     displayName: String!
 }
 
+"""Book interface."""
 interface Book {
+    "Book title."
     title: String!
     author: Author!
 }

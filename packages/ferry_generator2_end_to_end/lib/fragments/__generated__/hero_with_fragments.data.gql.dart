@@ -5,11 +5,13 @@
 import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
     as _gqlUtils;
 
+/// A character from the Star Wars universe.
 abstract class GheroData {
   String get name;
   String get G__typename;
 }
 
+/// A character from the Star Wars universe.
 class GheroDataData implements GheroData {
   const GheroDataData({
     required this.name,
@@ -63,6 +65,7 @@ class GheroDataData implements GheroData {
   }
 }
 
+/// A character from the Star Wars universe.
 abstract class GcomparisonFields {
   String get id;
   String get name;
@@ -81,6 +84,7 @@ abstract class GcomparisonFields_friendsConnection_edges {
   String get G__typename;
 }
 
+/// A character from the Star Wars universe.
 class GcomparisonFieldsData implements GcomparisonFields, GheroData {
   const GcomparisonFieldsData({
     required this.id,
@@ -289,6 +293,7 @@ class GcomparisonFieldsData_friendsConnection_edges
   }
 }
 
+/// The query type for the schema.
 class GHeroWithFragmentsData {
   const GHeroWithFragmentsData({
     this.hero,
@@ -305,6 +310,7 @@ class GHeroWithFragmentsData {
     );
   }
 
+  /// Hero for a given episode.
   final GcomparisonFieldsData? hero;
 
   final String G__typename;

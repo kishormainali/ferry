@@ -1,11 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
 
+/// A character from the Star Wars universe.
 abstract class GheroName {
   String get name;
   String get G__typename;
 }
 
+/// A character from the Star Wars universe.
 class GheroNameData implements GheroName {
   const GheroNameData({
     required this.name,
@@ -59,11 +61,13 @@ class GheroNameData implements GheroName {
   }
 }
 
+/// A character from the Star Wars universe.
 abstract class GheroId {
   String get id;
   String get G__typename;
 }
 
+/// A character from the Star Wars universe.
 class GheroIdData implements GheroId {
   const GheroIdData({
     required this.id,
@@ -117,6 +121,7 @@ class GheroIdData implements GheroId {
   }
 }
 
+/// The query type for the schema.
 class GHeroWith2FragmentsData {
   const GHeroWith2FragmentsData({
     this.hero,
@@ -133,6 +138,7 @@ class GHeroWith2FragmentsData {
     );
   }
 
+  /// Hero for a given episode.
   final GHeroWith2FragmentsData_hero? hero;
 
   final String G__typename;
@@ -175,6 +181,7 @@ class GHeroWith2FragmentsData {
   }
 }
 
+/// A character from the Star Wars universe.
 class GHeroWith2FragmentsData_hero implements GheroName, GheroId {
   const GHeroWith2FragmentsData_hero({
     required this.name,

@@ -5,7 +5,9 @@
 import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
     as _gqlUtils;
 
+/// Author interface.
 abstract class GSharedAuthorFragment {
+  /// Display name for the author.
   String get displayName;
   String get G__typename;
 }
@@ -23,6 +25,7 @@ abstract class GSharedAuthorFragment__asCompany
   String get G__typename;
 }
 
+/// Author interface.
 sealed class GSharedAuthorFragmentData implements GSharedAuthorFragment {
   const GSharedAuthorFragmentData({
     required this.displayName,
@@ -40,6 +43,7 @@ sealed class GSharedAuthorFragmentData implements GSharedAuthorFragment {
     }
   }
 
+  /// Display name for the author.
   final String displayName;
 
   final String G__typename;
@@ -211,6 +215,7 @@ class GSharedAuthorFragmentData__asCompany extends GSharedAuthorFragmentData
   }
 }
 
+/// Author interface.
 class GSharedAuthorFragmentData__unknown extends GSharedAuthorFragmentData
     implements GSharedAuthorFragment {
   const GSharedAuthorFragmentData__unknown({
@@ -260,7 +265,9 @@ class GSharedAuthorFragmentData__unknown extends GSharedAuthorFragmentData
   }
 }
 
+/// Book interface.
 abstract class GSharedBookFragment {
+  /// Book title.
   String get title;
   GSharedAuthorFragment get author;
   String get G__typename;
@@ -277,6 +284,7 @@ abstract class GSharedBookFragment__asColoringBook
   String get G__typename;
 }
 
+/// Book interface.
 sealed class GSharedBookFragmentData implements GSharedBookFragment {
   const GSharedBookFragmentData({
     required this.title,
@@ -295,6 +303,7 @@ sealed class GSharedBookFragmentData implements GSharedBookFragment {
     }
   }
 
+  /// Book title.
   final String title;
 
   final GSharedAuthorFragmentData author;
@@ -474,6 +483,7 @@ class GSharedBookFragmentData__asColoringBook extends GSharedBookFragmentData
   }
 }
 
+/// Book interface.
 class GSharedBookFragmentData__unknown extends GSharedBookFragmentData
     implements GSharedBookFragment {
   const GSharedBookFragmentData__unknown({
@@ -528,6 +538,7 @@ class GSharedBookFragmentData__unknown extends GSharedBookFragmentData
   }
 }
 
+/// The query type for the schema.
 class GSharedBooksAData {
   const GSharedBooksAData({
     required this.books,
@@ -584,6 +595,7 @@ class GSharedBooksAData {
   }
 }
 
+/// The query type for the schema.
 class GSharedBooksBData {
   const GSharedBooksBData({
     required this.books,

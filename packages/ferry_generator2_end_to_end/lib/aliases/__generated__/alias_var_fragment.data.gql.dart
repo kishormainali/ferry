@@ -209,6 +209,7 @@ class GPostFragmentData_isLiked implements GPostFragment_isLiked {
   }
 }
 
+/// The query type for the schema.
 class GPostsData {
   const GPostsData({
     this.posts,

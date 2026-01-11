@@ -7,6 +7,7 @@ import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.schema.
 import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
     as _gqlUtils;
 
+/// The query type for the schema.
 class GreviewsWithListArgumentData {
   const GreviewsWithListArgumentData({
     this.reviews,
@@ -27,6 +28,7 @@ class GreviewsWithListArgumentData {
     );
   }
 
+  /// Reviews for a given episode.
   final List<GreviewsWithListArgumentData_reviews?>? reviews;
 
   final String G__typename;

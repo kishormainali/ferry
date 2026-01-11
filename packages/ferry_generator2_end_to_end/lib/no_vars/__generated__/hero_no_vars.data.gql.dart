@@ -1,6 +1,7 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
 
+/// The query type for the schema.
 class GHeroNoVarsData {
   const GHeroNoVarsData({
     this.hero,
@@ -17,6 +18,7 @@ class GHeroNoVarsData {
     );
   }
 
+  /// Hero for a given episode.
   final GHeroNoVarsData_hero? hero;
 
   final String G__typename;
@@ -59,6 +61,7 @@ class GHeroNoVarsData {
   }
 }
 
+/// A character from the Star Wars universe.
 class GHeroNoVarsData_hero {
   const GHeroNoVarsData_hero({
     required this.id,

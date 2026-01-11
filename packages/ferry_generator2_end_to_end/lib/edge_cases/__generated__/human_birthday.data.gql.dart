@@ -3,6 +3,7 @@
 
 import 'package:ferry_generator2_end_to_end/custom/date.dart';
 
+/// The query type for the schema.
 class GHumanBirthdayData {
   const GHumanBirthdayData({
     this.human,

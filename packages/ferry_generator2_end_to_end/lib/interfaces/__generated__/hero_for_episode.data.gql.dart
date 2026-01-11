@@ -69,6 +69,7 @@ class GDroidFragmentData implements GDroidFragment {
   }
 }
 
+/// The query type for the schema.
 class GHeroForEpisodeData {
   const GHeroForEpisodeData({
     this.hero,
@@ -85,6 +86,7 @@ class GHeroForEpisodeData {
     );
   }
 
+  /// Hero for a given episode.
   final GHeroForEpisodeData_hero? hero;
 
   final String G__typename;
@@ -127,6 +129,7 @@ class GHeroForEpisodeData {
   }
 }
 
+/// A character from the Star Wars universe.
 sealed class GHeroForEpisodeData_hero {
   const GHeroForEpisodeData_hero({
     required this.name,
@@ -191,6 +194,7 @@ extension GHeroForEpisodeData_heroWhenExtension on GHeroForEpisodeData_hero {
   }
 }
 
+/// A character from the Star Wars universe.
 class GHeroForEpisodeData_hero_friends {
   const GHeroForEpisodeData_hero_friends({
     required this.name,
@@ -321,6 +325,7 @@ class GHeroForEpisodeData_hero__asDroid extends GHeroForEpisodeData_hero
   }
 }
 
+/// A character from the Star Wars universe.
 class GHeroForEpisodeData_hero__unknown extends GHeroForEpisodeData_hero {
   const GHeroForEpisodeData_hero__unknown({
     required name,

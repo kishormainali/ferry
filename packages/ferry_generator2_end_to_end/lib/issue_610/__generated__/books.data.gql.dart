@@ -5,7 +5,9 @@
 import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
     as _gqlUtils;
 
+/// Author interface.
 abstract class GAuthorFragment {
+  /// Display name for the author.
   String get displayName;
   String get G__typename;
 }
@@ -21,6 +23,7 @@ abstract class GAuthorFragment__asCompany implements GAuthorFragment {
   String get G__typename;
 }
 
+/// Author interface.
 sealed class GAuthorFragmentData implements GAuthorFragment {
   const GAuthorFragmentData({
     required this.displayName,
@@ -38,6 +41,7 @@ sealed class GAuthorFragmentData implements GAuthorFragment {
     }
   }
 
+  /// Display name for the author.
   final String displayName;
 
   final String G__typename;
@@ -207,6 +211,7 @@ class GAuthorFragmentData__asCompany extends GAuthorFragmentData
   }
 }
 
+/// Author interface.
 class GAuthorFragmentData__unknown extends GAuthorFragmentData
     implements GAuthorFragment {
   const GAuthorFragmentData__unknown({
@@ -255,8 +260,11 @@ class GAuthorFragmentData__unknown extends GAuthorFragmentData
   }
 }
 
+/// Book interface.
 abstract class GBookFragment {
   GAuthorFragment get author;
+
+  /// Book title.
   String get title;
   String get G__typename;
 }
@@ -271,6 +279,7 @@ abstract class GBookFragment__asColoringBook implements GBookFragment {
   String get G__typename;
 }
 
+/// Book interface.
 sealed class GBookFragmentData implements GBookFragment {
   const GBookFragmentData({
     required this.author,
@@ -291,6 +300,7 @@ sealed class GBookFragmentData implements GBookFragment {
 
   final GAuthorFragmentData author;
 
+  /// Book title.
   final String title;
 
   final String G__typename;
@@ -467,6 +477,7 @@ class GBookFragmentData__asColoringBook extends GBookFragmentData
   }
 }
 
+/// Book interface.
 class GBookFragmentData__unknown extends GBookFragmentData
     implements GBookFragment {
   const GBookFragmentData__unknown({
@@ -521,6 +532,7 @@ class GBookFragmentData__unknown extends GBookFragmentData
   }
 }
 
+/// The query type for the schema.
 class GGetBooksData {
   const GGetBooksData({
     required this.books,

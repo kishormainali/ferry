@@ -8,6 +8,7 @@ import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.schema.
 import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
     as _gqlUtils;
 
+/// The mutation type for the schema.
 class GReviewWithDateData {
   const GReviewWithDateData({
     this.createReview,
@@ -24,6 +25,7 @@ class GReviewWithDateData {
     );
   }
 
+  /// Create a new review.
   final GReviewWithDateData_createReview? createReview;
 
   final String G__typename;

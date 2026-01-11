@@ -5,6 +5,7 @@
 import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
     as _gqlUtils;
 
+/// A character from the Star Wars universe.
 abstract class GFragLevel1 {
   String get id;
   String get name;
@@ -12,6 +13,7 @@ abstract class GFragLevel1 {
   String get G__typename;
 }
 
+/// A character from the Star Wars universe.
 class GFragLevel1Data implements GFragLevel1, GFragLevel3, GFragLevel2 {
   const GFragLevel1Data({
     required this.id,
@@ -94,12 +96,14 @@ class GFragLevel1Data implements GFragLevel1, GFragLevel3, GFragLevel2 {
   }
 }
 
+/// A character from the Star Wars universe.
 abstract class GFragLevel2 {
   String get name;
   List<GFragLevel4?>? get friends;
   String get G__typename;
 }
 
+/// A character from the Star Wars universe.
 class GFragLevel2Data implements GFragLevel2, GFragLevel3 {
   const GFragLevel2Data({
     required this.name,
@@ -174,11 +178,13 @@ class GFragLevel2Data implements GFragLevel2, GFragLevel3 {
   }
 }
 
+/// A character from the Star Wars universe.
 abstract class GFragLevel3 {
   List<GFragLevel4?>? get friends;
   String get G__typename;
 }
 
+/// A character from the Star Wars universe.
 class GFragLevel3Data implements GFragLevel3 {
   const GFragLevel3Data({
     this.friends,
@@ -244,12 +250,14 @@ class GFragLevel3Data implements GFragLevel3 {
   }
 }
 
+/// A character from the Star Wars universe.
 abstract class GFragLevel4 {
   String get id;
   String get name;
   String get G__typename;
 }
 
+/// A character from the Star Wars universe.
 class GFragLevel4Data implements GFragLevel4 {
   const GFragLevel4Data({
     required this.id,
@@ -311,6 +319,7 @@ class GFragLevel4Data implements GFragLevel4 {
   }
 }
 
+/// The query type for the schema.
 class GDeepFragmentsData {
   const GDeepFragmentsData({
     this.hero,
@@ -326,6 +335,7 @@ class GDeepFragmentsData {
     );
   }
 
+  /// Hero for a given episode.
   final GFragLevel1Data? hero;
 
   final String G__typename;

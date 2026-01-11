@@ -15,6 +15,7 @@ class GHeroForEpisodeVars {
         ep: _i1.GEpisode.fromJson((json['ep'] as String)));
   }
 
+  /// The episodes in the Star Wars trilogy.
   final _i1.GEpisode ep;
 
   Map<String, dynamic> toJson() {

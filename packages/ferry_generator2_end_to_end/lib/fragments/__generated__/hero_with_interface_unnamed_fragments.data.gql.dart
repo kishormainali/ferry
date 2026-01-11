@@ -5,6 +5,7 @@
 import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
     as _gqlUtils;
 
+/// The query type for the schema.
 class GHeroWithInterfaceUnnamedFragmentsData {
   const GHeroWithInterfaceUnnamedFragmentsData({
     this.hero,
@@ -22,6 +23,7 @@ class GHeroWithInterfaceUnnamedFragmentsData {
     );
   }
 
+  /// Hero for a given episode.
   final GHeroWithInterfaceUnnamedFragmentsData_hero? hero;
 
   final String G__typename;
@@ -64,6 +66,7 @@ class GHeroWithInterfaceUnnamedFragmentsData {
   }
 }
 
+/// A character from the Star Wars universe.
 sealed class GHeroWithInterfaceUnnamedFragmentsData_hero {
   const GHeroWithInterfaceUnnamedFragmentsData_hero({
     required this.id,
@@ -234,6 +237,7 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman
   }
 }
 
+/// A character from the Star Wars universe.
 sealed class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends {
   const GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends(
       {required this.G__typename});
@@ -459,6 +463,7 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asDroid
   }
 }
 
+/// A character from the Star Wars universe.
 class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__unknown
     extends GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends {
   const GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__unknown(
@@ -568,6 +573,7 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asDroid
   }
 }
 
+/// A character from the Star Wars universe.
 class GHeroWithInterfaceUnnamedFragmentsData_hero__unknown
     extends GHeroWithInterfaceUnnamedFragmentsData_hero {
   const GHeroWithInterfaceUnnamedFragmentsData_hero__unknown({

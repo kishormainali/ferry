@@ -4,7 +4,9 @@
 import 'package:ferry_generator2_end_to_end/custom/date.dart';
 import 'package:gql_tristate_value/gql_tristate_value.dart';
 
+/// The episodes in the Star Wars trilogy.
 enum GEpisode {
+  /// Star Wars Episode IV: A New Hope, released in 1977.
   NEWHOPE,
   EMPIRE,
   JEDI,
@@ -65,6 +67,7 @@ enum GLengthUnit {
   }
 }
 
+/// Input object sent when creating a new review.
 class GReviewInput {
   const GReviewInput({
     required this.stars,
@@ -97,6 +100,7 @@ class GReviewInput {
     );
   }
 
+  /// 0-5 stars.
   final int stars;
 
   final Value<String> commentary;

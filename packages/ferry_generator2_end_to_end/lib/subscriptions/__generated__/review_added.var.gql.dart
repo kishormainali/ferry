@@ -15,6 +15,7 @@ class GReviewAddedVars {
         episode: _i1.GEpisode.fromJson((json['episode'] as String)));
   }
 
+  /// The episodes in the Star Wars trilogy.
   final _i1.GEpisode episode;
 
   Map<String, dynamic> toJson() {

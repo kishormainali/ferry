@@ -139,6 +139,7 @@ class GPostFragmentForUser1Data_favoritedUsers
   }
 }
 
+/// The query type for the schema.
 class GPostsWithFixedVariableData {
   const GPostsWithFixedVariableData({
     this.posts,

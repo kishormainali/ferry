@@ -33,8 +33,10 @@ class GReviewWithDateVars {
     );
   }
 
+  /// The episodes in the Star Wars trilogy.
   final Value<_i1.GEpisode> episode;
 
+  /// Input object sent when creating a new review.
   final _i1.GReviewInput review;
 
   final Value<CustomDate> createdAt;

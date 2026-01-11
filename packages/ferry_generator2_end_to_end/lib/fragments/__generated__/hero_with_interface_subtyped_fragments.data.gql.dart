@@ -5,6 +5,7 @@
 import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
     as _gqlUtils;
 
+/// A character from the Star Wars universe.
 abstract class GheroFieldsFragment {
   String get id;
   String get name;
@@ -17,6 +18,7 @@ abstract class GheroFieldsFragment__asHuman implements GheroFieldsFragment {
   String get G__typename;
 }
 
+/// A character from the Star Wars universe.
 abstract class GheroFieldsFragment__asHuman_friends {
   String get G__typename;
 }
@@ -26,6 +28,7 @@ abstract class GheroFieldsFragment__asDroid implements GheroFieldsFragment {
   String get G__typename;
 }
 
+/// A character from the Star Wars universe.
 sealed class GheroFieldsFragmentData implements GheroFieldsFragment {
   const GheroFieldsFragmentData({
     required this.id,
@@ -185,6 +188,7 @@ class GheroFieldsFragmentData__asHuman extends GheroFieldsFragmentData
   }
 }
 
+/// A character from the Star Wars universe.
 sealed class GheroFieldsFragmentData__asHuman_friends
     implements
         GhumanFieldsFragment_friends,
@@ -404,6 +408,7 @@ class GheroFieldsFragmentData__asHuman_friends__asHuman
   }
 }
 
+/// A character from the Star Wars universe.
 class GheroFieldsFragmentData__asHuman_friends__unknown
     extends GheroFieldsFragmentData__asHuman_friends
     implements
@@ -518,6 +523,7 @@ class GheroFieldsFragmentData__asDroid extends GheroFieldsFragmentData
   }
 }
 
+/// A character from the Star Wars universe.
 class GheroFieldsFragmentData__unknown extends GheroFieldsFragmentData
     implements GheroFieldsFragment {
   const GheroFieldsFragmentData__unknown({
@@ -577,6 +583,7 @@ abstract class GhumanFieldsFragment {
   String get G__typename;
 }
 
+/// A character from the Star Wars universe.
 abstract class GhumanFieldsFragment_friends {
   String get G__typename;
 }
@@ -660,6 +667,7 @@ class GhumanFieldsFragmentData implements GhumanFieldsFragment {
   }
 }
 
+/// A character from the Star Wars universe.
 sealed class GhumanFieldsFragmentData_friends
     implements GhumanFieldsFragment_friends {
   const GhumanFieldsFragmentData_friends({required this.G__typename});
@@ -869,6 +877,7 @@ class GhumanFieldsFragmentData_friends__asHuman
   }
 }
 
+/// A character from the Star Wars universe.
 class GhumanFieldsFragmentData_friends__unknown
     extends GhumanFieldsFragmentData_friends
     implements GhumanFieldsFragment_friends {
@@ -973,6 +982,7 @@ class GdroidFieldsFragmentData implements GdroidFieldsFragment {
   }
 }
 
+/// The query type for the schema.
 class GHeroWithInterfaceSubTypedFragmentsData {
   const GHeroWithInterfaceSubTypedFragmentsData({
     this.hero,
@@ -990,6 +1000,7 @@ class GHeroWithInterfaceSubTypedFragmentsData {
     );
   }
 
+  /// Hero for a given episode.
   final GheroFieldsFragmentData? hero;
 
   final String G__typename;

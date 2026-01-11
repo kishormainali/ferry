@@ -7,6 +7,7 @@ import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.schema.
 import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
     as _gqlUtils;
 
+/// A character from the Star Wars universe.
 abstract class GCharacterDetails {
   String get id;
   String get name;
@@ -15,6 +16,7 @@ abstract class GCharacterDetails {
   String get G__typename;
 }
 
+/// A character from the Star Wars universe.
 class GCharacterDetailsData implements GCharacterDetails {
   const GCharacterDetailsData({
     required this.id,
@@ -109,6 +111,7 @@ class GCharacterDetailsData implements GCharacterDetails {
   }
 }
 
+/// A character from the Star Wars universe.
 abstract class GFriendInfo {
   String get id;
   String get name;
@@ -121,6 +124,7 @@ abstract class GFriendInfo_friendsConnection {
   String get G__typename;
 }
 
+/// A character from the Star Wars universe.
 class GFriendInfoData implements GFriendInfo {
   const GFriendInfoData({
     required this.id,
@@ -258,12 +262,14 @@ class GFriendInfoData_friendsConnection
   }
 }
 
+/// A character from the Star Wars universe.
 abstract class GCharacterBasic {
   String get id;
   String get name;
   String get G__typename;
 }
 
+/// A character from the Star Wars universe.
 class GCharacterBasicData implements GCharacterBasic {
   const GCharacterBasicData({
     required this.id,
@@ -325,6 +331,7 @@ class GCharacterBasicData implements GCharacterBasic {
   }
 }
 
+/// The query type for the schema.
 class GSearchResultsQueryData {
   const GSearchResultsQueryData({
     this.search,

@@ -5,6 +5,7 @@
 import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.schema.gql.dart'
     as _i1;
 
+/// The mutation type for the schema.
 class GCreateReviewData {
   const GCreateReviewData({
     this.createReview,
@@ -21,6 +22,7 @@ class GCreateReviewData {
     );
   }
 
+  /// Create a new review.
   final GCreateReviewData_createReview? createReview;
 
   final String G__typename;

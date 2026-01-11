@@ -408,7 +408,8 @@ class _SelectionCacheKey {
   }
 
   @override
-  int get hashCode => Object.hash(identityHashCode(selectionSet), parentTypeName);
+  int get hashCode =>
+      Object.hash(identityHashCode(selectionSet), parentTypeName);
 }
 
 void _clearUnconditionalFragmentSpreads(ResolvedSelectionSet selectionSet) {

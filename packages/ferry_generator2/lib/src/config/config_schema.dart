@@ -201,13 +201,16 @@ const utilsSchema = ConfigSchema("data_classes.utils", {
 
 const dataClassesSchema = ConfigSchema("data_classes", {
   "reuse_fragments": ConfigLeaf<bool>(ConfigValueType.boolean, true),
-  "docs": ConfigLeaf<bool>(ConfigValueType.boolean, true),
   "when_extensions": ConfigSection(whenExtensionsSchema),
   "utils": ConfigSection(utilsSchema),
 });
 
 const varsSchema = ConfigSchema("vars", {
   "tristate_optionals": ConfigLeaf<bool>(ConfigValueType.boolean, false),
+});
+
+const docsSchema = ConfigSchema("docs", {
+  "enabled": ConfigLeaf<bool>(ConfigValueType.boolean, false),
 });
 
 const formattingSchema = ConfigSchema("formatting", {
@@ -244,6 +247,7 @@ const configSchema = ConfigSchema("options", {
   "outputs": ConfigSection(outputsSchema),
   "data_classes": ConfigSection(dataClassesSchema),
   "vars": ConfigSection(varsSchema),
+  "docs": ConfigSection(docsSchema),
   "formatting": ConfigSection(formattingSchema),
   "logging": ConfigSection(loggingSchema),
   "enums": ConfigSection(enumsSchema),

@@ -160,7 +160,6 @@ Top-level options:
 
 ### `data_classes`
 - `reuse_fragments` (default `true`)
-- `docs` (reserved for future doc generation)
 - `when_extensions`:
   - `when` (default `false`)
   - `maybe_when` (default `false`)
@@ -173,6 +172,9 @@ Top-level options:
 ### `vars`
 - `tristate_optionals` (default `false`)
   - When enabled, nullable inputs/vars are wrapped in `Value<T>` from `gql_tristate_value`.
+
+### `docs`
+- `enabled` (default `false`): emit doc comments from GraphQL schema descriptions.
 
 ### `enums`
 - `fallback`:

@@ -2,6 +2,7 @@ import "package:code_builder/code_builder.dart";
 import "package:gql/ast.dart";
 
 import "../context/generator_context.dart";
+import "../schema/schema.dart";
 import "data_emitter_classes.dart";
 import "data_emitter_context.dart";
 import "data_emitter_fragments.dart";
@@ -17,12 +18,14 @@ class DataEmitter {
   factory DataEmitter({
     required GeneratorContext context,
     required DocumentIR document,
+    required SchemaIndex schema,
     required Map<FragmentName, String> fragmentSourceUrls,
     required String? utilsUrl,
   }) {
     final ctx = DataEmitterContext(
       context: context,
       document: document,
+      schema: schema,
       fragmentSourceUrls: fragmentSourceUrls,
       utilsUrl: utilsUrl,
     );

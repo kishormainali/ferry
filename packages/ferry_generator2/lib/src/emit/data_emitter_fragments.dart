@@ -9,6 +9,7 @@ import "../ir/model.dart";
 import "../ir/names.dart";
 import "../ir/types.dart";
 import "../utils/naming.dart";
+import "../utils/docs.dart";
 
 void indexFragments({required DataEmitterContext ctx}) {
   for (final fragment in ctx.document.fragments.values) {
@@ -163,9 +164,12 @@ Class _buildFragmentInterfaceClass({
     (b) => b
       ..abstract = true
       ..name = builtClassName(interfaceKey)
+      ..docs.addAll(ctx.docsForType(selectionSet.parentTypeName))
       ..implements.addAll(implementsRefs)
       ..methods.addAll(
-        fieldsList.map((field) => _buildGetter(field, isOverride: false)),
+        fieldsList.map(
+          (field) => _buildGetter(field, isOverride: false),
+        ),
       ),
   );
 }
@@ -246,6 +250,11 @@ List<FieldSpec> _buildFragmentInterfaceFieldSpecs({
       selection.typeNode,
       namedTypeRef,
     );
+    final description = ctx.fieldDescription(
+      parentTypeName: selectionSet.parentTypeName,
+      fieldName: selection.fieldName,
+      isSynthetic: selection.isSynthetic,
+    );
 
     fieldsList.add(
       FieldSpec(
@@ -256,6 +265,7 @@ List<FieldSpec> _buildFragmentInterfaceFieldSpecs({
         typeRef: typeRef,
         namedTypeRef: namedTypeRef,
         selectionSet: selection.selectionSet,
+        description: description,
       ),
     );
   }
@@ -268,6 +278,7 @@ Method _buildGetter(FieldSpec field, {required bool isOverride}) {
       ..annotations.addAll(
         isOverride ? [refer("override")] : const <Expression>[],
       )
+      ..docs.addAll(docLines(field.description))
       ..returns = field.typeRef
       ..type = MethodType.getter
       ..name = field.propertyName,

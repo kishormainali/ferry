@@ -111,12 +111,14 @@ Note: `req` depends on `ast`, `data`, and `vars`.
 
 ### `data_classes`
 - `reuse_fragments`: reuse fragment classes when explicitly spread.
-- `docs`: emit doc comments from GraphQL descriptions.
 - `when_extensions`: `when` / `maybe_when` extension generation.
 - `utils`: `copy_with`, `equals`, `hash_code`, `to_string`.
 
 ### `vars`
 - `tristate_optionals`: use `Value<T>` for nullable variables.
+
+### `docs`
+- `enabled`: emit doc comments from GraphQL schema descriptions (default `false`).
 
 ### `enums.fallback`
 - `global`: enable global fallback.

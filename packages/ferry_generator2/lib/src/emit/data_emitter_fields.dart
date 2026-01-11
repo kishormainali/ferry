@@ -53,6 +53,11 @@ List<FieldSpec> buildFieldSpecs({
       selection.typeNode,
       namedTypeRef,
     );
+    final description = ctx.fieldDescription(
+      parentTypeName: selectionSet.parentTypeName,
+      fieldName: selection.fieldName,
+      isSynthetic: selection.isSynthetic,
+    );
 
     fields.add(
       FieldSpec(
@@ -63,6 +68,7 @@ List<FieldSpec> buildFieldSpecs({
         typeRef: typeRef,
         namedTypeRef: namedTypeRef,
         selectionSet: selection.selectionSet,
+        description: description,
       ),
     );
   }

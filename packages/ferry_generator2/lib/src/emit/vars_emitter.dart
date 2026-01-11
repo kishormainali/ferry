@@ -6,6 +6,8 @@ import "../context/generator_context.dart";
 import "../ir/model.dart";
 import "../ir/names.dart";
 import "../ir/types.dart";
+import "../schema/schema.dart";
+import "../utils/docs.dart";
 import "../utils/naming.dart";
 import "data_emitter_context.dart" show utilsImportAlias, utilsPrefix;
 import "emitter_helpers.dart";
@@ -13,6 +15,7 @@ import "../logging/diagnostics.dart";
 
 class VarsEmitter {
   final GeneratorContext context;
+  final SchemaIndex schema;
   final DocumentIR document;
   final String? utilsUrl;
   final Set<String> extraImports = {};
@@ -22,6 +25,7 @@ class VarsEmitter {
 
   VarsEmitter({
     required this.context,
+    required this.schema,
     required this.document,
     required this.utilsUrl,
   });
@@ -260,6 +264,7 @@ class VarsEmitter {
   Field _buildField(InputFieldSpec field) => Field(
         (b) => b
           ..name = field.propertyName
+          ..docs.addAll(docLines(field.description))
           ..type = field.typeRef
           ..modifier = FieldModifier.final$,
       );
@@ -302,6 +307,7 @@ class VarsEmitter {
       namedTypeRef,
       isTriState: isTriState,
     );
+    final description = _typeDescription(namedTypeName);
 
     return InputFieldSpec(
       responseKey: responseKey,
@@ -311,7 +317,14 @@ class VarsEmitter {
       typeRef: typeRef,
       namedTypeRef: namedTypeRef,
       isTriState: isTriState,
+      description: description,
     );
+  }
+
+  String? _typeDescription(String typeName) {
+    if (!config.generateDocs) return null;
+    final definition = schema.lookupType(NameNode(value: typeName));
+    return definition?.description?.value;
   }
 
   Reference _scalarReference(String typeName) {
@@ -623,6 +636,7 @@ class InputFieldSpec {
   final Reference typeRef;
   final Reference namedTypeRef;
   final bool isTriState;
+  final String? description;
 
   const InputFieldSpec({
     required this.responseKey,
@@ -632,6 +646,7 @@ class InputFieldSpec {
     required this.typeRef,
     required this.namedTypeRef,
     required this.isTriState,
+    required this.description,
   });
 
   bool get isRequired => !isTriState && typeNode.isNonNull;

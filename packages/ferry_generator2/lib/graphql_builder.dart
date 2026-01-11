@@ -296,11 +296,13 @@ class GraphqlBuilder implements Builder {
     final dataEmitter = DataEmitter(
       context: context,
       document: documentIr,
+      schema: schemaIndex,
       fragmentSourceUrls: fragmentSourceUrls,
       utilsUrl: utilsUrl,
     );
     final varsEmitter = VarsEmitter(
       context: context,
+      schema: schemaIndex,
       document: documentIr,
       utilsUrl: utilsUrl,
     );

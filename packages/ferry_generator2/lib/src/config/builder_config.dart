@@ -63,6 +63,8 @@ class BuilderConfig {
         const <String, Object?>{}) as Map<String, Object?>;
     final varsConfig =
         (values["vars"] ?? const <String, Object?>{}) as Map<String, Object?>;
+    final docsConfig =
+        (values["docs"] ?? const <String, Object?>{}) as Map<String, Object?>;
     final formattingConfig = (values["formatting"] ?? const <String, Object?>{})
         as Map<String, Object?>;
     final loggingConfig = (values["logging"] ?? const <String, Object?>{})
@@ -103,7 +105,7 @@ class BuilderConfig {
       generateEquals: utilsConfig["equals"] as bool,
       generateHashCode: utilsConfig["hash_code"] as bool,
       generateToString: utilsConfig["to_string"] as bool,
-      generateDocs: dataClassesConfig["docs"] as bool,
+      generateDocs: docsConfig["enabled"] as bool,
     );
 
     _validateOutputs(builderConfig.outputs);
@@ -150,7 +152,8 @@ class BuilderConfig {
     return "schema=$schema, outputs=$outputs, addTypenames=$shouldAddTypenames, "
         "possibleTypes=$shouldGeneratePossibleTypes, scalars=$scalars, "
         "format=$format, formatter=${formatterLanguageVersion ?? 'default'}, "
-        "utils=${_utilsSummary()}, logging=$logging";
+        "docs=${generateDocs ? 'on' : 'off'}, utils=${_utilsSummary()}, "
+        "logging=$logging";
   }
 
   String _outputsSummary() {

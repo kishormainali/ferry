@@ -10,6 +10,7 @@ import "fragment_interface_refs.dart";
 import "../ir/model.dart";
 import "../ir/names.dart";
 import "../utils/naming.dart";
+import "../utils/docs.dart";
 
 ({List<Spec> specs, DataEmitterContext ctx}) buildOperationData({
   required DataEmitterContext ctx,
@@ -68,6 +69,7 @@ List<Spec> buildSelectionSetClasses({
       _buildConcreteClass(
         ctx: ctx,
         className: className,
+        docs: ctx.docsForType(selectionSet.parentTypeName),
         fields: fieldsList,
         implementsRefs: implementsRefs,
         extendsRef: null,
@@ -96,6 +98,7 @@ List<Spec> buildSelectionSetClasses({
     _buildPolymorphicBaseClass(
       ctx: ctx,
       className: className,
+      docs: ctx.docsForType(selectionSet.parentTypeName),
       baseFields: baseFields,
       inlineTypeNames: selectionSet.inlineFragments.keys
           .map((typeName) => typeName.value)
@@ -149,6 +152,7 @@ List<Spec> buildSelectionSetClasses({
       _buildConcreteClass(
         ctx: ctx,
         className: builtClassName(inlineBaseName),
+        docs: ctx.docsForType(TypeName(typeName)),
         fields: mergedFields,
         implementsRefs: inlineImplements,
         extendsRef: refer(className),
@@ -172,6 +176,7 @@ List<Spec> buildSelectionSetClasses({
     _buildConcreteClass(
       ctx: ctx,
       className: builtClassName("${baseName}__unknown"),
+      docs: ctx.docsForType(selectionSet.parentTypeName),
       fields: baseFields,
       implementsRefs: _interfaceRefs(
         ctx: ctx,
@@ -403,6 +408,7 @@ List<Reference> _interfaceRefs({
 Class _buildPolymorphicBaseClass({
   required DataEmitterContext ctx,
   required String className,
+  required List<String> docs,
   required List<FieldSpec> baseFields,
   required List<String> inlineTypeNames,
   required List<Reference> implementsRefs,
@@ -412,6 +418,7 @@ Class _buildPolymorphicBaseClass({
       ..name = className
       ..abstract = true
       ..sealed = true
+      ..docs.addAll(docs)
       ..implements.addAll(implementsRefs)
       ..fields.addAll(baseFields.map(_buildField))
       ..constructors.addAll([
@@ -427,6 +434,7 @@ Class _buildPolymorphicBaseClass({
 Class _buildConcreteClass({
   required DataEmitterContext ctx,
   required String className,
+  required List<String> docs,
   required List<FieldSpec> fields,
   required List<Reference> implementsRefs,
   required Reference? extendsRef,
@@ -493,6 +501,7 @@ Class _buildConcreteClass({
   return Class(
     (b) => b
       ..name = className
+      ..docs.addAll(docs)
       ..implements.addAll(implementsRefs)
       ..extend = extendsRef
       ..fields.addAll(
@@ -637,6 +646,7 @@ Method _buildToJsonMethod(
 Field _buildField(FieldSpec field) => Field(
       (b) => b
         ..name = field.propertyName
+        ..docs.addAll(docLines(field.description))
         ..type = field.typeRef
         ..modifier = FieldModifier.final$,
     );

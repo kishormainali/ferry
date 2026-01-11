@@ -5,6 +5,7 @@ import "../config/builder_config.dart";
 import "../utils/naming.dart";
 import "../schema/schema.dart";
 import "../schema/type_utils.dart";
+import "../utils/docs.dart";
 
 Library buildSchemaLibrary({
   required SchemaIndex schema,
@@ -18,6 +19,7 @@ List<Spec> _buildEnum(
   EnumTypeDefinitionNode node,
   SchemaIndex schema,
   EnumFallbackConfig config,
+  bool generateDocs,
 ) {
   final enumName = builtClassName(node.name.value);
   final enumValues = schema.lookupEnumValueDefinitions(node);
@@ -28,6 +30,7 @@ List<Spec> _buildEnum(
       _EnumMappedValue(
         graphQLName: value.name.value,
         dartName: identifier(value.name.value),
+        description: value.description?.value,
       ),
     if (fallbackName != null)
       _EnumMappedValue(
@@ -40,9 +43,17 @@ List<Spec> _buildEnum(
     Enum(
       (b) => b
         ..name = enumName
+        ..docs
+            .addAll(generateDocs ? docLines(node.description?.value) : const [])
         ..values.addAll(
           values.map(
-            (value) => EnumValue((b) => b..name = value.dartName),
+            (value) => EnumValue(
+              (b) => b
+                ..name = value.dartName
+                ..docs.addAll(
+                  generateDocs ? docLines(value.description) : const <String>[],
+                ),
+            ),
           ),
         )
         ..methods.addAll([
@@ -143,10 +154,12 @@ String? _selectFallbackValueName(
 class _EnumMappedValue {
   final String graphQLName;
   final String dartName;
+  final String? description;
 
   const _EnumMappedValue({
     required this.graphQLName,
     required this.dartName,
+    this.description,
   });
 }
 
@@ -158,6 +171,9 @@ class _SchemaEmitter {
 
   _SchemaEmitter(this.schema, this.config);
 
+  List<String> _docs(String? description) =>
+      config.generateDocs ? docLines(description) : const [];
+
   Library buildLibrary() {
     final specs = <Spec>[];
 
@@ -168,6 +184,7 @@ class _SchemaEmitter {
           definition,
           schema,
           config.enumFallbackConfig,
+          config.generateDocs,
         ));
       }
       if (definition is InputObjectTypeDefinitionNode &&
@@ -198,12 +215,13 @@ class _SchemaEmitter {
   Class _buildInputObject(InputObjectTypeDefinitionNode node) {
     final fields = schema
         .lookupInputValueDefinitions(node)
-        .map((field) => _fieldSpecFromDefinition(field.name.value, field.type))
+        .map(_fieldSpecFromDefinition)
         .toList();
     final className = builtClassName(node.name.value);
     return Class(
       (b) => b
         ..name = className
+        ..docs.addAll(_docs(node.description?.value))
         ..fields.addAll(fields.map(_buildField))
         ..constructors.addAll([
           _buildConstructor(fields),
@@ -315,13 +333,15 @@ class _SchemaEmitter {
   Field _buildField(_InputFieldSpec field) => Field(
         (b) => b
           ..name = field.propertyName
+          ..docs.addAll(_docs(field.description))
           ..type = field.typeRef
           ..modifier = FieldModifier.final$,
       );
 
-  _InputFieldSpec _fieldSpecFromDefinition(String name, TypeNode typeNode) {
-    final responseKey = name;
-    final propertyName = identifier(name);
+  _InputFieldSpec _fieldSpecFromDefinition(InputValueDefinitionNode node) {
+    final responseKey = node.name.value;
+    final propertyName = identifier(node.name.value);
+    final typeNode = node.type;
     final namedTypeName = unwrapNamedTypeName(typeNode) ?? "Object";
     final typeDef = schema.lookupType(NameNode(value: namedTypeName));
 
@@ -353,6 +373,7 @@ class _SchemaEmitter {
       typeRef: typeRef,
       namedTypeRef: namedTypeRef,
       isTriState: isTriState,
+      description: node.description?.value,
     );
   }
 
@@ -596,6 +617,7 @@ class _InputFieldSpec {
   final Reference typeRef;
   final Reference namedTypeRef;
   final bool isTriState;
+  final String? description;
 
   const _InputFieldSpec({
     required this.responseKey,
@@ -604,6 +626,7 @@ class _InputFieldSpec {
     required this.typeRef,
     required this.namedTypeRef,
     required this.isTriState,
+    required this.description,
   });
 
   bool get isRequired => !isTriState && typeNode.isNonNull;

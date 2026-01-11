@@ -1,12 +1,13 @@
 import "package:code_builder/code_builder.dart";
 import "package:gql/ast.dart";
 
-import "../config/config.dart";
+import "../context/generator_context.dart";
 import "data_emitter_classes.dart";
 import "data_emitter_context.dart";
 import "data_emitter_fragments.dart";
 import "../ir/model.dart";
 import "../ir/names.dart";
+import "../logging/diagnostics.dart";
 
 class DataEmitter {
   final DataEmitterContext _ctx;
@@ -14,13 +15,13 @@ class DataEmitter {
   DataEmitter._(this._ctx);
 
   factory DataEmitter({
-    required BuilderConfig config,
+    required GeneratorContext context,
     required DocumentIR document,
     required Map<FragmentName, String> fragmentSourceUrls,
     required String? utilsUrl,
   }) {
     final ctx = DataEmitterContext(
-      config: config,
+      context: context,
       document: document,
       fragmentSourceUrls: fragmentSourceUrls,
       utilsUrl: utilsUrl,
@@ -57,6 +58,14 @@ class DataEmitter {
       );
       specs.addAll(operationData.specs);
     }
+
+    _ctx.log.emit(
+      LogEvent(
+        level: LogLevel.debug,
+        category: LogCategory.data,
+        message: "Emitted ${specs.length} data specs.",
+      ),
+    );
 
     final directives = <Directive>[
       if (_ctx.needsUtilsImport && _ctx.utilsUrl != null)

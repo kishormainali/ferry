@@ -27,7 +27,6 @@ class FieldSpec {
   final Reference typeRef;
   final Reference namedTypeRef;
   final SelectionSetIR? selectionSet;
-  final String? fragmentSpreadOnlyName;
 
   const FieldSpec({
     required this.responseKey,
@@ -37,7 +36,6 @@ class FieldSpec {
     required this.typeRef,
     required this.namedTypeRef,
     required this.selectionSet,
-    required this.fragmentSpreadOnlyName,
   });
 }
 

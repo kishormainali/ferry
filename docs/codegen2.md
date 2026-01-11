@@ -105,6 +105,8 @@ targets:
 dart run build_runner build --delete-conflicting-outputs
 ```
 
+> To see full logging output, run build_runner with `--verbose`.
+
 ## What gets generated
 
 For each `.graphql` input, generator 2 can emit:
@@ -196,6 +198,21 @@ scalars:
 - `enabled` (default `true`)
 - `language_version` (optional, e.g. `3.6`)
 - `emit_format_off` (default `false`): add `// dart format off` to generated files (still formats once if `enabled: true`).
+
+### `logging`
+- `level` (default `warn`): `off | error | warn | info | debug | verbose`
+  - `verbose` is an alias for `debug`.
+- `format` (default `text`): `text | json`
+- `categories` (default empty = all): list of categories to include for info/debug logs  
+  Available: `config`, `validation`, `schema`, `ir`, `data`, `vars`, `req`, `emit`, `build`
+
+Example:
+```yaml
+logging:
+  level: verbose
+  format: json
+  categories: [schema, validation, ir, emit]
+```
 
 ## Migration notes (v1 -> v2)
 

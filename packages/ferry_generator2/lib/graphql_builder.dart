@@ -7,7 +7,7 @@ import "package:gql/ast.dart";
 import "src/selection/add_typenames.dart";
 import "src/utils/allocator.dart";
 import "src/emit/ast_builder.dart";
-import "src/config/config.dart";
+import "src/config/builder_config.dart";
 import "src/emit/data_emitter.dart";
 import "src/utils/locations.dart";
 import "src/source/reader.dart";
@@ -22,14 +22,25 @@ import "src/emit/utils_emitter.dart";
 import "src/emit/vars_emitter.dart";
 import "src/utils/writer.dart";
 import "src/selection/validation.dart";
+import "src/logging/build_log_sink.dart";
+import "src/logging/diagnostics.dart";
+import "src/context/generator_context.dart";
 
 Builder graphqlBuilder(BuilderOptions options) =>
     GraphqlBuilder(options.config);
 
 class GraphqlBuilder implements Builder {
   final BuilderConfig config;
+  final List<String> _configWarnings;
+  bool _didLogConfigWarnings = false;
+  _SchemaCache? _schemaCache;
 
-  GraphqlBuilder(Map<String, dynamic> config) : config = BuilderConfig(config);
+  factory GraphqlBuilder(Map<String, dynamic> config) {
+    final result = BuilderConfig.parse(config);
+    return GraphqlBuilder._(result.config, result.warnings);
+  }
+
+  GraphqlBuilder._(this.config, this._configWarnings);
 
   @override
   Map<String, List<String>> get buildExtensions {
@@ -65,6 +76,34 @@ class GraphqlBuilder implements Builder {
 
   @override
   FutureOr<void> build(BuildStep buildStep) async {
+    final logSink = BuildLogSink(
+      config: config.logging,
+      inputId: buildStep.inputId,
+    );
+    final context = GeneratorContext(
+      config: config,
+      log: logSink,
+    );
+    logSink.emit(
+      LogEvent(
+        level: LogLevel.info,
+        category: LogCategory.build,
+        message: "Starting build.",
+      ),
+    );
+    if (!_didLogConfigWarnings) {
+      for (final warning in _configWarnings) {
+        logSink.emit(
+          LogEvent(
+            level: LogLevel.warn,
+            category: LogCategory.config,
+            message: warning,
+          ),
+        );
+      }
+      _didLogConfigWarnings = true;
+    }
+
     if (!config.outputs.ast &&
         !config.outputs.data &&
         !config.outputs.vars &&
@@ -78,11 +117,9 @@ class GraphqlBuilder implements Builder {
       throw StateError("No schema configured for ${buildStep.inputId}");
     }
 
-    final schemaSource = await readDocument(
-      buildStep,
-      config.sourceExtension,
-      schemaId,
-    );
+    final schemaCache = await _loadSchema(buildStep, logSink);
+    final schemaSource = schemaCache.source;
+    final schemaIndex = schemaCache.index;
 
     if ((config.whenExtensionConfig.generateMaybeWhenExtensionMethod ||
             config.whenExtensionConfig.generateWhenExtensionMethod) &&
@@ -92,7 +129,6 @@ class GraphqlBuilder implements Builder {
       );
     }
 
-    final schemaIndex = SchemaIndex.fromDocuments([schemaSource.flatDocument]);
     _validateEnumFallbacks(schemaIndex, config.enumFallbackConfig);
     final sourceUrl = buildStep.inputId.uri.toString();
     final schemaUrl = schemaId.uri.toString();
@@ -119,6 +155,7 @@ class GraphqlBuilder implements Builder {
     }
 
     if (buildStep.inputId == schemaId) {
+      final outputs = <String>[];
       if (config.outputs.ast) {
         final outputId = outputAssetId(
           buildStep.inputId,
@@ -130,6 +167,7 @@ class GraphqlBuilder implements Builder {
           buildAstLibrary(schemaSource),
           outputId,
         );
+        outputs.add("ast");
       }
 
       if (config.outputs.schema) {
@@ -146,6 +184,7 @@ class GraphqlBuilder implements Builder {
           ),
           outputId,
         );
+        outputs.add("schema");
       }
 
       if (config.generateEquals || config.generateHashCode) {
@@ -159,6 +198,16 @@ class GraphqlBuilder implements Builder {
           buildUtilsLibrary(),
           outputId,
         );
+        outputs.add("utils");
+      }
+      if (outputs.isNotEmpty) {
+        logSink.emit(
+          LogEvent(
+            level: LogLevel.info,
+            category: LogCategory.emit,
+            message: "Emitted schema outputs: ${outputs.join(', ')}.",
+          ),
+        );
       }
       return;
     }
@@ -171,15 +220,56 @@ class GraphqlBuilder implements Builder {
         config.shouldAddTypenames ? addTypenamesToSource(docSource) : docSource;
 
     final documentIndex = DocumentIndex(sourceWithTypenames.flatDocument);
+    logSink.emit(
+      LogEvent(
+        level: LogLevel.debug,
+        category: LogCategory.validation,
+        message:
+            "Document has ${documentIndex.operations.length} operations and ${documentIndex.fragments.length} fragments.",
+      ),
+    );
+    logSink.emit(
+      LogEvent(
+        level: LogLevel.info,
+        category: LogCategory.validation,
+        message: "Validating document.",
+      ),
+    );
+    final validationStopwatch = Stopwatch()..start();
     DocumentValidator(
       schema: schemaIndex,
       documentIndex: documentIndex,
     ).validate(sourceWithTypenames.flatDocument);
+    validationStopwatch.stop();
+    logSink.emit(
+      LogEvent(
+        level: LogLevel.info,
+        category: LogCategory.validation,
+        message: "Validation complete.",
+      ),
+    );
+    logSink.emit(
+      LogEvent(
+        level: LogLevel.debug,
+        category: LogCategory.validation,
+        message:
+            "Validation took ${validationStopwatch.elapsedMilliseconds}ms.",
+      ),
+    );
 
+    final irStopwatch = Stopwatch()..start();
     final documentIr = buildDocumentIr(
       schema: schemaIndex,
-      config: config,
+      context: context,
       documentIndex: documentIndex,
+    );
+    irStopwatch.stop();
+    logSink.emit(
+      LogEvent(
+        level: LogLevel.debug,
+        category: LogCategory.ir,
+        message: "Built IR in ${irStopwatch.elapsedMilliseconds}ms.",
+      ),
     );
 
     final fragmentSourceUrls = _fragmentSourceUrls(sourceWithTypenames);
@@ -193,20 +283,29 @@ class GraphqlBuilder implements Builder {
         .whereType<FragmentDefinitionNode>();
     final ownedOperations = sourceWithTypenames.document.definitions
         .whereType<OperationDefinitionNode>();
+    logSink.emit(
+      LogEvent(
+        level: LogLevel.info,
+        category: LogCategory.emit,
+        message:
+            "Emitting outputs for ${ownedOperations.length} operations and ${ownedFragments.length} fragments.",
+      ),
+    );
 
+    final emitStopwatch = Stopwatch()..start();
     final dataEmitter = DataEmitter(
-      config: config,
+      context: context,
       document: documentIr,
       fragmentSourceUrls: fragmentSourceUrls,
       utilsUrl: utilsUrl,
     );
     final varsEmitter = VarsEmitter(
-      config: config,
+      context: context,
       document: documentIr,
       utilsUrl: utilsUrl,
     );
     final reqEmitter = ReqEmitter(
-      config: config,
+      context: context,
       documentIndex: documentIndex,
       document: documentIr,
       fragmentSourceUrls: fragmentSourceUrls,
@@ -276,7 +375,88 @@ class GraphqlBuilder implements Builder {
         outputId,
       );
     }
+    emitStopwatch.stop();
+    logSink.emit(
+      LogEvent(
+        level: LogLevel.debug,
+        category: LogCategory.emit,
+        message: "Emit phase took ${emitStopwatch.elapsedMilliseconds}ms.",
+      ),
+    );
   }
+
+  Future<_SchemaCache> _loadSchema(
+    BuildStep buildStep,
+    BuildLogSink logSink,
+  ) async {
+    final schemaId = config.schemaId!;
+    final digest = (await buildStep.digest(schemaId)).toString();
+    final cached = _schemaCache;
+    if (cached != null &&
+        cached.schemaId == schemaId &&
+        cached.digest == digest) {
+      logSink.emit(
+        LogEvent(
+          level: LogLevel.debug,
+          category: LogCategory.schema,
+          message: "Using cached schema document.",
+        ),
+      );
+      return cached;
+    }
+
+    final schemaStopwatch = Stopwatch()..start();
+    final schemaSource = await readDocument(
+      buildStep,
+      config.sourceExtension,
+      schemaId,
+    );
+    schemaStopwatch.stop();
+    final schemaIndex = SchemaIndex.fromDocuments([schemaSource.flatDocument]);
+    final cache = _SchemaCache(
+      schemaId: schemaId,
+      digest: digest,
+      source: schemaSource,
+      index: schemaIndex,
+    );
+    _schemaCache = cache;
+    logSink.emit(
+      LogEvent(
+        level: LogLevel.debug,
+        category: LogCategory.config,
+        message: "Config: ${config.summary()}",
+      ),
+    );
+    logSink.emit(
+      LogEvent(
+        level: LogLevel.debug,
+        category: LogCategory.schema,
+        message: "Parsed schema in ${schemaStopwatch.elapsedMilliseconds}ms.",
+      ),
+    );
+    logSink.emit(
+      LogEvent(
+        level: LogLevel.info,
+        category: LogCategory.schema,
+        message: "Loaded schema document.",
+      ),
+    );
+    return cache;
+  }
+}
+
+final class _SchemaCache {
+  final AssetId schemaId;
+  final String digest;
+  final DocumentSource source;
+  final SchemaIndex index;
+
+  const _SchemaCache({
+    required this.schemaId,
+    required this.digest,
+    required this.source,
+    required this.index,
+  });
 }
 
 void _validateEnumFallbacks(

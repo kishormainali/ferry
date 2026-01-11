@@ -1,13 +1,15 @@
-import "../config/config.dart";
+import "../config/builder_config.dart";
+import "../context/generator_context.dart";
 import "../ir/model.dart";
 import "../ir/names.dart";
+import "../logging/sink.dart";
 import "data_emitter_types.dart";
 
 const utilsImportAlias = "_gqlUtils";
 const utilsPrefix = "$utilsImportAlias.";
 
 class DataEmitterContext {
-  final BuilderConfig config;
+  final GeneratorContext context;
   final DocumentIR document;
   final Map<FragmentName, String> fragmentSourceUrls;
   final String? utilsUrl;
@@ -21,9 +23,12 @@ class DataEmitterContext {
   bool needsUtilsImport = false;
 
   DataEmitterContext({
-    required this.config,
+    required this.context,
     required this.document,
     required this.fragmentSourceUrls,
     required this.utilsUrl,
   });
+
+  LogSink get log => context.log;
+  BuilderConfig get config => context.config;
 }

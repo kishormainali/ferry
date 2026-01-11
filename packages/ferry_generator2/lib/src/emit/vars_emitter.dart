@@ -1,16 +1,18 @@
 import "package:code_builder/code_builder.dart";
 import "package:gql/ast.dart";
 
-import "../config/config.dart";
+import "../config/builder_config.dart";
+import "../context/generator_context.dart";
 import "../ir/model.dart";
 import "../ir/names.dart";
 import "../ir/types.dart";
 import "../utils/naming.dart";
 import "data_emitter_context.dart" show utilsImportAlias, utilsPrefix;
 import "emitter_helpers.dart";
+import "../logging/diagnostics.dart";
 
 class VarsEmitter {
-  final BuilderConfig config;
+  final GeneratorContext context;
   final DocumentIR document;
   final String? utilsUrl;
   final Set<String> extraImports = {};
@@ -19,16 +21,20 @@ class VarsEmitter {
   bool _needsUtilsImport = false;
 
   VarsEmitter({
-    required this.config,
+    required this.context,
     required this.document,
     required this.utilsUrl,
   });
+
+  BuilderConfig get config => context.config;
 
   Library? buildLibrary({
     required Iterable<FragmentDefinitionNode> ownedFragments,
     required Iterable<OperationDefinitionNode> ownedOperations,
   }) {
     final specs = <Spec>[];
+    var operationCount = 0;
+    var fragmentCount = 0;
 
     for (final operation in ownedOperations) {
       if (operation.name == null) continue;
@@ -36,6 +42,7 @@ class VarsEmitter {
       if (op == null || op.variables.isEmpty) {
         continue;
       }
+      operationCount += 1;
       specs.addAll(
         _buildVarsClass(
           "${operation.name!.value}Vars",
@@ -53,6 +60,7 @@ class VarsEmitter {
       if (frag == null || frag.variables.isEmpty) {
         continue;
       }
+      fragmentCount += 1;
       specs.addAll(
         _buildVarsClass(
           "${fragment.name.value}Vars",
@@ -66,6 +74,13 @@ class VarsEmitter {
     }
 
     if (specs.isEmpty) {
+      context.log.emit(
+        LogEvent(
+          level: LogLevel.debug,
+          category: LogCategory.vars,
+          message: "No vars classes emitted.",
+        ),
+      );
       return null;
     }
 
@@ -76,6 +91,14 @@ class VarsEmitter {
     }
 
     _needsUtilsImport = config.generateEquals || config.generateHashCode;
+    context.log.emit(
+      LogEvent(
+        level: LogLevel.debug,
+        category: LogCategory.vars,
+        message:
+            "Emitted ${specs.length} vars specs ($operationCount operations, $fragmentCount fragments).",
+      ),
+    );
 
     return Library(
       (b) => b

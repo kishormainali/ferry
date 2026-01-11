@@ -1,7 +1,7 @@
 import "package:code_builder/code_builder.dart";
 import "package:gql/ast.dart";
 
-import "../config/config.dart";
+import "../config/builder_config.dart";
 import "data_emitter_context.dart";
 import "data_emitter_types.dart";
 import "../ir/model.dart";
@@ -22,8 +22,8 @@ List<FieldSpec> buildFieldSpecs({
     final namedTypeName = selection.namedType.name.value;
     final namedTypeKind = selection.namedType.kind;
 
-    FragmentName? fragmentName = ctx.config.dataClassConfig.reuseFragments
-        ? selection.fragmentSpreadOnlyName
+    final FragmentName? fragmentName = ctx.config.dataClassConfig.reuseFragments
+        ? selection.selectionSet?.reuseFragment
         : null;
     Reference? namedTypeRef;
 
@@ -63,7 +63,6 @@ List<FieldSpec> buildFieldSpecs({
         typeRef: typeRef,
         namedTypeRef: namedTypeRef,
         selectionSet: selection.selectionSet,
-        fragmentSpreadOnlyName: fragmentName?.value,
       ),
     );
   }

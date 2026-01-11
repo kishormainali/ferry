@@ -1,6 +1,5 @@
-import 'package:build/build.dart';
-import 'package:ferry_generator2/src/config/config.dart';
-import 'package:logging/logging.dart';
+import 'package:ferry_generator2/src/config/builder_config.dart';
+import 'package:ferry_generator2/src/logging/diagnostics.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:test/test.dart';
 
@@ -62,13 +61,35 @@ void main() {
     );
   });
 
-  test('warns on unknown config entries', () async {
-    final records = <LogRecord>[];
-    final previousLevel = Logger.root.level;
-    Logger.root.level = Level.ALL;
-    final subscription = log.onRecord.listen(records.add);
+  test('logging config parses', () {
+    final config = BuilderConfig({
+      'logging': {
+        'level': 'debug',
+        'format': 'json',
+        'categories': ['ir', 'emit'],
+      },
+    });
 
-    BuilderConfig({
+    expect(config.logging.level, LogLevel.debug);
+    expect(config.logging.format, LogFormat.json);
+    expect(
+      config.logging.categories,
+      {LogCategory.ir, LogCategory.emit},
+    );
+  });
+
+  test('logging verbose level maps to debug', () {
+    final config = BuilderConfig({
+      'logging': {
+        'level': 'verbose',
+      },
+    });
+
+    expect(config.logging.level, LogLevel.debug);
+  });
+
+  test('warns on unknown config entries', () async {
+    final result = BuilderConfig.parse({
       'schema': {
         'file': 'ferry_generator2|lib/schema.graphql',
         'add_typenames': true,
@@ -91,11 +112,7 @@ void main() {
       },
       'unknown_top': true,
     });
-
-    await subscription.cancel();
-    Logger.root.level = previousLevel;
-
-    final messages = records.map((record) => record.message).join('\n');
+    final messages = result.warnings.join('\n');
     expect(messages, contains('options: unknown_top'));
     expect(messages, contains('schema: unknown'));
     expect(messages, contains('enums: extra'));

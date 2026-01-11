@@ -1,16 +1,18 @@
 import "package:code_builder/code_builder.dart";
 import "package:gql/ast.dart";
 
-import "../config/config.dart";
+import "../config/builder_config.dart";
+import "../context/generator_context.dart";
 import "data_emitter_context.dart";
 import "emitter_helpers.dart";
 import "../utils/naming.dart";
 import "../selection/selection_resolver.dart";
 import "../ir/model.dart";
 import "../ir/names.dart";
+import "../logging/diagnostics.dart";
 
 class ReqEmitter {
-  final BuilderConfig config;
+  final GeneratorContext context;
   final DocumentIndex documentIndex;
   final DocumentIR document;
   final Map<FragmentName, String> fragmentSourceUrls;
@@ -18,12 +20,14 @@ class ReqEmitter {
   bool _needsUtilsImport = false;
 
   ReqEmitter({
-    required this.config,
+    required this.context,
     required this.documentIndex,
     required this.document,
     required this.fragmentSourceUrls,
     required this.utilsUrl,
   });
+
+  BuilderConfig get config => context.config;
 
   Library buildLibrary({
     required Iterable<OperationDefinitionNode> ownedOperations,
@@ -31,15 +35,27 @@ class ReqEmitter {
   }) {
     final specs = <Spec>[];
     _needsUtilsImport = config.generateEquals || config.generateHashCode;
+    var operationCount = 0;
+    var fragmentCount = 0;
 
     for (final operation in ownedOperations) {
       if (operation.name == null) continue;
+      operationCount += 1;
       specs.add(_buildOperationReq(operation));
     }
 
     for (final fragment in ownedFragments) {
+      fragmentCount += 1;
       specs.add(_buildFragmentReq(fragment));
     }
+    context.log.emit(
+      LogEvent(
+        level: LogLevel.debug,
+        category: LogCategory.req,
+        message:
+            "Emitted ${specs.length} req specs ($operationCount operations, $fragmentCount fragments).",
+      ),
+    );
 
     return Library(
       (b) => b

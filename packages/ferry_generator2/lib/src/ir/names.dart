@@ -1,11 +1,11 @@
-extension type TypeName(String value) {}
+extension type const TypeName(String value) {}
 
-extension type FragmentName(String value) {}
+extension type const FragmentName(String value) {}
 
-extension type OperationName(String value) {}
+extension type const OperationName(String value) {}
 
-extension type FieldName(String value) {}
+extension type const FieldName(String value) {}
 
-extension type ResponseKey(String value) {}
+extension type const ResponseKey(String value) {}
 
-extension type VariableName(String value) {}
+extension type const VariableName(String value) {}

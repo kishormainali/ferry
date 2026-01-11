@@ -1,7 +1,7 @@
 import "package:code_builder/code_builder.dart";
 import "package:gql/ast.dart";
 
-import "../config/config.dart";
+import "../config/builder_config.dart";
 import "../utils/naming.dart";
 import "../schema/schema.dart";
 import "../schema/type_utils.dart";

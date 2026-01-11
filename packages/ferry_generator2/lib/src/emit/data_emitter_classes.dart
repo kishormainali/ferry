@@ -329,7 +329,8 @@ List<Spec> _buildNestedClasses(
 ) {
   final specs = <Spec>[];
   for (final field in fieldsList) {
-    if (field.selectionSet == null || field.fragmentSpreadOnlyName != null) {
+    if (field.selectionSet == null ||
+        field.selectionSet?.reuseFragment != null) {
       continue;
     }
     final nestedName = "${baseName}_${field.responseKey}";
@@ -367,7 +368,7 @@ List<Reference> _nestedInterfaceRefsForField(
     final nestedField = selectionSet.fields[ResponseKey(field.responseKey)];
     if (nestedField?.selectionSet == null) continue;
     if (ctx.config.dataClassConfig.reuseFragments &&
-        nestedField!.fragmentSpreadOnlyName != null) {
+        nestedField!.selectionSet?.reuseFragment != null) {
       continue;
     }
     final nestedKey = "${interfaceKey}_${field.responseKey}";

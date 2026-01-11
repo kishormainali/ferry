@@ -1,18 +1,21 @@
 import "package:gql/ast.dart";
 
-import "../config/config.dart";
+import "../context/generator_context.dart";
 import "../schema/schema.dart";
 import "../schema/type_utils.dart";
 import "../selection/selection_resolver.dart";
 import "model.dart";
 import "names.dart";
 import "types.dart";
+import "../logging/diagnostics.dart";
 
 DocumentIR buildDocumentIr({
   required SchemaIndex schema,
-  required BuilderConfig config,
+  required GeneratorContext context,
   required DocumentIndex documentIndex,
 }) {
+  final config = context.config;
+  final log = context.log;
   final resolver = SelectionResolver(
     schema: schema,
     documentIndex: documentIndex,
@@ -90,6 +93,21 @@ DocumentIR buildDocumentIr({
     );
   }
 
+  final reuseCount = _countReuseSelections(
+    operations.values.map((operation) => operation.selection),
+  );
+  final fragmentReuseCount = _countReuseSelections(
+    fragments.values.map((fragment) => fragment.selection),
+  );
+  log.emit(
+    LogEvent(
+      level: LogLevel.debug,
+      category: LogCategory.ir,
+      message:
+          "Built IR (${operations.length} operations, ${fragments.length} fragments, ${reuseCount + fragmentReuseCount} reusable selections).",
+    ),
+  );
+
   return DocumentIR(
     operations: operations,
     fragments: fragments,
@@ -99,6 +117,7 @@ DocumentIR buildDocumentIr({
 SelectionSetIR _buildSelectionSetIr({
   required SchemaIndex schema,
   required ResolvedSelectionSet selectionSet,
+  FragmentName? reuseFragment,
 }) {
   final fields = <ResponseKey, FieldIR>{};
   for (final entry in selectionSet.fields.entries) {
@@ -118,10 +137,10 @@ SelectionSetIR _buildSelectionSetIr({
           : _buildSelectionSetIr(
               schema: schema,
               selectionSet: selection.selectionSet!,
+              reuseFragment: selection.fragmentSpreadOnlyName == null
+                  ? null
+                  : FragmentName(selection.fragmentSpreadOnlyName!),
             ),
-      fragmentSpreadOnlyName: selection.fragmentSpreadOnlyName == null
-          ? null
-          : FragmentName(selection.fragmentSpreadOnlyName!),
       isSynthetic: selection.isSynthetic,
     );
   }
@@ -145,6 +164,7 @@ SelectionSetIR _buildSelectionSetIr({
       for (final name in selectionSet.unconditionalFragmentSpreads)
         FragmentName(name),
     },
+    reuseFragment: reuseFragment,
   );
 }
 
@@ -175,6 +195,30 @@ Set<FragmentName> _collectUsedFragments(
 
   visitSelection(selection);
   return result;
+}
+
+int _countReuseSelections(Iterable<SelectionSetIR> roots) {
+  var count = 0;
+
+  void visit(SelectionSetIR selection) {
+    if (selection.reuseFragment != null) {
+      count += 1;
+    }
+    for (final field in selection.fields.values) {
+      final nested = field.selectionSet;
+      if (nested != null) {
+        visit(nested);
+      }
+    }
+    for (final inline in selection.inlineFragments.values) {
+      visit(inline);
+    }
+  }
+
+  for (final root in roots) {
+    visit(root);
+  }
+  return count;
 }
 
 VariableIR _variableFromDefinition({

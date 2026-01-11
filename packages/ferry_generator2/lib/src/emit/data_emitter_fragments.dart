@@ -134,7 +134,7 @@ void _registerInterfaceSelection({
   for (final field in selectionSet.fields.values) {
     if (field.selectionSet == null) continue;
     if (ctx.config.dataClassConfig.reuseFragments &&
-        field.fragmentSpreadOnlyName != null) {
+        field.selectionSet?.reuseFragment != null) {
       continue;
     }
     final nestedKey = "${interfaceKey}_${field.responseKey.value}";
@@ -179,7 +179,7 @@ List<Spec> _buildFragmentNestedInterfaces({
   for (final field in selectionSet.fields.values) {
     if (field.selectionSet == null) continue;
     if (ctx.config.dataClassConfig.reuseFragments &&
-        field.fragmentSpreadOnlyName != null) {
+        field.selectionSet?.reuseFragment != null) {
       continue;
     }
     final nestedKey = "${interfaceKey}_${field.responseKey.value}";
@@ -217,7 +217,7 @@ List<FieldSpec> _buildFragmentInterfaceFieldSpecs({
     final namedTypeKind = selection.namedType.kind;
 
     final fragmentName = ctx.config.dataClassConfig.reuseFragments
-        ? selection.fragmentSpreadOnlyName
+        ? selection.selectionSet?.reuseFragment
         : null;
     Reference namedTypeRef;
 
@@ -256,7 +256,6 @@ List<FieldSpec> _buildFragmentInterfaceFieldSpecs({
         typeRef: typeRef,
         namedTypeRef: namedTypeRef,
         selectionSet: selection.selectionSet,
-        fragmentSpreadOnlyName: fragmentName?.value,
       ),
     );
   }

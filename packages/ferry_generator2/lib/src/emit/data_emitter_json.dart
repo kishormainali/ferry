@@ -5,6 +5,7 @@ import "../config/config.dart";
 import "data_emitter_context.dart";
 import "data_emitter_fields.dart";
 import "data_emitter_types.dart";
+import "../ir/types.dart";
 
 Expression fromJsonExpression({
   required DataEmitterContext ctx,
@@ -29,12 +30,11 @@ Expression _fromJsonForTypeNode({
     if (node.type is NamedTypeNode) {
       final innerNode = node.type as NamedTypeNode;
       final typeName = innerNode.name.value;
-      final typeDef = ctx.schema.lookupType(NameNode(value: typeName));
       final override = ctx.config.typeOverrides[typeName];
       if (canUseListFrom(
         ctx: ctx,
         typeName: typeName,
-        typeDef: typeDef,
+        namedType: field.namedType,
         override: override,
       )) {
         final scalarRef = scalarReference(ctx: ctx, typeName: typeName);
@@ -84,11 +84,10 @@ Expression _fromJsonForTypeNode({
   if (node is NamedTypeNode) {
     final typeName = node.name.value;
     final override = ctx.config.typeOverrides[typeName];
-    final typeDef = ctx.schema.lookupType(NameNode(value: typeName));
     final inner = _fromJsonForNamedType(
       ctx: ctx,
       typeName: typeName,
-      typeDef: typeDef,
+      namedType: field.namedType,
       override: override,
       field: field,
       valueExpr: valueExpr,
@@ -104,7 +103,7 @@ Expression _fromJsonForTypeNode({
 Expression _fromJsonForNamedType({
   required DataEmitterContext ctx,
   required String typeName,
-  required TypeDefinitionNode? typeDef,
+  required NamedTypeInfo namedType,
   required TypeOverrideConfig? override,
   required FieldSpec field,
   required Expression valueExpr,
@@ -112,15 +111,15 @@ Expression _fromJsonForNamedType({
   if (override?.fromJsonFunctionName != null) {
     return refer(override!.fromJsonFunctionName!).call([valueExpr]);
   }
-  if (typeDef is EnumTypeDefinitionNode) {
+  if (namedType.kind == GraphQLTypeKind.enumType) {
     return field.namedTypeRef.property("fromJson").call([
       valueExpr.asA(refer("String")),
     ]);
   }
-  if (typeDef is ObjectTypeDefinitionNode ||
-      typeDef is InterfaceTypeDefinitionNode ||
-      typeDef is UnionTypeDefinitionNode ||
-      typeDef is InputObjectTypeDefinitionNode) {
+  if (namedType.kind == GraphQLTypeKind.object ||
+      namedType.kind == GraphQLTypeKind.interface ||
+      namedType.kind == GraphQLTypeKind.union ||
+      namedType.kind == GraphQLTypeKind.inputObject) {
     return field.namedTypeRef.property("fromJson").call([
       valueExpr.asA(mapStringDynamicType()),
     ]);
@@ -179,11 +178,10 @@ Expression _toJsonForTypeNode({
   if (node is NamedTypeNode) {
     final typeName = node.name.value;
     final override = ctx.config.typeOverrides[typeName];
-    final typeDef = ctx.schema.lookupType(NameNode(value: typeName));
     final inner = _toJsonForNamedType(
       ctx: ctx,
       typeName: typeName,
-      typeDef: typeDef,
+      namedType: field.namedType,
       override: override,
       field: field,
       valueExpr: valueExpr,
@@ -199,7 +197,7 @@ Expression _toJsonForTypeNode({
 Expression _toJsonForNamedType({
   required DataEmitterContext ctx,
   required String typeName,
-  required TypeDefinitionNode? typeDef,
+  required NamedTypeInfo namedType,
   required TypeOverrideConfig? override,
   required FieldSpec field,
   required Expression valueExpr,
@@ -207,13 +205,13 @@ Expression _toJsonForNamedType({
   if (override?.toJsonFunctionName != null) {
     return refer(override!.toJsonFunctionName!).call([valueExpr]);
   }
-  if (typeDef is EnumTypeDefinitionNode) {
+  if (namedType.kind == GraphQLTypeKind.enumType) {
     return valueExpr.property("toJson").call([]);
   }
-  if (typeDef is ObjectTypeDefinitionNode ||
-      typeDef is InterfaceTypeDefinitionNode ||
-      typeDef is UnionTypeDefinitionNode ||
-      typeDef is InputObjectTypeDefinitionNode) {
+  if (namedType.kind == GraphQLTypeKind.object ||
+      namedType.kind == GraphQLTypeKind.interface ||
+      namedType.kind == GraphQLTypeKind.union ||
+      namedType.kind == GraphQLTypeKind.inputObject) {
     return valueExpr.property("toJson").call([]);
   }
   return valueExpr;

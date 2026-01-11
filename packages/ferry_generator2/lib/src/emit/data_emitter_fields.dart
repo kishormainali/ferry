@@ -4,24 +4,22 @@ import "package:gql/ast.dart";
 import "../config/config.dart";
 import "data_emitter_context.dart";
 import "data_emitter_types.dart";
+import "../ir/model.dart";
+import "../ir/types.dart";
 import "../utils/naming.dart";
-import "../selection/selection_resolver.dart";
-import "../schema/type_utils.dart";
 
 List<FieldSpec> buildFieldSpecs({
   required DataEmitterContext ctx,
   required String baseName,
-  required ResolvedSelectionSet selectionSet,
-  required String parentTypeName,
-  required FieldContext fieldContext,
+  required SelectionSetIR selectionSet,
 }) {
   final fields = <FieldSpec>[];
   for (final selection in selectionSet.fields.values) {
     final fieldName = selection.responseKey;
     final propertyName = identifier(fieldName);
     final nestedBaseName = "${baseName}_$fieldName";
-    final namedTypeName = unwrapNamedTypeName(selection.typeNode) ?? "Object";
-    final typeDef = ctx.schema.lookupType(NameNode(value: namedTypeName));
+    final namedTypeName = selection.namedType.name;
+    final namedTypeKind = selection.namedType.kind;
 
     String? fragmentName = ctx.config.dataClassConfig.reuseFragments
         ? selection.fragmentSpreadOnlyName
@@ -31,20 +29,20 @@ List<FieldSpec> buildFieldSpecs({
     if (fragmentName != null) {
       namedTypeRef =
           fragmentDataReference(ctx: ctx, fragmentName: fragmentName);
-    } else if (typeDef is ObjectTypeDefinitionNode ||
-        typeDef is InterfaceTypeDefinitionNode ||
-        typeDef is UnionTypeDefinitionNode) {
+    } else if (namedTypeKind == GraphQLTypeKind.object ||
+        namedTypeKind == GraphQLTypeKind.interface ||
+        namedTypeKind == GraphQLTypeKind.union) {
       namedTypeRef = Reference(
         builtClassName(nestedBaseName),
         "#data",
       );
-    } else if (typeDef is EnumTypeDefinitionNode ||
-        typeDef is InputObjectTypeDefinitionNode) {
+    } else if (namedTypeKind == GraphQLTypeKind.enumType ||
+        namedTypeKind == GraphQLTypeKind.inputObject) {
       namedTypeRef = Reference(
         builtClassName(namedTypeName),
         "#schema",
       );
-    } else if (typeDef is ScalarTypeDefinitionNode) {
+    } else if (namedTypeKind == GraphQLTypeKind.scalar) {
       namedTypeRef = scalarReference(ctx: ctx, typeName: namedTypeName);
     } else {
       namedTypeRef = refer("Object");
@@ -60,6 +58,7 @@ List<FieldSpec> buildFieldSpecs({
         responseKey: fieldName,
         propertyName: propertyName,
         typeNode: selection.typeNode,
+        namedType: selection.namedType,
         typeRef: typeRef,
         namedTypeRef: namedTypeRef,
         selectionSet: selection.selectionSet,
@@ -154,10 +153,10 @@ Reference typeReferenceForTypeNode(
 bool canUseListFrom({
   required DataEmitterContext ctx,
   required String typeName,
-  required TypeDefinitionNode? typeDef,
+  required NamedTypeInfo namedType,
   required TypeOverrideConfig? override,
 }) {
-  if (typeDef is! ScalarTypeDefinitionNode) return false;
+  if (namedType.kind != GraphQLTypeKind.scalar) return false;
   if (override?.fromJsonFunctionName != null) return false;
   if (_isBuiltinScalarName(typeName)) return true;
   final overrideType = override?.type;

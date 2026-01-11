@@ -6,19 +6,20 @@ import "data_emitter_context.dart";
 import "emitter_helpers.dart";
 import "../utils/naming.dart";
 import "../selection/selection_resolver.dart";
+import "../ir/model.dart";
 
 class ReqEmitter {
   final BuilderConfig config;
-  final Set<String> fragmentsWithVars;
   final DocumentIndex documentIndex;
+  final DocumentIR document;
   final Map<String, String> fragmentSourceUrls;
   final String? utilsUrl;
   bool _needsUtilsImport = false;
 
   ReqEmitter({
     required this.config,
-    required this.fragmentsWithVars,
     required this.documentIndex,
+    required this.document,
     required this.fragmentSourceUrls,
     required this.utilsUrl,
   });
@@ -52,7 +53,9 @@ class ReqEmitter {
 
   Class _buildOperationReq(OperationDefinitionNode operation) {
     final operationName = operation.name!.value;
-    final hasVars = operation.variableDefinitions.isNotEmpty;
+    final operationIr = document.operations[operationName];
+    final hasVars = operationIr?.variables.isNotEmpty ??
+        operation.variableDefinitions.isNotEmpty;
     final className = builtClassName("${operationName}Req");
     final dataTypeRef = Reference(
       builtClassName("${operationName}Data"),
@@ -72,7 +75,10 @@ class ReqEmitter {
     );
     final nullableDataType = _nullableReference(dataTypeRef);
 
-    final documentExpr = _documentForOperation(operation);
+    final documentExpr = _documentForOperation(
+      operationName: operationName,
+      fragmentNames: operationIr?.usedFragments ?? const <String>{},
+    );
 
     final instanceFields = <Field>[
       Field(
@@ -520,7 +526,8 @@ ${hasVars ? "  vars: vars," : ""}
 
   Class _buildFragmentReq(FragmentDefinitionNode fragment) {
     final fragmentName = fragment.name.value;
-    final hasVars = fragmentsWithVars.contains(fragmentName);
+    final fragmentIr = document.fragments[fragmentName];
+    final hasVars = fragmentIr?.variables.isNotEmpty ?? false;
     final className = builtClassName("${fragmentName}Req");
     final dataTypeRef = Reference(
       builtClassName("${fragmentName}Data"),
@@ -540,7 +547,10 @@ ${hasVars ? "  vars: vars," : ""}
     );
     final nullableDataType = _nullableReference(dataTypeRef);
 
-    final documentExpr = _documentForFragment(fragment);
+    final documentExpr = _documentForFragment(
+      fragmentName: fragmentName,
+      fragmentNames: fragmentIr?.usedFragments ?? const <String>{},
+    );
 
     final fieldSpecs = [
       _ReqFieldSpec(
@@ -755,25 +765,24 @@ ${hasVars ? "  vars: vars," : ""}
     );
   }
 
-  Expression _documentForOperation(OperationDefinitionNode operation) {
-    final name = operation.name?.value;
-    if (name == null) {
-      throw StateError("Operations must be named");
-    }
-    final fragmentNames = _collectFragmentSpreads(operation.selectionSet);
+  Expression _documentForOperation({
+    required String operationName,
+    required Set<String> fragmentNames,
+  }) {
     final definitionRefs = _definitionRefsForOperation(
-      operationName: name,
+      operationName: operationName,
       fragmentNames: fragmentNames,
     );
     return _documentExpression(definitionRefs);
   }
 
-  Expression _documentForFragment(FragmentDefinitionNode fragment) {
-    final fragmentNames = _collectFragmentSpreads(fragment.selectionSet)
-      ..add(fragment.name.value);
+  Expression _documentForFragment({
+    required String fragmentName,
+    required Set<String> fragmentNames,
+  }) {
     final definitionRefs = _definitionRefsForOperation(
       operationName: null,
-      fragmentNames: fragmentNames,
+      fragmentNames: {...fragmentNames, fragmentName},
     );
     return _documentExpression(definitionRefs);
   }
@@ -824,35 +833,6 @@ ${hasVars ? "  vars: vars," : ""}
   }) {
     final url = sourceUrl == null ? "#ast" : "$sourceUrl#ast";
     return Reference(identifier(definitionName), url);
-  }
-
-  Set<String> _collectFragmentSpreads(SelectionSetNode selectionSet) {
-    final fragments = <String>{};
-    final visited = <String>{};
-
-    void visit(SelectionSetNode set) {
-      for (final selection in set.selections) {
-        if (selection is FieldNode) {
-          final nested = selection.selectionSet;
-          if (nested != null) {
-            visit(nested);
-          }
-        } else if (selection is InlineFragmentNode) {
-          visit(selection.selectionSet);
-        } else if (selection is FragmentSpreadNode) {
-          final name = selection.name.value;
-          fragments.add(name);
-          if (!visited.add(name)) {
-            continue;
-          }
-          final fragment = documentIndex.getFragment(name);
-          visit(fragment.selectionSet);
-        }
-      }
-    }
-
-    visit(selectionSet);
-    return fragments;
   }
 
   Reference _nullableReference(Reference reference) {

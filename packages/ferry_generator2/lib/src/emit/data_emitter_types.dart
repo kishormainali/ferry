@@ -1,12 +1,13 @@
 import "package:code_builder/code_builder.dart";
 import "package:gql/ast.dart";
 
-import "../selection/selection_resolver.dart";
+import "../ir/model.dart";
+import "../ir/types.dart";
 
 class FragmentInfo {
   final String name;
   final String typeCondition;
-  final ResolvedSelectionSet selectionSet;
+  final SelectionSetIR selectionSet;
   final Set<String> inlineTypes;
 
   const FragmentInfo({
@@ -21,23 +22,23 @@ class FieldSpec {
   final String responseKey;
   final String propertyName;
   final TypeNode typeNode;
+  final NamedTypeInfo namedType;
   final Reference typeRef;
   final Reference namedTypeRef;
-  final ResolvedSelectionSet? selectionSet;
+  final SelectionSetIR? selectionSet;
   final String? fragmentSpreadOnlyName;
 
   const FieldSpec({
     required this.responseKey,
     required this.propertyName,
     required this.typeNode,
+    required this.namedType,
     required this.typeRef,
     required this.namedTypeRef,
     required this.selectionSet,
     required this.fragmentSpreadOnlyName,
   });
 }
-
-enum FieldContext { base, inline }
 
 String stripPrefix(String name) {
   if (name.startsWith("G")) {

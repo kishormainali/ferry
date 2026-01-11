@@ -5,8 +5,7 @@ import "../config/config.dart";
 import "data_emitter_classes.dart";
 import "data_emitter_context.dart";
 import "data_emitter_fragments.dart";
-import "../schema/schema.dart";
-import "../selection/selection_resolver.dart";
+import "../ir/model.dart";
 
 class DataEmitter {
   final DataEmitterContext _ctx;
@@ -14,18 +13,14 @@ class DataEmitter {
   DataEmitter._(this._ctx);
 
   factory DataEmitter({
-    required SchemaIndex schema,
     required BuilderConfig config,
-    required DocumentIndex documentIndex,
-    required SelectionResolver resolver,
+    required DocumentIR document,
     required Map<String, String> fragmentSourceUrls,
     required String? utilsUrl,
   }) {
     final ctx = DataEmitterContext(
-      schema: schema,
       config: config,
-      documentIndex: documentIndex,
-      resolver: resolver,
+      document: document,
       fragmentSourceUrls: fragmentSourceUrls,
       utilsUrl: utilsUrl,
     );

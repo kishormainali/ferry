@@ -5,22 +5,22 @@ import "data_emitter_classes.dart";
 import "data_emitter_context.dart";
 import "data_emitter_fields.dart";
 import "data_emitter_types.dart";
+import "../ir/types.dart";
 import "../utils/naming.dart";
-import "../selection/selection_resolver.dart";
-import "../schema/type_utils.dart";
+import "../ir/model.dart";
 
 void indexFragments({required DataEmitterContext ctx}) {
-  for (final fragment in ctx.documentIndex.fragments.values) {
-    final resolved = ctx.resolver.resolveFragment(fragment);
-    ctx.fragmentInfo[fragment.name.value] = FragmentInfo(
-      name: fragment.name.value,
-      typeCondition: fragment.typeCondition.on.name.value,
+  for (final fragment in ctx.document.fragments.values) {
+    final resolved = fragment.selection;
+    ctx.fragmentInfo[fragment.name] = FragmentInfo(
+      name: fragment.name,
+      typeCondition: fragment.typeCondition,
       selectionSet: resolved,
       inlineTypes: resolved.inlineFragments.keys.toSet(),
     );
     _indexFragmentInterfaceSelections(
       ctx: ctx,
-      fragmentName: fragment.name.value,
+      fragmentName: fragment.name,
       selectionSet: resolved,
     );
   }
@@ -86,7 +86,6 @@ void indexFragments({required DataEmitterContext ctx}) {
     ctx: ctx,
     baseName: baseName,
     selectionSet: resolved,
-    parentTypeName: resolved.parentTypeName,
     classImplements: [
       refer(builtClassName(fragment.name.value)),
     ],
@@ -99,7 +98,7 @@ void indexFragments({required DataEmitterContext ctx}) {
 void _indexFragmentInterfaceSelections({
   required DataEmitterContext ctx,
   required String fragmentName,
-  required ResolvedSelectionSet selectionSet,
+  required SelectionSetIR selectionSet,
 }) {
   _registerInterfaceSelection(
     ctx: ctx,
@@ -121,7 +120,7 @@ void _registerInterfaceSelection({
   required DataEmitterContext ctx,
   required String fragmentName,
   required String interfaceKey,
-  required ResolvedSelectionSet selectionSet,
+  required SelectionSetIR selectionSet,
 }) {
   if (ctx.fragmentInterfaceSelections.containsKey(interfaceKey)) {
     return;
@@ -148,7 +147,7 @@ void _registerInterfaceSelection({
 Class _buildFragmentInterfaceClass({
   required DataEmitterContext ctx,
   required String interfaceKey,
-  required ResolvedSelectionSet selectionSet,
+  required SelectionSetIR selectionSet,
   required List<Reference> implementsRefs,
 }) {
   final fieldsList = _buildFragmentInterfaceFieldSpecs(
@@ -171,7 +170,7 @@ Class _buildFragmentInterfaceClass({
 List<Spec> _buildFragmentNestedInterfaces({
   required DataEmitterContext ctx,
   required String interfaceKey,
-  required ResolvedSelectionSet selectionSet,
+  required SelectionSetIR selectionSet,
 }) {
   final specs = <Spec>[];
   for (final field in selectionSet.fields.values) {
@@ -205,14 +204,14 @@ List<Spec> _buildFragmentNestedInterfaces({
 List<FieldSpec> _buildFragmentInterfaceFieldSpecs({
   required DataEmitterContext ctx,
   required String interfaceKey,
-  required ResolvedSelectionSet selectionSet,
+  required SelectionSetIR selectionSet,
 }) {
   final fieldsList = <FieldSpec>[];
   for (final selection in selectionSet.fields.values) {
     final fieldName = selection.responseKey;
     final propertyName = identifier(fieldName);
-    final namedTypeName = unwrapNamedTypeName(selection.typeNode) ?? "Object";
-    final typeDef = ctx.schema.lookupType(NameNode(value: namedTypeName));
+    final namedTypeName = selection.namedType.name;
+    final namedTypeKind = selection.namedType.kind;
 
     final fragmentName = ctx.config.dataClassConfig.reuseFragments
         ? selection.fragmentSpreadOnlyName
@@ -228,13 +227,13 @@ List<FieldSpec> _buildFragmentInterfaceFieldSpecs({
       namedTypeRef = Reference(
         builtClassName("${interfaceKey}_$fieldName"),
       );
-    } else if (typeDef is EnumTypeDefinitionNode ||
-        typeDef is InputObjectTypeDefinitionNode) {
+    } else if (namedTypeKind == GraphQLTypeKind.enumType ||
+        namedTypeKind == GraphQLTypeKind.inputObject) {
       namedTypeRef = Reference(
         builtClassName(namedTypeName),
         "#schema",
       );
-    } else if (typeDef is ScalarTypeDefinitionNode) {
+    } else if (namedTypeKind == GraphQLTypeKind.scalar) {
       namedTypeRef = scalarReference(ctx: ctx, typeName: namedTypeName);
     } else {
       namedTypeRef = refer("Object");
@@ -250,6 +249,7 @@ List<FieldSpec> _buildFragmentInterfaceFieldSpecs({
         responseKey: fieldName,
         propertyName: propertyName,
         typeNode: selection.typeNode,
+        namedType: selection.namedType,
         typeRef: typeRef,
         namedTypeRef: namedTypeRef,
         selectionSet: selection.selectionSet,

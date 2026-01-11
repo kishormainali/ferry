@@ -2,17 +2,15 @@ import "package:code_builder/code_builder.dart";
 import "package:gql/ast.dart";
 
 import "../config/config.dart";
+import "../ir/model.dart";
+import "../ir/types.dart";
 import "../utils/naming.dart";
-import "../schema/schema.dart";
-import "../selection/selection_resolver.dart";
-import "../schema/type_utils.dart";
 import "data_emitter_context.dart" show utilsImportAlias, utilsPrefix;
 import "emitter_helpers.dart";
 
 class VarsEmitter {
-  final SchemaIndex schema;
   final BuilderConfig config;
-  final DocumentIndex documentIndex;
+  final DocumentIR document;
   final String? utilsUrl;
   final Set<String> extraImports = {};
 
@@ -20,9 +18,8 @@ class VarsEmitter {
   bool _needsUtilsImport = false;
 
   VarsEmitter({
-    required this.schema,
     required this.config,
-    required this.documentIndex,
+    required this.document,
     required this.utilsUrl,
   });
 
@@ -34,18 +31,16 @@ class VarsEmitter {
 
     for (final operation in ownedOperations) {
       if (operation.name == null) continue;
-      if (operation.variableDefinitions.isEmpty) {
+      final op = document.operations[operation.name!.value];
+      if (op == null || op.variables.isEmpty) {
         continue;
       }
       specs.addAll(
         _buildVarsClass(
           "${operation.name!.value}Vars",
-          operation.variableDefinitions
+          op.variables
               .map(
-                (definition) => _fieldSpecFromDefinition(
-                  definition.variable.name.value,
-                  definition.type,
-                ),
+                (variable) => _fieldSpecFromVariable(variable),
               )
               .toList(),
         ),
@@ -53,19 +48,16 @@ class VarsEmitter {
     }
 
     for (final fragment in ownedFragments) {
-      final varTypes = _fragmentVarTypes(fragment);
-      if (varTypes.isEmpty) {
+      final frag = document.fragments[fragment.name.value];
+      if (frag == null || frag.variables.isEmpty) {
         continue;
       }
       specs.addAll(
         _buildVarsClass(
           "${fragment.name.value}Vars",
-          varTypes.entries
+          frag.variables
               .map(
-                (entry) => _fieldSpecFromDefinition(
-                  entry.key,
-                  entry.value,
-                ),
+                (variable) => _fieldSpecFromVariable(variable),
               )
               .toList(),
         ),
@@ -93,10 +85,6 @@ class VarsEmitter {
         ])
         ..body.addAll(specs),
     );
-  }
-
-  Map<String, TypeNode> fragmentVarTypes(FragmentDefinitionNode fragment) {
-    return _fragmentVarTypes(fragment);
   }
 
   List<Spec> _buildVarsClass(String name, List<InputFieldSpec> fields) {
@@ -260,25 +248,26 @@ class VarsEmitter {
     return false;
   }
 
-  InputFieldSpec _fieldSpecFromDefinition(String name, TypeNode typeNode) {
-    final responseKey = name;
-    final propertyName = identifier(name);
-    final namedTypeName = unwrapNamedTypeName(typeNode) ?? "Object";
-    final typeDef = schema.lookupType(NameNode(value: namedTypeName));
+  InputFieldSpec _fieldSpecFromVariable(VariableIR variable) {
+    final responseKey = variable.name;
+    final propertyName = identifier(variable.name);
+    final namedTypeName = variable.namedType.name;
+    final namedTypeKind = variable.namedType.kind;
 
     Reference namedTypeRef;
-    if (typeDef is InputObjectTypeDefinitionNode ||
-        typeDef is EnumTypeDefinitionNode) {
+    if (namedTypeKind == GraphQLTypeKind.inputObject ||
+        namedTypeKind == GraphQLTypeKind.enumType) {
       namedTypeRef = Reference(
         builtClassName(namedTypeName),
         "#schema",
       );
-    } else if (typeDef is ScalarTypeDefinitionNode) {
+    } else if (namedTypeKind == GraphQLTypeKind.scalar) {
       namedTypeRef = _scalarReference(namedTypeName);
     } else {
       namedTypeRef = refer("Object");
     }
 
+    final typeNode = variable.typeNode;
     final isTriState = _useTriState && !typeNode.isNonNull;
     if (isTriState) {
       _usesTriStateValue = true;
@@ -294,6 +283,7 @@ class VarsEmitter {
       responseKey: responseKey,
       propertyName: propertyName,
       typeNode: typeNode,
+      namedType: variable.namedType,
       typeRef: typeRef,
       namedTypeRef: namedTypeRef,
       isTriState: isTriState,
@@ -321,10 +311,10 @@ class VarsEmitter {
 
   bool _canUseListFrom({
     required String typeName,
-    required TypeDefinitionNode? typeDef,
+    required NamedTypeInfo namedType,
     required TypeOverrideConfig? override,
   }) {
-    if (typeDef is! ScalarTypeDefinitionNode) return false;
+    if (namedType.kind != GraphQLTypeKind.scalar) return false;
     if (override?.fromJsonFunctionName != null) return false;
     if (_isBuiltinScalarName(typeName)) return true;
     final overrideType = override?.type;
@@ -437,11 +427,10 @@ class VarsEmitter {
       if (node.type is NamedTypeNode) {
         final innerNode = node.type as NamedTypeNode;
         final typeName = innerNode.name.value;
-        final typeDef = schema.lookupType(NameNode(value: typeName));
         final override = config.typeOverrides[typeName];
         if (_canUseListFrom(
           typeName: typeName,
-          typeDef: typeDef,
+          namedType: field.namedType,
           override: override,
         )) {
           final scalarRef = _scalarReference(typeName);
@@ -486,10 +475,9 @@ class VarsEmitter {
     if (node is NamedTypeNode) {
       final typeName = node.name.value;
       final override = config.typeOverrides[typeName];
-      final typeDef = schema.lookupType(NameNode(value: typeName));
       final inner = _fromJsonForNamedType(
         typeName: typeName,
-        typeDef: typeDef,
+        namedType: field.namedType,
         override: override,
         field: field,
         valueExpr: valueExpr,
@@ -504,7 +492,7 @@ class VarsEmitter {
 
   Expression _fromJsonForNamedType({
     required String typeName,
-    required TypeDefinitionNode? typeDef,
+    required NamedTypeInfo namedType,
     required TypeOverrideConfig? override,
     required InputFieldSpec field,
     required Expression valueExpr,
@@ -512,12 +500,12 @@ class VarsEmitter {
     if (override?.fromJsonFunctionName != null) {
       return refer(override!.fromJsonFunctionName!).call([valueExpr]);
     }
-    if (typeDef is EnumTypeDefinitionNode) {
+    if (namedType.kind == GraphQLTypeKind.enumType) {
       return field.namedTypeRef.property("fromJson").call([
         valueExpr.asA(refer("String")),
       ]);
     }
-    if (typeDef is InputObjectTypeDefinitionNode) {
+    if (namedType.kind == GraphQLTypeKind.inputObject) {
       return field.namedTypeRef.property("fromJson").call([
         valueExpr.asA(_mapStringDynamicType()),
       ]);
@@ -567,10 +555,9 @@ class VarsEmitter {
     if (node is NamedTypeNode) {
       final typeName = node.name.value;
       final override = config.typeOverrides[typeName];
-      final typeDef = schema.lookupType(NameNode(value: typeName));
       final inner = _toJsonForNamedType(
         typeName: typeName,
-        typeDef: typeDef,
+        namedType: field.namedType,
         override: override,
         field: field,
         valueExpr: valueExpr,
@@ -585,7 +572,7 @@ class VarsEmitter {
 
   Expression _toJsonForNamedType({
     required String typeName,
-    required TypeDefinitionNode? typeDef,
+    required NamedTypeInfo namedType,
     required TypeOverrideConfig? override,
     required InputFieldSpec field,
     required Expression valueExpr,
@@ -593,8 +580,8 @@ class VarsEmitter {
     if (override?.toJsonFunctionName != null) {
       return refer(override!.toJsonFunctionName!).call([valueExpr]);
     }
-    if (typeDef is EnumTypeDefinitionNode ||
-        typeDef is InputObjectTypeDefinitionNode) {
+    if (namedType.kind == GraphQLTypeKind.enumType ||
+        namedType.kind == GraphQLTypeKind.inputObject) {
       return valueExpr.property("toJson").call([]);
     }
     return valueExpr;
@@ -602,143 +589,13 @@ class VarsEmitter {
 
   bool get _useTriState =>
       config.triStateOptionalsConfig == TriStateValueConfig.onAllNullableFields;
-
-  Map<String, TypeNode> _fragmentVarTypes(FragmentDefinitionNode fragment) {
-    return _collectVarTypes(
-      fragment.selectionSet,
-      fragment.typeCondition.on.name.value,
-      fragmentStack: {fragment.name.value},
-    );
-  }
-
-  Map<String, TypeNode> _collectVarTypes(
-    SelectionSetNode selectionSet,
-    String parentTypeName, {
-    required Set<String> fragmentStack,
-  }) {
-    final parentType = schema.lookupType(NameNode(value: parentTypeName));
-    if (parentType == null) return {};
-
-    final result = <String, TypeNode>{};
-
-    for (final selection in selectionSet.selections) {
-      if (selection is FieldNode) {
-        final fieldDef =
-            schema.lookupFieldDefinitionNode(parentType, selection.name);
-        if (fieldDef != null) {
-          for (final argument in selection.arguments) {
-            final argDef =
-                fieldDef.args.whereType<InputValueDefinitionNode?>().firstWhere(
-                      (arg) => arg?.name.value == argument.name.value,
-                      orElse: () => null,
-                    );
-            if (argDef != null) {
-              _mergeVarTypes(
-                result,
-                _collectVarTypesFromValue(argument.value, argDef.type),
-              );
-            }
-          }
-
-          if (selection.selectionSet != null) {
-            final fieldType =
-                schema.lookupTypeDefinitionFromTypeNode(fieldDef.type);
-            if (fieldType != null) {
-              _mergeVarTypes(
-                result,
-                _collectVarTypes(
-                  selection.selectionSet!,
-                  fieldType.name.value,
-                  fragmentStack: fragmentStack,
-                ),
-              );
-            }
-          }
-        }
-      } else if (selection is InlineFragmentNode) {
-        final typeName =
-            selection.typeCondition?.on.name.value ?? parentTypeName;
-        _mergeVarTypes(
-          result,
-          _collectVarTypes(
-            selection.selectionSet,
-            typeName,
-            fragmentStack: fragmentStack,
-          ),
-        );
-      } else if (selection is FragmentSpreadNode) {
-        final name = selection.name.value;
-        if (fragmentStack.contains(name)) {
-          throw StateError("Fragment spread cycle detected at $name");
-        }
-        final fragment = documentIndex.getFragment(name);
-        _mergeVarTypes(
-          result,
-          _collectVarTypes(
-            fragment.selectionSet,
-            fragment.typeCondition.on.name.value,
-            fragmentStack: {...fragmentStack, name},
-          ),
-        );
-      }
-    }
-
-    return result;
-  }
-
-  Map<String, TypeNode> _collectVarTypesFromValue(
-    ValueNode value,
-    TypeNode typeNode,
-  ) {
-    if (value is VariableNode) {
-      return {value.name.value: typeNode};
-    }
-    if (value is ListValueNode && typeNode is ListTypeNode) {
-      final result = <String, TypeNode>{};
-      for (final entry in value.values) {
-        _mergeVarTypes(
-          result,
-          _collectVarTypesFromValue(entry, typeNode.type),
-        );
-      }
-      return result;
-    }
-    if (value is ObjectValueNode) {
-      final namedType = unwrapNamedType(typeNode);
-      if (namedType == null) return {};
-      final inputDef = schema.lookupTypeAs<InputObjectTypeDefinitionNode>(
-        namedType.name,
-      );
-      if (inputDef == null) return {};
-      final result = <String, TypeNode>{};
-      for (final field in value.fields) {
-        final inputField =
-            schema.lookupInputFieldDefinition(inputDef, field.name);
-        if (inputField == null) continue;
-        _mergeVarTypes(
-          result,
-          _collectVarTypesFromValue(field.value, inputField.type),
-        );
-      }
-      return result;
-    }
-    return {};
-  }
-
-  void _mergeVarTypes(
-    Map<String, TypeNode> target,
-    Map<String, TypeNode> other,
-  ) {
-    for (final entry in other.entries) {
-      target[entry.key] = entry.value;
-    }
-  }
 }
 
 class InputFieldSpec {
   final String responseKey;
   final String propertyName;
   final TypeNode typeNode;
+  final NamedTypeInfo namedType;
   final Reference typeRef;
   final Reference namedTypeRef;
   final bool isTriState;
@@ -747,6 +604,7 @@ class InputFieldSpec {
     required this.responseKey,
     required this.propertyName,
     required this.typeNode,
+    required this.namedType,
     required this.typeRef,
     required this.namedTypeRef,
     required this.isTriState,

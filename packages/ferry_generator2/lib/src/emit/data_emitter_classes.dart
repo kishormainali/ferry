@@ -8,7 +8,7 @@ import "data_emitter_types.dart";
 import "emitter_helpers.dart";
 import "fragment_interface_refs.dart";
 import "../utils/naming.dart";
-import "../selection/selection_resolver.dart";
+import "../ir/model.dart";
 
 ({List<Spec> specs, DataEmitterContext ctx}) buildOperationData({
   required DataEmitterContext ctx,
@@ -17,14 +17,17 @@ import "../selection/selection_resolver.dart";
   if (operation.name == null) {
     return (specs: const <Spec>[], ctx: ctx);
   }
-  final resolved = ctx.resolver.resolveOperation(operation);
+  final operationIr = ctx.document.operations[operation.name!.value];
+  if (operationIr == null) {
+    return (specs: const <Spec>[], ctx: ctx);
+  }
+  final resolved = operationIr.selection;
   final baseName = "${operation.name!.value}Data";
   return (
     specs: buildSelectionSetClasses(
       ctx: ctx,
       baseName: baseName,
       selectionSet: resolved,
-      parentTypeName: resolved.parentTypeName,
       classImplements: const [],
       fragmentName: null,
     ),
@@ -35,8 +38,7 @@ import "../selection/selection_resolver.dart";
 List<Spec> buildSelectionSetClasses({
   required DataEmitterContext ctx,
   required String baseName,
-  required ResolvedSelectionSet selectionSet,
-  required String parentTypeName,
+  required SelectionSetIR selectionSet,
   required List<Reference> classImplements,
   required String? fragmentName,
 }) {
@@ -53,13 +55,11 @@ List<Spec> buildSelectionSetClasses({
       ctx: ctx,
       baseName: baseName,
       selectionSet: selectionSet,
-      parentTypeName: parentTypeName,
-      fieldContext: FieldContext.base,
     );
     final implementsRefs = _interfaceRefs(
       ctx: ctx,
       fragmentSpreads: interfaceSpreads,
-      parentTypeName: parentTypeName,
+      parentTypeName: selectionSet.parentTypeName,
       baseImplements: classImplements,
     );
     specs.add(
@@ -82,14 +82,12 @@ List<Spec> buildSelectionSetClasses({
     ctx: ctx,
     baseName: baseName,
     selectionSet: selectionSet,
-    parentTypeName: parentTypeName,
-    fieldContext: FieldContext.base,
   );
 
   final baseImplements = _interfaceRefs(
     ctx: ctx,
     fragmentSpreads: interfaceSpreads,
-    parentTypeName: parentTypeName,
+    parentTypeName: selectionSet.parentTypeName,
     baseImplements: classImplements,
   );
   specs.add(
@@ -118,8 +116,6 @@ List<Spec> buildSelectionSetClasses({
       ctx: ctx,
       baseName: inlineBaseName,
       selectionSet: entry.value,
-      parentTypeName: typeName,
-      fieldContext: FieldContext.inline,
     );
     final baseKeys = baseFields.map((field) => field.responseKey).toSet();
     final List<FieldSpec> mergedFields = [
@@ -172,7 +168,7 @@ List<Spec> buildSelectionSetClasses({
       implementsRefs: _interfaceRefs(
         ctx: ctx,
         fragmentSpreads: interfaceSpreads,
-        parentTypeName: parentTypeName,
+        parentTypeName: selectionSet.parentTypeName,
         baseImplements: classImplements,
       ),
       extendsRef: refer(className),
@@ -339,7 +335,6 @@ List<Spec> _buildNestedClasses(
         ctx: ctx,
         baseName: nestedName,
         selectionSet: field.selectionSet!,
-        parentTypeName: field.selectionSet!.parentTypeName,
         classImplements: nestedInterfaces,
         fragmentName: null,
       ),

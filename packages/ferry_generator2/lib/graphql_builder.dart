@@ -15,6 +15,7 @@ import "src/emit/req_emitter.dart";
 import "src/schema/schema.dart";
 import "src/emit/schema_emitter.dart";
 import "src/selection/selection_resolver.dart";
+import "src/ir/builder.dart";
 import "src/source/source.dart";
 import "src/emit/utils_emitter.dart";
 import "src/emit/vars_emitter.dart";
@@ -169,15 +170,16 @@ class GraphqlBuilder implements Builder {
         config.shouldAddTypenames ? addTypenamesToSource(docSource) : docSource;
 
     final documentIndex = DocumentIndex(sourceWithTypenames.flatDocument);
-    final resolver = SelectionResolver(
-      schema: schemaIndex,
-      documentIndex: documentIndex,
-      addTypenames: config.shouldAddTypenames,
-    );
     DocumentValidator(
       schema: schemaIndex,
       documentIndex: documentIndex,
     ).validate(sourceWithTypenames.flatDocument);
+
+    final documentIr = buildDocumentIr(
+      schema: schemaIndex,
+      config: config,
+      documentIndex: documentIndex,
+    );
 
     final fragmentSourceUrls = _fragmentSourceUrls(sourceWithTypenames);
 
@@ -192,29 +194,20 @@ class GraphqlBuilder implements Builder {
         .whereType<OperationDefinitionNode>();
 
     final dataEmitter = DataEmitter(
-      schema: schemaIndex,
       config: config,
-      documentIndex: documentIndex,
-      resolver: resolver,
+      document: documentIr,
       fragmentSourceUrls: fragmentSourceUrls,
       utilsUrl: utilsUrl,
     );
     final varsEmitter = VarsEmitter(
-      schema: schemaIndex,
       config: config,
-      documentIndex: documentIndex,
+      document: documentIr,
       utilsUrl: utilsUrl,
     );
-    final fragmentsWithVars = <String>{};
-    for (final fragment in ownedFragments) {
-      if (varsEmitter.fragmentVarTypes(fragment).isNotEmpty) {
-        fragmentsWithVars.add(fragment.name.value);
-      }
-    }
     final reqEmitter = ReqEmitter(
       config: config,
-      fragmentsWithVars: fragmentsWithVars,
       documentIndex: documentIndex,
+      document: documentIr,
       fragmentSourceUrls: fragmentSourceUrls,
       utilsUrl: utilsUrl,
     );

@@ -63,15 +63,26 @@ class FieldSelection {
     );
   }
 
-  FieldSelection clone() => FieldSelection(
-        responseKey: responseKey,
-        fieldName: fieldName,
-        argumentsKey: argumentsKey,
-        typeNode: typeNode,
-        selectionSet: selectionSet?.clone(),
-        fragmentSpreadOnlyName: fragmentSpreadOnlyName,
-        isSynthetic: isSynthetic,
-      );
+  FieldSelection copyWith({
+    String? responseKey,
+    String? fieldName,
+    String? argumentsKey,
+    TypeNode? typeNode,
+    ResolvedSelectionSet? selectionSet,
+    String? fragmentSpreadOnlyName,
+    bool? isSynthetic,
+  }) {
+    return FieldSelection(
+      responseKey: responseKey ?? this.responseKey,
+      fieldName: fieldName ?? this.fieldName,
+      argumentsKey: argumentsKey ?? this.argumentsKey,
+      typeNode: typeNode ?? this.typeNode,
+      selectionSet: selectionSet ?? this.selectionSet?.copyWith(),
+      fragmentSpreadOnlyName:
+          fragmentSpreadOnlyName ?? this.fragmentSpreadOnlyName,
+      isSynthetic: isSynthetic ?? this.isSynthetic,
+    );
+  }
 }
 
 class ResolvedSelectionSet {
@@ -122,16 +133,28 @@ class ResolvedSelectionSet {
     mergeFrom(other);
   }
 
-  ResolvedSelectionSet clone() {
-    final copy = ResolvedSelectionSet(parentTypeName: parentTypeName);
-    for (final entry in fields.entries) {
-      copy.fields[entry.key] = entry.value.clone();
+  ResolvedSelectionSet copyWith({
+    String? parentTypeName,
+    Map<String, FieldSelection>? fields,
+    Map<String, ResolvedSelectionSet>? inlineFragments,
+    Set<String>? fragmentSpreads,
+    Set<String>? unconditionalFragmentSpreads,
+  }) {
+    final copy = ResolvedSelectionSet(
+      parentTypeName: parentTypeName ?? this.parentTypeName,
+    );
+    final fieldEntries = fields ?? this.fields;
+    for (final entry in fieldEntries.entries) {
+      copy.fields[entry.key] = entry.value.copyWith();
     }
-    for (final entry in inlineFragments.entries) {
-      copy.inlineFragments[entry.key] = entry.value.clone();
+    final inlineEntries = inlineFragments ?? this.inlineFragments;
+    for (final entry in inlineEntries.entries) {
+      copy.inlineFragments[entry.key] = entry.value.copyWith();
     }
-    copy.fragmentSpreads.addAll(fragmentSpreads);
-    copy.unconditionalFragmentSpreads.addAll(unconditionalFragmentSpreads);
+    copy.fragmentSpreads.addAll(fragmentSpreads ?? this.fragmentSpreads);
+    copy.unconditionalFragmentSpreads.addAll(
+      unconditionalFragmentSpreads ?? this.unconditionalFragmentSpreads,
+    );
     return copy;
   }
 }
@@ -186,7 +209,7 @@ class SelectionResolver {
     final cacheKey = _SelectionCacheKey(selectionSet, parentTypeName);
     final cached = _cache[cacheKey];
     if (cached != null) {
-      return cached.clone();
+      return cached.copyWith();
     }
     final parentType = schema.lookupType(NameNode(value: parentTypeName));
     if (parentType == null) {
@@ -216,7 +239,7 @@ class SelectionResolver {
       }
       _ensureTypenameField(result);
     }
-    _cache[cacheKey] = result.clone();
+    _cache[cacheKey] = result.copyWith();
     return result;
   }
 

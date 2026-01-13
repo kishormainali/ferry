@@ -1,5 +1,3 @@
-import "dart:collection";
-
 import "package:gql/ast.dart";
 import "package:gql/language.dart";
 
@@ -79,7 +77,7 @@ class FieldSelection {
       fieldName: fieldName ?? this.fieldName,
       argumentsKey: argumentsKey ?? this.argumentsKey,
       typeNode: typeNode ?? this.typeNode,
-      selectionSet: selectionSet ?? this.selectionSet?.copyWith(),
+      selectionSet: selectionSet ?? this.selectionSet,
       fragmentSpreadOnlyName:
           fragmentSpreadOnlyName ?? this.fragmentSpreadOnlyName,
       isSynthetic: isSynthetic ?? this.isSynthetic,
@@ -87,33 +85,54 @@ class FieldSelection {
   }
 }
 
-class ResolvedSelectionSet {
+final class ResolvedSelectionSet {
   final String parentTypeName;
-  final Map<String, FieldSelection> _fields = {};
-  final Map<String, ResolvedSelectionSet> _inlineFragments = {};
-  final Set<String> _fragmentSpreads = {};
-  final Set<String> _unconditionalFragmentSpreads = {};
+  final Map<String, FieldSelection> fields;
+  final Map<String, ResolvedSelectionSet> inlineFragments;
+  final Set<String> fragmentSpreads;
+  final Set<String> unconditionalFragmentSpreads;
 
-  ResolvedSelectionSet({required this.parentTypeName});
+  const ResolvedSelectionSet._({
+    required this.parentTypeName,
+    required this.fields,
+    required this.inlineFragments,
+    required this.fragmentSpreads,
+    required this.unconditionalFragmentSpreads,
+  });
+}
 
-  Map<String, FieldSelection> get fields => UnmodifiableMapView(_fields);
-  Map<String, ResolvedSelectionSet> get inlineFragments =>
-      UnmodifiableMapView(_inlineFragments);
-  Set<String> get fragmentSpreads => UnmodifiableSetView(_fragmentSpreads);
-  Set<String> get unconditionalFragmentSpreads =>
-      UnmodifiableSetView(_unconditionalFragmentSpreads);
+final class _ResolvedSelectionSetBuilder {
+  final String parentTypeName;
+  final Map<String, FieldSelection> fields;
+  final Map<String, ResolvedSelectionSet> inlineFragments;
+  final Set<String> fragmentSpreads;
+  final Set<String> unconditionalFragmentSpreads;
 
-  FieldSelection? getField(String key) => _fields[key];
-  void setField(String key, FieldSelection value) => _fields[key] = value;
+  _ResolvedSelectionSetBuilder({required this.parentTypeName})
+      : fields = {},
+        inlineFragments = {},
+        fragmentSpreads = {},
+        unconditionalFragmentSpreads = {};
 
-  ResolvedSelectionSet? getInlineFragment(String key) => _inlineFragments[key];
+  _ResolvedSelectionSetBuilder.from(ResolvedSelectionSet selectionSet)
+      : parentTypeName = selectionSet.parentTypeName,
+        fields = Map.of(selectionSet.fields),
+        inlineFragments = Map.of(selectionSet.inlineFragments),
+        fragmentSpreads = Set.of(selectionSet.fragmentSpreads),
+        unconditionalFragmentSpreads =
+            Set.of(selectionSet.unconditionalFragmentSpreads);
+
+  FieldSelection? getField(String key) => fields[key];
+  void setField(String key, FieldSelection value) => fields[key] = value;
+
+  ResolvedSelectionSet? getInlineFragment(String key) => inlineFragments[key];
   void setInlineFragment(String key, ResolvedSelectionSet value) =>
-      _inlineFragments[key] = value;
+      inlineFragments[key] = value;
 
   void addFragmentSpread(String name, {required bool unconditional}) {
-    _fragmentSpreads.add(name);
+    fragmentSpreads.add(name);
     if (unconditional) {
-      _unconditionalFragmentSpreads.add(name);
+      unconditionalFragmentSpreads.add(name);
     }
   }
 
@@ -122,60 +141,42 @@ class ResolvedSelectionSet {
     bool includeUnconditional = true,
   }) {
     for (final entry in other.fields.entries) {
-      final existing = _fields[entry.key];
+      final existing = fields[entry.key];
       if (existing == null) {
-        _fields[entry.key] = entry.value;
+        fields[entry.key] = entry.value;
       } else {
-        _fields[entry.key] = existing.mergeWith(entry.value);
+        fields[entry.key] = existing.mergeWith(entry.value);
       }
     }
 
     for (final entry in other.inlineFragments.entries) {
-      final existing = _inlineFragments[entry.key];
+      final existing = inlineFragments[entry.key];
       if (existing == null) {
-        _inlineFragments[entry.key] = entry.value;
+        inlineFragments[entry.key] = entry.value;
       } else {
-        existing.mergeInlineFrom(entry.value);
+        inlineFragments[entry.key] = _mergeResolvedSelectionSets(
+          existing,
+          entry.value,
+          includeUnconditional: includeUnconditional,
+        );
       }
     }
 
-    _fragmentSpreads.addAll(other.fragmentSpreads);
+    fragmentSpreads.addAll(other.fragmentSpreads);
     if (includeUnconditional) {
-      _unconditionalFragmentSpreads.addAll(other.unconditionalFragmentSpreads);
+      unconditionalFragmentSpreads.addAll(other.unconditionalFragmentSpreads);
     }
   }
 
-  void mergeInlineFrom(ResolvedSelectionSet other) {
-    mergeFrom(other);
-  }
-
-  ResolvedSelectionSet copyWith({
-    String? parentTypeName,
-    Map<String, FieldSelection>? fields,
-    Map<String, ResolvedSelectionSet>? inlineFragments,
-    Set<String>? fragmentSpreads,
-    Set<String>? unconditionalFragmentSpreads,
-  }) {
-    final copy = ResolvedSelectionSet(
-      parentTypeName: parentTypeName ?? this.parentTypeName,
+  ResolvedSelectionSet build() {
+    return ResolvedSelectionSet._(
+      parentTypeName: parentTypeName,
+      fields: Map.unmodifiable(Map.of(fields)),
+      inlineFragments: Map.unmodifiable(Map.of(inlineFragments)),
+      fragmentSpreads: Set.unmodifiable(Set.of(fragmentSpreads)),
+      unconditionalFragmentSpreads:
+          Set.unmodifiable(Set.of(unconditionalFragmentSpreads)),
     );
-    final fieldEntries = fields ?? _fields;
-    for (final entry in fieldEntries.entries) {
-      copy.setField(entry.key, entry.value.copyWith());
-    }
-    final inlineEntries = inlineFragments ?? _inlineFragments;
-    for (final entry in inlineEntries.entries) {
-      copy.setInlineFragment(entry.key, entry.value.copyWith());
-    }
-    copy._fragmentSpreads.addAll(fragmentSpreads ?? _fragmentSpreads);
-    copy._unconditionalFragmentSpreads.addAll(
-      unconditionalFragmentSpreads ?? _unconditionalFragmentSpreads,
-    );
-    return copy;
-  }
-
-  void clearUnconditionalFragmentSpreads() {
-    _unconditionalFragmentSpreads.clear();
   }
 }
 
@@ -185,8 +186,27 @@ ResolvedSelectionSet? _mergeSelectionSets(
 ) {
   if (a == null) return b;
   if (b == null) return a;
-  a.mergeInlineFrom(b);
-  return a;
+  return _mergeResolvedSelectionSets(a, b);
+}
+
+ResolvedSelectionSet _mergeResolvedSelectionSets(
+  ResolvedSelectionSet base,
+  ResolvedSelectionSet other, {
+  bool includeUnconditional = true,
+}) {
+  final builder = _ResolvedSelectionSetBuilder.from(base);
+  builder.mergeFrom(other, includeUnconditional: includeUnconditional);
+  return builder.build();
+}
+
+ResolvedSelectionSet _withFragmentSpread(
+  ResolvedSelectionSet selectionSet,
+  String name, {
+  required bool unconditional,
+}) {
+  final builder = _ResolvedSelectionSetBuilder.from(selectionSet);
+  builder.addFragmentSpread(name, unconditional: unconditional);
+  return builder.build();
 }
 
 class SelectionResolver {
@@ -229,14 +249,14 @@ class SelectionResolver {
     final cacheKey = _SelectionCacheKey(selectionSet, parentTypeName);
     final cached = _cache[cacheKey];
     if (cached != null) {
-      return cached.copyWith();
+      return cached;
     }
     final parentType = schema.lookupType(NameNode(value: parentTypeName));
     if (parentType == null) {
       throw StateError("Missing type definition for $parentTypeName");
     }
 
-    final result = ResolvedSelectionSet(parentTypeName: parentTypeName);
+    final result = _ResolvedSelectionSetBuilder(parentTypeName: parentTypeName);
 
     for (final selection in selectionSet.selections) {
       if (selection is FieldNode) {
@@ -259,12 +279,13 @@ class SelectionResolver {
       }
       _ensureTypenameField(result);
     }
-    _cache[cacheKey] = result.copyWith();
-    return result;
+    final built = result.build();
+    _cache[cacheKey] = built;
+    return built;
   }
 
   void _addFieldSelection(
-    ResolvedSelectionSet result,
+    _ResolvedSelectionSetBuilder result,
     TypeDefinitionNode parentType,
     FieldNode field,
     Set<String> fragmentStack,
@@ -323,21 +344,21 @@ class SelectionResolver {
   }
 
   void _addInlineFragment(
-    ResolvedSelectionSet result,
+    _ResolvedSelectionSetBuilder result,
     String parentTypeName,
     InlineFragmentNode fragment,
     Set<String> fragmentStack,
   ) {
     final typeConditionName =
         fragment.typeCondition?.on.name.value ?? parentTypeName;
-    final resolved = resolveSelectionSet(
+    var resolved = resolveSelectionSet(
       fragment.selectionSet,
       typeConditionName,
       fragmentStack: fragmentStack,
     );
     final unconditional = !_hasConditionalDirective(fragment.directives);
     if (!unconditional) {
-      _clearUnconditionalFragmentSpreads(resolved);
+      resolved = _clearUnconditionalFragmentSpreads(resolved);
     }
 
     if (_shouldMergeIntoBase(parentTypeName, typeConditionName)) {
@@ -352,15 +373,19 @@ class SelectionResolver {
     if (existing == null) {
       result.setInlineFragment(typeConditionName, resolved);
     } else {
-      existing.mergeFrom(
-        resolved,
-        includeUnconditional: unconditional,
+      result.setInlineFragment(
+        typeConditionName,
+        _mergeResolvedSelectionSets(
+          existing,
+          resolved,
+          includeUnconditional: unconditional,
+        ),
       );
     }
   }
 
   void _addFragmentSpread(
-    ResolvedSelectionSet result,
+    _ResolvedSelectionSetBuilder result,
     String parentTypeName,
     FragmentSpreadNode spread,
     Set<String> fragmentStack,
@@ -372,14 +397,14 @@ class SelectionResolver {
 
     final fragment = documentIndex.getFragment(name);
     final fragmentTypeName = fragment.typeCondition.on.name.value;
-    final resolved = resolveSelectionSet(
+    var resolved = resolveSelectionSet(
       fragment.selectionSet,
       fragmentTypeName,
       fragmentStack: {...fragmentStack, name},
     );
     final unconditional = !_hasConditionalDirective(spread.directives);
     if (!unconditional) {
-      _clearUnconditionalFragmentSpreads(resolved);
+      resolved = _clearUnconditionalFragmentSpreads(resolved);
     }
 
     if (_shouldMergeIntoBase(parentTypeName, fragmentTypeName)) {
@@ -393,14 +418,28 @@ class SelectionResolver {
 
     final existing = result.getInlineFragment(fragmentTypeName);
     if (existing == null) {
-      result.setInlineFragment(fragmentTypeName, resolved);
-      resolved.addFragmentSpread(name, unconditional: unconditional);
+      result.setInlineFragment(
+        fragmentTypeName,
+        _withFragmentSpread(
+          resolved,
+          name,
+          unconditional: unconditional,
+        ),
+      );
     } else {
-      existing.mergeFrom(
+      final merged = _mergeResolvedSelectionSets(
+        existing,
         resolved,
         includeUnconditional: unconditional,
       );
-      existing.addFragmentSpread(name, unconditional: unconditional);
+      result.setInlineFragment(
+        fragmentTypeName,
+        _withFragmentSpread(
+          merged,
+          name,
+          unconditional: unconditional,
+        ),
+      );
     }
   }
 
@@ -420,7 +459,7 @@ class SelectionResolver {
     return schema.possibleTypesMap()[typeName] ?? {};
   }
 
-  void _ensureTypenameField(ResolvedSelectionSet result) {
+  void _ensureTypenameField(_ResolvedSelectionSetBuilder result) {
     if (result.fields.containsKey("__typename")) return;
     result.setField(
       "__typename",
@@ -458,17 +497,55 @@ class _SelectionCacheKey {
       Object.hash(identityHashCode(selectionSet), parentTypeName);
 }
 
-void _clearUnconditionalFragmentSpreads(ResolvedSelectionSet selectionSet) {
-  selectionSet.clearUnconditionalFragmentSpreads();
-  for (final field in selectionSet.fields.values) {
-    final nested = field.selectionSet;
-    if (nested != null) {
-      _clearUnconditionalFragmentSpreads(nested);
+ResolvedSelectionSet _clearUnconditionalFragmentSpreads(
+  ResolvedSelectionSet selectionSet,
+) {
+  var fieldsChanged = false;
+  final clearedFields = <String, FieldSelection>{};
+  for (final entry in selectionSet.fields.entries) {
+    final selection = entry.value;
+    final nested = selection.selectionSet;
+    if (nested == null) {
+      clearedFields[entry.key] = selection;
+      continue;
+    }
+    final clearedNested = _clearUnconditionalFragmentSpreads(nested);
+    if (!identical(clearedNested, nested)) {
+      fieldsChanged = true;
+      clearedFields[entry.key] = selection.copyWith(
+        selectionSet: clearedNested,
+      );
+    } else {
+      clearedFields[entry.key] = selection;
     }
   }
-  for (final inline in selectionSet.inlineFragments.values) {
-    _clearUnconditionalFragmentSpreads(inline);
+
+  var inlineChanged = false;
+  final clearedInline = <String, ResolvedSelectionSet>{};
+  for (final entry in selectionSet.inlineFragments.entries) {
+    final cleared = _clearUnconditionalFragmentSpreads(entry.value);
+    if (!identical(cleared, entry.value)) {
+      inlineChanged = true;
+    }
+    clearedInline[entry.key] = cleared;
   }
+
+  if (!fieldsChanged &&
+      !inlineChanged &&
+      selectionSet.unconditionalFragmentSpreads.isEmpty) {
+    return selectionSet;
+  }
+
+  return ResolvedSelectionSet._(
+    parentTypeName: selectionSet.parentTypeName,
+    fields:
+        fieldsChanged ? Map.unmodifiable(clearedFields) : selectionSet.fields,
+    inlineFragments: inlineChanged
+        ? Map.unmodifiable(clearedInline)
+        : selectionSet.inlineFragments,
+    fragmentSpreads: selectionSet.fragmentSpreads,
+    unconditionalFragmentSpreads: const {},
+  );
 }
 
 TypeNode _applyConditionalNullability(

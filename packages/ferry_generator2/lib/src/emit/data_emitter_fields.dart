@@ -2,6 +2,7 @@ import "package:code_builder/code_builder.dart";
 import "package:gql/ast.dart";
 
 import "../config/builder_config.dart";
+import "collection_helpers.dart";
 import "data_emitter_context.dart";
 import "data_emitter_types.dart";
 import "../ir/model.dart";
@@ -123,11 +124,7 @@ bool isMapOverride({
   required DataEmitterContext ctx,
   required String typeName,
 }) {
-  final override = ctx.config.typeOverrides[typeName];
-  final overrideType = override?.type;
-  if (overrideType == null) return false;
-  final normalized = overrideType.replaceAll(" ", "");
-  return RegExp(r'(^|\\.)Map(<|\\?|$)').hasMatch(normalized);
+  return isMapOverrideType(typeName, ctx.config.typeOverrides);
 }
 
 Reference typeReferenceForTypeNode(

@@ -3,6 +3,7 @@ import "package:gql/ast.dart";
 
 import "../config/builder_config.dart";
 import "../utils/naming.dart";
+import "collection_helpers.dart";
 import "../schema/schema.dart";
 import "../schema/type_utils.dart";
 import "../utils/docs.dart";
@@ -407,14 +408,6 @@ class _SchemaEmitter {
     };
   }
 
-  bool _isMapOverride(String typeName) {
-    final override = config.typeOverrides[typeName];
-    final overrideType = override?.type;
-    if (overrideType == null) return false;
-    final normalized = overrideType.replaceAll(" ", "");
-    return RegExp(r'(^|\.)Map(<|\?|$)').hasMatch(normalized);
-  }
-
   Reference _typeReferenceForTypeNode(
     TypeNode typeNode,
     Reference namedTypeRef, {
@@ -478,10 +471,22 @@ class _SchemaEmitter {
       final absentExpr = refer("Value").newInstanceNamed("absent", []);
       final valueExpr =
           _conditionalExpression(condition, presentExpr, absentExpr);
-      return _wrapCollectionsIfNeeded(field.typeNode, valueExpr);
+      return wrapCollectionValue(
+        config: config,
+        node: field.typeNode,
+        overrides: config.typeOverrides,
+        valueExpr: valueExpr,
+        nullGuard: _nullGuard,
+      );
     }
     final valueExpr = _fromJsonForTypeNode(field.typeNode, field, accessExpr);
-    return _wrapCollectionsIfNeeded(field.typeNode, valueExpr);
+    return wrapCollectionValue(
+      config: config,
+      node: field.typeNode,
+      overrides: config.typeOverrides,
+      valueExpr: valueExpr,
+      nullGuard: _nullGuard,
+    );
   }
 
   Expression _fromJsonForTypeNode(
@@ -566,62 +571,24 @@ class _SchemaEmitter {
     );
   }
 
-  Expression _wrapCollectionsIfNeeded(TypeNode node, Expression valueExpr) {
-    if (config.collections.mode != CollectionMode.unmodifiable) {
-      return valueExpr;
-    }
-    if (node is ListTypeNode) {
-      if (node.isNonNull) {
-        return refer("List").property("unmodifiable").call([valueExpr]);
-      }
-      return _nullGuard(
-        valueExpr,
-        refer("List").property("unmodifiable").call([valueExpr]),
-      );
-    }
-    if (node is NamedTypeNode) {
-      final typeName = node.name.value;
-      if (_isMapOverride(typeName)) {
-        if (node.isNonNull) {
-          return refer("Map").property("unmodifiable").call([valueExpr]);
-        }
-        return _nullGuard(
-          valueExpr,
-          refer("Map").property("unmodifiable").call([valueExpr]),
-        );
-      }
-    }
-    return valueExpr;
-  }
-
   bool _needsCollectionWrapper(_InputFieldSpec field) {
-    if (config.collections.mode != CollectionMode.unmodifiable) {
-      return false;
-    }
-    final node = field.typeNode;
-    if (node is ListTypeNode) return true;
-    if (node is NamedTypeNode) {
-      return _isMapOverride(node.name.value);
-    }
-    return false;
+    return needsCollectionWrapper(
+      config: config,
+      node: field.typeNode,
+      overrides: config.typeOverrides,
+    );
   }
 
   String _collectionWrapperExpression(
     _InputFieldSpec field,
     String propertyName,
   ) {
-    final node = field.typeNode;
-    if (node is ListTypeNode) {
-      final wrapper = "List.unmodifiable($propertyName)";
-      if (node.isNonNull) return wrapper;
-      return "$propertyName == null ? null : $wrapper";
-    }
-    if (node is NamedTypeNode && _isMapOverride(node.name.value)) {
-      final wrapper = "Map.unmodifiable($propertyName)";
-      if (node.isNonNull) return wrapper;
-      return "$propertyName == null ? null : $wrapper";
-    }
-    return propertyName;
+    return collectionWrapperExpression(
+      config: config,
+      node: field.typeNode,
+      overrides: config.typeOverrides,
+      propertyName: propertyName,
+    );
   }
 
   Expression _toJsonForTypeNode(

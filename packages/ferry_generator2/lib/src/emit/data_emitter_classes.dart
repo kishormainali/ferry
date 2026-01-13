@@ -1,7 +1,7 @@
 import "package:code_builder/code_builder.dart";
 import "package:gql/ast.dart";
 
-import "../config/builder_config.dart";
+import "collection_helpers.dart";
 import "data_emitter_context.dart";
 import "data_emitter_fields.dart";
 import "data_emitter_json.dart";
@@ -524,7 +524,13 @@ Constructor _buildConstructor(
 }) {
   final wrapFields = fieldsList
       .where((field) => !superFields.contains(field))
-      .where((field) => _needsCollectionWrapper(ctx, field))
+      .where(
+        (field) => needsCollectionWrapper(
+          config: ctx.config,
+          node: field.typeNode,
+          overrides: ctx.config.typeOverrides,
+        ),
+      )
       .toList();
   final wrapFieldNames = wrapFields.map((field) => field.propertyName).toSet();
 
@@ -545,7 +551,12 @@ Constructor _buildConstructor(
   final initializers = <Code>[];
   for (final field in wrapFields) {
     final propertyName = field.propertyName;
-    final wrapper = _collectionWrapperExpression(ctx, field, propertyName);
+    final wrapper = collectionWrapperExpression(
+      config: ctx.config,
+      node: field.typeNode,
+      overrides: ctx.config.typeOverrides,
+      propertyName: propertyName,
+    );
     initializers.add(Code("$propertyName = $wrapper"));
   }
   if (extendsRef != null && superFields.isNotEmpty) {
@@ -561,38 +572,6 @@ Constructor _buildConstructor(
       ..optionalParameters.addAll(namedParameters)
       ..initializers.addAll(initializers),
   );
-}
-
-bool _needsCollectionWrapper(DataEmitterContext ctx, FieldSpec field) {
-  if (ctx.config.collections.mode != CollectionMode.unmodifiable) {
-    return false;
-  }
-  final node = field.typeNode;
-  if (node is ListTypeNode) return true;
-  if (node is NamedTypeNode) {
-    return isMapOverride(ctx: ctx, typeName: node.name.value);
-  }
-  return false;
-}
-
-String _collectionWrapperExpression(
-  DataEmitterContext ctx,
-  FieldSpec field,
-  String propertyName,
-) {
-  final node = field.typeNode;
-  if (node is ListTypeNode) {
-    final wrapper = "List.unmodifiable($propertyName)";
-    if (node.isNonNull) return wrapper;
-    return "$propertyName == null ? null : $wrapper";
-  }
-  if (node is NamedTypeNode &&
-      isMapOverride(ctx: ctx, typeName: node.name.value)) {
-    final wrapper = "Map.unmodifiable($propertyName)";
-    if (node.isNonNull) return wrapper;
-    return "$propertyName == null ? null : $wrapper";
-  }
-  return propertyName;
 }
 
 Constructor _buildFromJsonFactory(

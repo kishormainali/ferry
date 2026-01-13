@@ -2,6 +2,7 @@ import "package:code_builder/code_builder.dart";
 import "package:gql/ast.dart";
 
 import "../config/builder_config.dart";
+import "collection_helpers.dart";
 import "data_emitter_context.dart";
 import "data_emitter_fields.dart";
 import "data_emitter_types.dart";
@@ -18,7 +19,13 @@ Expression fromJsonExpression({
     node: field.typeNode,
     valueExpr: accessExpr,
   );
-  return _wrapCollectionsIfNeeded(ctx, field.typeNode, valueExpr);
+  return wrapCollectionValue(
+    config: ctx.config,
+    node: field.typeNode,
+    overrides: ctx.config.typeOverrides,
+    valueExpr: valueExpr,
+    nullGuard: nullGuard,
+  );
 }
 
 Expression _fromJsonForTypeNode({
@@ -193,38 +200,6 @@ Expression _toJsonForTypeNode({
     return nullGuard(valueExpr, inner);
   }
   throw StateError("Invalid type node");
-}
-
-Expression _wrapCollectionsIfNeeded(
-  DataEmitterContext ctx,
-  TypeNode node,
-  Expression valueExpr,
-) {
-  if (ctx.config.collections.mode != CollectionMode.unmodifiable) {
-    return valueExpr;
-  }
-  if (node is ListTypeNode) {
-    if (node.isNonNull) {
-      return refer("List").property("unmodifiable").call([valueExpr]);
-    }
-    return nullGuard(
-      valueExpr,
-      refer("List").property("unmodifiable").call([valueExpr]),
-    );
-  }
-  if (node is NamedTypeNode) {
-    final typeName = node.name.value;
-    if (isMapOverride(ctx: ctx, typeName: typeName)) {
-      if (node.isNonNull) {
-        return refer("Map").property("unmodifiable").call([valueExpr]);
-      }
-      return nullGuard(
-        valueExpr,
-        refer("Map").property("unmodifiable").call([valueExpr]),
-      );
-    }
-  }
-  return valueExpr;
 }
 
 Expression _toJsonForNamedType({

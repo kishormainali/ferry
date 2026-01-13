@@ -170,6 +170,20 @@ void main() {
         'vars': {
           'tristate_optionals': false,
         },
+        'collections': {
+          'mode': 'plain',
+        },
+      },
+      expectTristate: false,
+      expectWhenExtensions: false,
+    ),
+    _Scenario(
+      name: 'unmodifiable collections',
+      config: {
+        ...baseConfig,
+        'collections': {
+          'mode': 'unmodifiable',
+        },
       },
       expectTristate: false,
       expectWhenExtensions: false,
@@ -197,6 +211,11 @@ void main() {
       _expectReqGenerics(resolved.req);
       _expectDataToJsonSignature(resolved.req);
       _expectReqDocumentDefinitions(resolved.req);
+      if (scenario.name == 'unmodifiable collections') {
+        final dataSource = readGeneratedDartSource(sources, _fragmentDataPath);
+        final varsSource = readGeneratedDartSource(sources, _queryVarPath);
+        _expectUnmodifiableCollections(dataSource + varsSource);
+      }
     });
   }
 }
@@ -384,6 +403,10 @@ void _expectReqDocumentDefinitions(LibraryElement library) {
     bookByIdExpected,
   );
   expect(bookByIdDefs.length, bookByIdExpected.length);
+}
+
+void _expectUnmodifiableCollections(String source) {
+  expect(source, contains('unmodifiable('));
 }
 
 List<String> _reqDefinitionNames(

@@ -205,6 +205,10 @@ const dataClassesSchema = ConfigSchema("data_classes", {
   "utils": ConfigSection(utilsSchema),
 });
 
+const collectionsSchema = ConfigSchema("collections", {
+  "mode": ConfigLeaf<String>(ConfigValueType.string, "plain"),
+});
+
 const varsSchema = ConfigSchema("vars", {
   "tristate_optionals": ConfigLeaf<bool>(ConfigValueType.boolean, false),
 });
@@ -246,6 +250,7 @@ const configSchema = ConfigSchema("options", {
   "schema": ConfigSection(schemaSchema),
   "outputs": ConfigSection(outputsSchema),
   "data_classes": ConfigSection(dataClassesSchema),
+  "collections": ConfigSection(collectionsSchema),
   "vars": ConfigSection(varsSchema),
   "docs": ConfigSection(docsSchema),
   "formatting": ConfigSection(formattingSchema),

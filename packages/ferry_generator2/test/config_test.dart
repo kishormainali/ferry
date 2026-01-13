@@ -95,6 +95,9 @@ void main() {
         'add_typenames': true,
         'unknown': true,
       },
+      'collections': {
+        'mode': 'plain',
+      },
       'enums': {
         'fallback': {
           'per_enum': {
@@ -126,6 +129,9 @@ void main() {
         'vars': {
           'tristate_optionals': 'nope',
         },
+        'collections': {
+          'mode': 'plain',
+        },
       }),
       throwsA(
         isA<ArgumentError>().having(
@@ -143,6 +149,9 @@ void main() {
         'scalars': {
           'Date': 'String',
         },
+        'collections': {
+          'mode': 'plain',
+        },
       }),
       throwsA(
         isA<ArgumentError>().having(
@@ -152,5 +161,15 @@ void main() {
         ),
       ),
     );
+  });
+
+  test('parses collection mode', () {
+    final config = BuilderConfig({
+      'collections': {
+        'mode': 'unmodifiable',
+      },
+    });
+
+    expect(config.collections.mode, CollectionMode.unmodifiable);
   });
 }

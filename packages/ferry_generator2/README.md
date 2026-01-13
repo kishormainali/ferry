@@ -114,6 +114,18 @@ Note: `req` depends on `ast`, `data`, and `vars`.
 - `when_extensions`: `when` / `maybe_when` extension generation.
 - `utils`: `copy_with`, `equals`, `hash_code`, `to_string`.
 
+### `collections`
+Choose how list/map fields are represented:
+
+```yaml
+collections:
+  mode: plain # or unmodifiable
+```
+
+- `plain`: standard `List`/`Map` types (default).
+- `unmodifiable`: wraps generated list/map fields with
+  `List.unmodifiable` / `Map.unmodifiable` in constructors and `fromJson`.
+
 ### `vars`
 - `tristate_optionals`: use `Value<T>` for nullable variables.
 

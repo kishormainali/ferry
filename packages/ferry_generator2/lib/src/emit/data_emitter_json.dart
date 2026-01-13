@@ -12,12 +12,13 @@ Expression fromJsonExpression({
   required FieldSpec field,
 }) {
   final accessExpr = refer("json").index(literalString(field.responseKey));
-  return _fromJsonForTypeNode(
+  final valueExpr = _fromJsonForTypeNode(
     ctx: ctx,
     field: field,
     node: field.typeNode,
     valueExpr: accessExpr,
   );
+  return _wrapCollectionsIfNeeded(ctx, field.typeNode, valueExpr);
 }
 
 Expression _fromJsonForTypeNode({
@@ -192,6 +193,38 @@ Expression _toJsonForTypeNode({
     return nullGuard(valueExpr, inner);
   }
   throw StateError("Invalid type node");
+}
+
+Expression _wrapCollectionsIfNeeded(
+  DataEmitterContext ctx,
+  TypeNode node,
+  Expression valueExpr,
+) {
+  if (ctx.config.collections.mode != CollectionMode.unmodifiable) {
+    return valueExpr;
+  }
+  if (node is ListTypeNode) {
+    if (node.isNonNull) {
+      return refer("List").property("unmodifiable").call([valueExpr]);
+    }
+    return nullGuard(
+      valueExpr,
+      refer("List").property("unmodifiable").call([valueExpr]),
+    );
+  }
+  if (node is NamedTypeNode) {
+    final typeName = node.name.value;
+    if (isMapOverride(ctx: ctx, typeName: typeName)) {
+      if (node.isNonNull) {
+        return refer("Map").property("unmodifiable").call([valueExpr]);
+      }
+      return nullGuard(
+        valueExpr,
+        refer("Map").property("unmodifiable").call([valueExpr]),
+      );
+    }
+  }
+  return valueExpr;
 }
 
 Expression _toJsonForNamedType({

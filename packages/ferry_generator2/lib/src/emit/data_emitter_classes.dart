@@ -1,6 +1,7 @@
 import "package:code_builder/code_builder.dart";
 import "package:gql/ast.dart";
 
+import "../config/builder_config.dart";
 import "data_emitter_context.dart";
 import "data_emitter_fields.dart";
 import "data_emitter_json.dart";
@@ -422,7 +423,7 @@ Class _buildPolymorphicBaseClass({
       ..implements.addAll(implementsRefs)
       ..fields.addAll(baseFields.map(_buildField))
       ..constructors.addAll([
-        _buildConstructor(baseFields, null),
+        _buildConstructor(ctx, baseFields, null),
         _buildFromJsonFactory(className, baseFields, inlineTypeNames),
       ])
       ..methods.add(
@@ -508,7 +509,7 @@ Class _buildConcreteClass({
         fields.where((field) => !superFields.contains(field)).map(_buildField),
       )
       ..constructors.addAll([
-        _buildConstructor(fields, extendsRef, superFields: superFields),
+        _buildConstructor(ctx, fields, extendsRef, superFields: superFields),
         _buildConcreteFromJson(ctx, className, fields),
       ])
       ..methods.addAll(methods),
@@ -516,24 +517,37 @@ Class _buildConcreteClass({
 }
 
 Constructor _buildConstructor(
+  DataEmitterContext ctx,
   List<FieldSpec> fieldsList,
   Reference? extendsRef, {
   List<FieldSpec> superFields = const [],
 }) {
+  final wrapFields = fieldsList
+      .where((field) => !superFields.contains(field))
+      .where((field) => _needsCollectionWrapper(ctx, field))
+      .toList();
+  final wrapFieldNames = wrapFields.map((field) => field.propertyName).toSet();
+
   final namedParameters = fieldsList.map((field) {
     final isRequired = field.typeRef is TypeReference
         ? !((field.typeRef as TypeReference).isNullable ?? false)
         : true;
+    final shouldWrap = wrapFieldNames.contains(field.propertyName);
     return Parameter(
       (b) => b
         ..name = field.propertyName
         ..named = true
         ..required = isRequired
-        ..toThis = !superFields.contains(field),
+        ..toThis = !superFields.contains(field) && !shouldWrap,
     );
   });
 
   final initializers = <Code>[];
+  for (final field in wrapFields) {
+    final propertyName = field.propertyName;
+    final wrapper = _collectionWrapperExpression(ctx, field, propertyName);
+    initializers.add(Code("$propertyName = $wrapper"));
+  }
   if (extendsRef != null && superFields.isNotEmpty) {
     final args = superFields
         .map((field) => "${field.propertyName}: ${field.propertyName}")
@@ -543,10 +557,42 @@ Constructor _buildConstructor(
 
   return Constructor(
     (b) => b
-      ..constant = true
+      ..constant = wrapFields.isEmpty
       ..optionalParameters.addAll(namedParameters)
       ..initializers.addAll(initializers),
   );
+}
+
+bool _needsCollectionWrapper(DataEmitterContext ctx, FieldSpec field) {
+  if (ctx.config.collections.mode != CollectionMode.unmodifiable) {
+    return false;
+  }
+  final node = field.typeNode;
+  if (node is ListTypeNode) return true;
+  if (node is NamedTypeNode) {
+    return isMapOverride(ctx: ctx, typeName: node.name.value);
+  }
+  return false;
+}
+
+String _collectionWrapperExpression(
+  DataEmitterContext ctx,
+  FieldSpec field,
+  String propertyName,
+) {
+  final node = field.typeNode;
+  if (node is ListTypeNode) {
+    final wrapper = "List.unmodifiable($propertyName)";
+    if (node.isNonNull) return wrapper;
+    return "$propertyName == null ? null : $wrapper";
+  }
+  if (node is NamedTypeNode &&
+      isMapOverride(ctx: ctx, typeName: node.name.value)) {
+    final wrapper = "Map.unmodifiable($propertyName)";
+    if (node.isNonNull) return wrapper;
+    return "$propertyName == null ? null : $wrapper";
+  }
+  return propertyName;
 }
 
 Constructor _buildFromJsonFactory(

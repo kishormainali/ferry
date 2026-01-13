@@ -169,6 +169,18 @@ Top-level options:
   - `hash_code` (default `false`)
   - `to_string` (default `false`)
 
+### `collections`
+Choose how list/map fields are represented:
+
+```yaml
+collections:
+  mode: plain # or unmodifiable
+```
+
+- `plain` (default): standard `List`/`Map` types.
+- `unmodifiable`: wraps generated list/map fields with
+  `List.unmodifiable` / `Map.unmodifiable` in constructors and `fromJson`.
+
 ### `vars`
 - `tristate_optionals` (default `false`)
   - When enabled, nullable inputs/vars are wrapped in `Value<T>` from `gql_tristate_value`.

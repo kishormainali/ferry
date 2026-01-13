@@ -234,22 +234,33 @@ class _SchemaEmitter {
   }
 
   Constructor _buildConstructor(List<_InputFieldSpec> fields) {
+    final wrapFields = fields.where(_needsCollectionWrapper).toList();
+    final wrapNames = wrapFields.map((field) => field.propertyName).toSet();
+
     final parameters = fields.map(
       (field) => Parameter(
         (b) => b
           ..name = field.propertyName
           ..named = true
           ..required = field.isRequired
-          ..toThis = true
+          ..toThis = !wrapNames.contains(field.propertyName)
           ..defaultTo =
               field.isTriState ? const Code("const Value.absent()") : null,
       ),
     );
 
+    final initializers = <Code>[];
+    for (final field in wrapFields) {
+      final propertyName = field.propertyName;
+      final wrapper = _collectionWrapperExpression(field, propertyName);
+      initializers.add(Code("$propertyName = $wrapper"));
+    }
+
     return Constructor(
       (b) => b
-        ..constant = true
-        ..optionalParameters.addAll(parameters),
+        ..constant = wrapFields.isEmpty
+        ..optionalParameters.addAll(parameters)
+        ..initializers.addAll(initializers),
     );
   }
 
@@ -396,6 +407,14 @@ class _SchemaEmitter {
     };
   }
 
+  bool _isMapOverride(String typeName) {
+    final override = config.typeOverrides[typeName];
+    final overrideType = override?.type;
+    if (overrideType == null) return false;
+    final normalized = overrideType.replaceAll(" ", "");
+    return RegExp(r'(^|\.)Map(<|\?|$)').hasMatch(normalized);
+  }
+
   Reference _typeReferenceForTypeNode(
     TypeNode typeNode,
     Reference namedTypeRef, {
@@ -457,9 +476,12 @@ class _SchemaEmitter {
           .call([literalString(field.responseKey)]);
       final presentExpr = refer("Value").newInstanceNamed("present", [inner]);
       final absentExpr = refer("Value").newInstanceNamed("absent", []);
-      return _conditionalExpression(condition, presentExpr, absentExpr);
+      final valueExpr =
+          _conditionalExpression(condition, presentExpr, absentExpr);
+      return _wrapCollectionsIfNeeded(field.typeNode, valueExpr);
     }
-    return _fromJsonForTypeNode(field.typeNode, field, accessExpr);
+    final valueExpr = _fromJsonForTypeNode(field.typeNode, field, accessExpr);
+    return _wrapCollectionsIfNeeded(field.typeNode, valueExpr);
   }
 
   Expression _fromJsonForTypeNode(
@@ -542,6 +564,64 @@ class _SchemaEmitter {
       field,
       valueExpr,
     );
+  }
+
+  Expression _wrapCollectionsIfNeeded(TypeNode node, Expression valueExpr) {
+    if (config.collections.mode != CollectionMode.unmodifiable) {
+      return valueExpr;
+    }
+    if (node is ListTypeNode) {
+      if (node.isNonNull) {
+        return refer("List").property("unmodifiable").call([valueExpr]);
+      }
+      return _nullGuard(
+        valueExpr,
+        refer("List").property("unmodifiable").call([valueExpr]),
+      );
+    }
+    if (node is NamedTypeNode) {
+      final typeName = node.name.value;
+      if (_isMapOverride(typeName)) {
+        if (node.isNonNull) {
+          return refer("Map").property("unmodifiable").call([valueExpr]);
+        }
+        return _nullGuard(
+          valueExpr,
+          refer("Map").property("unmodifiable").call([valueExpr]),
+        );
+      }
+    }
+    return valueExpr;
+  }
+
+  bool _needsCollectionWrapper(_InputFieldSpec field) {
+    if (config.collections.mode != CollectionMode.unmodifiable) {
+      return false;
+    }
+    final node = field.typeNode;
+    if (node is ListTypeNode) return true;
+    if (node is NamedTypeNode) {
+      return _isMapOverride(node.name.value);
+    }
+    return false;
+  }
+
+  String _collectionWrapperExpression(
+    _InputFieldSpec field,
+    String propertyName,
+  ) {
+    final node = field.typeNode;
+    if (node is ListTypeNode) {
+      final wrapper = "List.unmodifiable($propertyName)";
+      if (node.isNonNull) return wrapper;
+      return "$propertyName == null ? null : $wrapper";
+    }
+    if (node is NamedTypeNode && _isMapOverride(node.name.value)) {
+      final wrapper = "Map.unmodifiable($propertyName)";
+      if (node.isNonNull) return wrapper;
+      return "$propertyName == null ? null : $wrapper";
+    }
+    return propertyName;
   }
 
   Expression _toJsonForTypeNode(

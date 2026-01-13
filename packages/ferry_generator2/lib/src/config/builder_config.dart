@@ -17,6 +17,7 @@ class BuilderConfig {
   final bool shouldGeneratePossibleTypes;
   final Map<String, TypeOverrideConfig> typeOverrides;
   final EnumFallbackConfig enumFallbackConfig;
+  final CollectionConfig collections;
   final String outputDir;
   final String sourceExtension;
   final InlineFragmentSpreadWhenExtensionConfig whenExtensionConfig;
@@ -57,6 +58,8 @@ class BuilderConfig {
         as Map<String, Object?>;
     final dataClassesConfig = (values["data_classes"] ??
         const <String, Object?>{}) as Map<String, Object?>;
+    final collectionsConfig = (values["collections"] ??
+        const <String, Object?>{}) as Map<String, Object?>;
     final whenExtensionsConfig = (dataClassesConfig["when_extensions"] ??
         const <String, Object?>{}) as Map<String, Object?>;
     final utilsConfig = (dataClassesConfig["utils"] ??
@@ -89,6 +92,7 @@ class BuilderConfig {
           schemaConfig["generate_possible_types_map"] as bool,
       typeOverrides: _getTypeOverrides(scalarsConfig),
       enumFallbackConfig: _getEnumFallbackConfig(enumsFallbackConfig),
+      collections: _getCollectionsConfig(collectionsConfig),
       outputDir: schemaConfig["output_dir"] as String,
       sourceExtension: schemaConfig["source_extension"] as String,
       whenExtensionConfig: _getWhenExtensionConfig(whenExtensionsConfig),
@@ -127,6 +131,7 @@ class BuilderConfig {
     required this.shouldGeneratePossibleTypes,
     required this.typeOverrides,
     required this.enumFallbackConfig,
+    required this.collections,
     required this.outputDir,
     required this.sourceExtension,
     required this.whenExtensionConfig,
@@ -151,7 +156,8 @@ class BuilderConfig {
     final logging = _loggingSummary();
     return "schema=$schema, outputs=$outputs, addTypenames=$shouldAddTypenames, "
         "possibleTypes=$shouldGeneratePossibleTypes, scalars=$scalars, "
-        "format=$format, formatter=${formatterLanguageVersion ?? 'default'}, "
+        "collections=${collections.mode.name}, format=$format, "
+        "formatter=${formatterLanguageVersion ?? 'default'}, "
         "docs=${generateDocs ? 'on' : 'off'}, utils=${_utilsSummary()}, "
         "logging=$logging";
   }
@@ -252,6 +258,14 @@ class EnumFallbackConfig {
   });
 }
 
+enum CollectionMode { plain, unmodifiable }
+
+class CollectionConfig {
+  final CollectionMode mode;
+
+  const CollectionConfig({required this.mode});
+}
+
 class TypeOverrideConfig {
   final String? type;
   final String? import;
@@ -281,6 +295,22 @@ OutputsConfig _getOutputsConfig(Map<String, Object?> config) {
     vars: config["vars"] as bool,
     req: config["req"] as bool,
     schema: config["schema"] as bool,
+  );
+}
+
+CollectionConfig _getCollectionsConfig(Map<String, Object?> config) {
+  final raw = config["mode"] as String;
+  final value = raw.trim().toLowerCase();
+  return CollectionConfig(
+    mode: switch (value) {
+      "plain" => CollectionMode.plain,
+      "unmodifiable" => CollectionMode.unmodifiable,
+      _ => throw ArgumentError.value(
+          raw,
+          "collections.mode",
+          "Expected one of plain, unmodifiable",
+        ),
+    },
   );
 }
 

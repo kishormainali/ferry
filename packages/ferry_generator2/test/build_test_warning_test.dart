@@ -44,6 +44,9 @@ void main() {
         'add_typenames': true,
         'unknown': true,
       },
+      'collections': {
+        'mode': 'plain',
+      },
       'enums': {
         'fallback': {
           'per_enum': {
@@ -96,6 +99,9 @@ void main() {
       'schema': {
         'file': _schemaPath,
         'add_typenames': true,
+      },
+      'collections': {
+        'mode': 'plain',
       },
       'formatting': {
         'enabled': false,

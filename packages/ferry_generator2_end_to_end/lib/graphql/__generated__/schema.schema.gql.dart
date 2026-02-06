@@ -93,9 +93,9 @@ class GReviewInput {
       seenOn: json.containsKey('seenOn')
           ? Value.present(json['seenOn'] == null
               ? null
-              : (json['seenOn'] as List<dynamic>)
+              : List<CustomDate?>.unmodifiable((json['seenOn'] as List<dynamic>)
                   .map((_$e) => _$e == null ? null : customDateFromJson(_$e))
-                  .toList())
+                  .toList()))
           : Value.absent(),
     );
   }

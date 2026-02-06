@@ -131,11 +131,11 @@ class GHeroForEpisodeData {
 
 /// A character from the Star Wars universe.
 sealed class GHeroForEpisodeData_hero {
-  const GHeroForEpisodeData_hero({
+  GHeroForEpisodeData_hero({
     required this.name,
-    this.friends,
+    List<GHeroForEpisodeData_hero_friends?>? friends,
     required this.G__typename,
-  });
+  }) : friends = friends == null ? null : List.unmodifiable(friends);
 
   factory GHeroForEpisodeData_hero.fromJson(Map<String, dynamic> json) {
     switch (json['__typename'] as String) {
@@ -250,10 +250,10 @@ class GHeroForEpisodeData_hero_friends {
 
 class GHeroForEpisodeData_hero__asDroid extends GHeroForEpisodeData_hero
     implements GDroidFragment {
-  const GHeroForEpisodeData_hero__asDroid({
-    required name,
-    friends,
-    required G__typename,
+  GHeroForEpisodeData_hero__asDroid({
+    required String name,
+    List<GHeroForEpisodeData_hero_friends?>? friends,
+    required String G__typename,
     this.primaryFunction,
   }) : super(name: name, friends: friends, G__typename: G__typename);
 
@@ -263,12 +263,13 @@ class GHeroForEpisodeData_hero__asDroid extends GHeroForEpisodeData_hero
       name: (json['name'] as String),
       friends: json['friends'] == null
           ? null
-          : (json['friends'] as List<dynamic>)
-              .map((_$e) => _$e == null
-                  ? null
-                  : GHeroForEpisodeData_hero_friends.fromJson(
-                      (_$e as Map<String, dynamic>)))
-              .toList(),
+          : List<GHeroForEpisodeData_hero_friends?>.unmodifiable(
+              (json['friends'] as List<dynamic>)
+                  .map((_$e) => _$e == null
+                      ? null
+                      : GHeroForEpisodeData_hero_friends.fromJson(
+                          (_$e as Map<String, dynamic>)))
+                  .toList()),
       G__typename: (json['__typename'] as String),
       primaryFunction: json['primaryFunction'] == null
           ? null
@@ -327,10 +328,10 @@ class GHeroForEpisodeData_hero__asDroid extends GHeroForEpisodeData_hero
 
 /// A character from the Star Wars universe.
 class GHeroForEpisodeData_hero__unknown extends GHeroForEpisodeData_hero {
-  const GHeroForEpisodeData_hero__unknown({
-    required name,
-    friends,
-    required G__typename,
+  GHeroForEpisodeData_hero__unknown({
+    required String name,
+    List<GHeroForEpisodeData_hero_friends?>? friends,
+    required String G__typename,
   }) : super(name: name, friends: friends, G__typename: G__typename);
 
   factory GHeroForEpisodeData_hero__unknown.fromJson(
@@ -339,12 +340,13 @@ class GHeroForEpisodeData_hero__unknown extends GHeroForEpisodeData_hero {
       name: (json['name'] as String),
       friends: json['friends'] == null
           ? null
-          : (json['friends'] as List<dynamic>)
-              .map((_$e) => _$e == null
-                  ? null
-                  : GHeroForEpisodeData_hero_friends.fromJson(
-                      (_$e as Map<String, dynamic>)))
-              .toList(),
+          : List<GHeroForEpisodeData_hero_friends?>.unmodifiable(
+              (json['friends'] as List<dynamic>)
+                  .map((_$e) => _$e == null
+                      ? null
+                      : GHeroForEpisodeData_hero_friends.fromJson(
+                          (_$e as Map<String, dynamic>)))
+                  .toList()),
       G__typename: (json['__typename'] as String),
     );
   }

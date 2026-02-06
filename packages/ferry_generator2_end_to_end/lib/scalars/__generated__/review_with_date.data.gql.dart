@@ -70,15 +70,16 @@ class GReviewWithDateData {
 }
 
 class GReviewWithDateData_createReview {
-  const GReviewWithDateData_createReview({
+  GReviewWithDateData_createReview({
     this.episode,
     required this.stars,
     this.commentary,
     this.createdAt,
-    required this.seenOn,
-    required this.custom,
+    required List<CustomDate> seenOn,
+    required List<String> custom,
     required this.G__typename,
-  });
+  })  : seenOn = List.unmodifiable(seenOn),
+        custom = List.unmodifiable(custom);
 
   factory GReviewWithDateData_createReview.fromJson(Map<String, dynamic> json) {
     return GReviewWithDateData_createReview(
@@ -91,10 +92,11 @@ class GReviewWithDateData_createReview {
       createdAt: json['createdAt'] == null
           ? null
           : customDateFromJson(json['createdAt']),
-      seenOn: (json['seenOn'] as List<dynamic>)
+      seenOn: List<CustomDate>.unmodifiable((json['seenOn'] as List<dynamic>)
           .map((_$e) => customDateFromJson(_$e))
-          .toList(),
-      custom: List<String>.from((json['custom'] as List<dynamic>)),
+          .toList()),
+      custom: List<String>.unmodifiable(
+          List<String>.from((json['custom'] as List<dynamic>))),
       G__typename: (json['__typename'] as String),
     );
   }

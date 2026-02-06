@@ -14,6 +14,14 @@ fragment SharedBookFragment on Book {
   author {
     ...SharedAuthorFragment
   }
+  tagMatrix
+  tagMatrixNullable
+  relatedBooks {
+    title
+    author {
+      ...SharedAuthorFragment
+    }
+  }
   ... on Textbook {
     courses
   }

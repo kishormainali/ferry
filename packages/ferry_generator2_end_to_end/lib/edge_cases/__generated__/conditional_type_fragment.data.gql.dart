@@ -179,9 +179,9 @@ extension GHeroConditionalTypeFragmentData_heroWhenExtension
 
 class GHeroConditionalTypeFragmentData_hero__asHuman
     extends GHeroConditionalTypeFragmentData_hero {
-  const GHeroConditionalTypeFragmentData_hero__asHuman({
-    required G__typename,
-    required id,
+  GHeroConditionalTypeFragmentData_hero__asHuman({
+    required String G__typename,
+    required String id,
     required this.name,
   }) : super(G__typename: G__typename, id: id);
 
@@ -237,9 +237,9 @@ class GHeroConditionalTypeFragmentData_hero__asHuman
 /// A character from the Star Wars universe.
 class GHeroConditionalTypeFragmentData_hero__unknown
     extends GHeroConditionalTypeFragmentData_hero {
-  const GHeroConditionalTypeFragmentData_hero__unknown({
-    required G__typename,
-    required id,
+  GHeroConditionalTypeFragmentData_hero__unknown({
+    required String G__typename,
+    required String id,
   }) : super(G__typename: G__typename, id: id);
 
   factory GHeroConditionalTypeFragmentData_hero__unknown.fromJson(

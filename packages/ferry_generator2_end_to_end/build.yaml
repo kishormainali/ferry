@@ -41,3 +41,5 @@ targets:
           logging:
             level: info
             format: text
+          collections:
+            mode: unmodifiable

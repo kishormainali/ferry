@@ -547,6 +547,29 @@ void main() {
           '__typename': 'Textbook',
           'title': 'GraphQL 101',
           'courses': ['Intro'],
+          'tagMatrix': [
+            ['tag1', 'tag2'],
+            ['tag3'],
+          ],
+          'tagMatrixNullable': [
+            ['nullable', null],
+            null,
+            [],
+          ],
+          'relatedBooks': [
+            [
+              {
+                '__typename': 'Textbook',
+                'title': 'GraphQL 102',
+                'author': {
+                  '__typename': 'Person',
+                  'displayName': 'Bob Builder',
+                  'firstName': 'Bob',
+                  'lastName': 'Builder',
+                },
+              },
+            ],
+          ],
           'author': {
             '__typename': 'Person',
             'displayName': 'Ada Lovelace',
@@ -577,6 +600,29 @@ void main() {
           '__typename': 'Textbook',
           'title': 'GraphQL 101',
           'courses': ['Intro'],
+          'tagMatrix': [
+            ['tag1', 'tag2'],
+            ['tag3'],
+          ],
+          'tagMatrixNullable': [
+            ['nullable', null],
+            null,
+            [],
+          ],
+          'relatedBooks': [
+            [
+              {
+                '__typename': 'Textbook',
+                'title': 'GraphQL 102',
+                'author': {
+                  '__typename': 'Person',
+                  'displayName': 'Bob Builder',
+                  'firstName': 'Bob',
+                  'lastName': 'Builder',
+                },
+              },
+            ],
+          ],
           'author': {
             '__typename': 'Person',
             'displayName': 'Ada Lovelace',
@@ -603,6 +649,29 @@ void main() {
           '__typename': 'Textbook',
           'title': 'GraphQL 101',
           'courses': ['Intro', 'Advanced'],
+          'tagMatrix': [
+            ['tag1', 'tag2'],
+            ['tag3'],
+          ],
+          'tagMatrixNullable': [
+            ['nullable', null],
+            null,
+            [],
+          ],
+          'relatedBooks': [
+            [
+              {
+                '__typename': 'Textbook',
+                'title': 'GraphQL 102',
+                'author': {
+                  '__typename': 'Person',
+                  'displayName': 'Bob Builder',
+                  'firstName': 'Bob',
+                  'lastName': 'Builder',
+                },
+              },
+            ],
+          ],
           'author': {
             '__typename': 'Person',
             'displayName': 'Ada Lovelace',
@@ -627,6 +696,29 @@ void main() {
           '__typename': 'Textbook',
           'title': 'GraphQL 101',
           'courses': ['Intro'],
+          'tagMatrix': [
+            ['tag1', 'tag2'],
+            ['tag3'],
+          ],
+          'tagMatrixNullable': [
+            ['nullable', null],
+            null,
+            [],
+          ],
+          'relatedBooks': [
+            [
+              {
+                '__typename': 'Textbook',
+                'title': 'GraphQL 102',
+                'author': {
+                  '__typename': 'Person',
+                  'displayName': 'Bob Builder',
+                  'firstName': 'Bob',
+                  'lastName': 'Builder',
+                },
+              },
+            ],
+          ],
           'author': {
             '__typename': 'Person',
             'displayName': 'Ada Lovelace',

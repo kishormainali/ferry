@@ -96,7 +96,7 @@ void main() {
     _check(roundTripSearch.length == 3, 'round trip search length mismatch');
   }
 
-  const emptyData = GSearchResultsQueryData(
+  final emptyData = GSearchResultsQueryData(
     G__typename: 'Query',
     search: <GSearchResultsQueryData_search?>[],
   );
@@ -108,7 +108,7 @@ void main() {
     _check(emptySearch.isEmpty, 'empty search not empty');
   }
 
-  const unknown = GSearchResultsQueryData_search__unknown(
+  final unknown = GSearchResultsQueryData_search__unknown(
     G__typename: 'Starship',
   );
   _check(

@@ -16,12 +16,13 @@ class GPostsByLikesVars {
         likes: json.containsKey('likes')
             ? Value.present(json['likes'] == null
                 ? null
-                : (json['likes'] as List<dynamic>)
-                    .map((_$e) => _$e == null
-                        ? null
-                        : _i1.GPostLikesInput.fromJson(
-                            (_$e as Map<String, dynamic>)))
-                    .toList())
+                : List<_i1.GPostLikesInput?>.unmodifiable(
+                    (json['likes'] as List<dynamic>)
+                        .map((_$e) => _$e == null
+                            ? null
+                            : _i1.GPostLikesInput.fromJson(
+                                (_$e as Map<String, dynamic>)))
+                        .toList()))
             : Value.absent());
   }
 

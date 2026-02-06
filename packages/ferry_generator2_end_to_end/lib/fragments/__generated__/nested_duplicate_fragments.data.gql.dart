@@ -18,13 +18,14 @@ abstract class GCharacterDetails {
 
 /// A character from the Star Wars universe.
 class GCharacterDetailsData implements GCharacterDetails {
-  const GCharacterDetailsData({
+  GCharacterDetailsData({
     required this.id,
     required this.name,
-    this.friends,
-    required this.appearsIn,
+    List<GFriendInfoData?>? friends,
+    required List<_i1.GEpisode?> appearsIn,
     required this.G__typename,
-  });
+  })  : friends = friends == null ? null : List.unmodifiable(friends),
+        appearsIn = List.unmodifiable(appearsIn);
 
   factory GCharacterDetailsData.fromJson(Map<String, dynamic> json) {
     return GCharacterDetailsData(
@@ -32,15 +33,17 @@ class GCharacterDetailsData implements GCharacterDetails {
       name: (json['name'] as String),
       friends: json['friends'] == null
           ? null
-          : (json['friends'] as List<dynamic>)
-              .map((_$e) => _$e == null
-                  ? null
-                  : GFriendInfoData.fromJson((_$e as Map<String, dynamic>)))
-              .toList(),
-      appearsIn: (json['appearsIn'] as List<dynamic>)
-          .map((_$e) =>
-              _$e == null ? null : _i1.GEpisode.fromJson((_$e as String)))
-          .toList(),
+          : List<GFriendInfoData?>.unmodifiable(
+              (json['friends'] as List<dynamic>)
+                  .map((_$e) => _$e == null
+                      ? null
+                      : GFriendInfoData.fromJson((_$e as Map<String, dynamic>)))
+                  .toList()),
+      appearsIn: List<_i1.GEpisode?>.unmodifiable(
+          (json['appearsIn'] as List<dynamic>)
+              .map((_$e) =>
+                  _$e == null ? null : _i1.GEpisode.fromJson((_$e as String)))
+              .toList()),
       G__typename: (json['__typename'] as String),
     );
   }
@@ -197,21 +200,22 @@ class GFriendInfoData implements GFriendInfo {
 
 class GFriendInfoData_friendsConnection
     implements GFriendInfo_friendsConnection {
-  const GFriendInfoData_friendsConnection({
-    this.friends,
+  GFriendInfoData_friendsConnection({
+    List<GCharacterBasicData?>? friends,
     required this.G__typename,
-  });
+  }) : friends = friends == null ? null : List.unmodifiable(friends);
 
   factory GFriendInfoData_friendsConnection.fromJson(
       Map<String, dynamic> json) {
     return GFriendInfoData_friendsConnection(
       friends: json['friends'] == null
           ? null
-          : (json['friends'] as List<dynamic>)
+          : List<GCharacterBasicData?>.unmodifiable((json['friends']
+                  as List<dynamic>)
               .map((_$e) => _$e == null
                   ? null
                   : GCharacterBasicData.fromJson((_$e as Map<String, dynamic>)))
-              .toList(),
+              .toList()),
       G__typename: (json['__typename'] as String),
     );
   }
@@ -333,21 +337,22 @@ class GCharacterBasicData implements GCharacterBasic {
 
 /// The query type for the schema.
 class GSearchResultsQueryData {
-  const GSearchResultsQueryData({
-    this.search,
+  GSearchResultsQueryData({
+    List<GSearchResultsQueryData_search?>? search,
     required this.G__typename,
-  });
+  }) : search = search == null ? null : List.unmodifiable(search);
 
   factory GSearchResultsQueryData.fromJson(Map<String, dynamic> json) {
     return GSearchResultsQueryData(
       search: json['search'] == null
           ? null
-          : (json['search'] as List<dynamic>)
-              .map((_$e) => _$e == null
-                  ? null
-                  : GSearchResultsQueryData_search.fromJson(
-                      (_$e as Map<String, dynamic>)))
-              .toList(),
+          : List<GSearchResultsQueryData_search?>.unmodifiable(
+              (json['search'] as List<dynamic>)
+                  .map((_$e) => _$e == null
+                      ? null
+                      : GSearchResultsQueryData_search.fromJson(
+                          (_$e as Map<String, dynamic>)))
+                  .toList()),
       G__typename: (json['__typename'] as String),
     );
   }
@@ -460,13 +465,15 @@ extension GSearchResultsQueryData_searchWhenExtension
 
 class GSearchResultsQueryData_search__asHuman
     extends GSearchResultsQueryData_search implements GCharacterDetails {
-  const GSearchResultsQueryData_search__asHuman({
-    required G__typename,
+  GSearchResultsQueryData_search__asHuman({
+    required String G__typename,
     required this.id,
     required this.name,
-    this.friends,
-    required this.appearsIn,
-  }) : super(G__typename: G__typename);
+    List<GFriendInfoData?>? friends,
+    required List<_i1.GEpisode?> appearsIn,
+  })  : friends = friends == null ? null : List.unmodifiable(friends),
+        appearsIn = List.unmodifiable(appearsIn),
+        super(G__typename: G__typename);
 
   factory GSearchResultsQueryData_search__asHuman.fromJson(
       Map<String, dynamic> json) {
@@ -476,15 +483,17 @@ class GSearchResultsQueryData_search__asHuman
       name: (json['name'] as String),
       friends: json['friends'] == null
           ? null
-          : (json['friends'] as List<dynamic>)
-              .map((_$e) => _$e == null
-                  ? null
-                  : GFriendInfoData.fromJson((_$e as Map<String, dynamic>)))
-              .toList(),
-      appearsIn: (json['appearsIn'] as List<dynamic>)
-          .map((_$e) =>
-              _$e == null ? null : _i1.GEpisode.fromJson((_$e as String)))
-          .toList(),
+          : List<GFriendInfoData?>.unmodifiable(
+              (json['friends'] as List<dynamic>)
+                  .map((_$e) => _$e == null
+                      ? null
+                      : GFriendInfoData.fromJson((_$e as Map<String, dynamic>)))
+                  .toList()),
+      appearsIn: List<_i1.GEpisode?>.unmodifiable(
+          (json['appearsIn'] as List<dynamic>)
+              .map((_$e) =>
+                  _$e == null ? null : _i1.GEpisode.fromJson((_$e as String)))
+              .toList()),
     );
   }
 
@@ -553,13 +562,15 @@ class GSearchResultsQueryData_search__asHuman
 
 class GSearchResultsQueryData_search__asDroid
     extends GSearchResultsQueryData_search implements GCharacterDetails {
-  const GSearchResultsQueryData_search__asDroid({
-    required G__typename,
+  GSearchResultsQueryData_search__asDroid({
+    required String G__typename,
     required this.id,
     required this.name,
-    this.friends,
-    required this.appearsIn,
-  }) : super(G__typename: G__typename);
+    List<GFriendInfoData?>? friends,
+    required List<_i1.GEpisode?> appearsIn,
+  })  : friends = friends == null ? null : List.unmodifiable(friends),
+        appearsIn = List.unmodifiable(appearsIn),
+        super(G__typename: G__typename);
 
   factory GSearchResultsQueryData_search__asDroid.fromJson(
       Map<String, dynamic> json) {
@@ -569,15 +580,17 @@ class GSearchResultsQueryData_search__asDroid
       name: (json['name'] as String),
       friends: json['friends'] == null
           ? null
-          : (json['friends'] as List<dynamic>)
-              .map((_$e) => _$e == null
-                  ? null
-                  : GFriendInfoData.fromJson((_$e as Map<String, dynamic>)))
-              .toList(),
-      appearsIn: (json['appearsIn'] as List<dynamic>)
-          .map((_$e) =>
-              _$e == null ? null : _i1.GEpisode.fromJson((_$e as String)))
-          .toList(),
+          : List<GFriendInfoData?>.unmodifiable(
+              (json['friends'] as List<dynamic>)
+                  .map((_$e) => _$e == null
+                      ? null
+                      : GFriendInfoData.fromJson((_$e as Map<String, dynamic>)))
+                  .toList()),
+      appearsIn: List<_i1.GEpisode?>.unmodifiable(
+          (json['appearsIn'] as List<dynamic>)
+              .map((_$e) =>
+                  _$e == null ? null : _i1.GEpisode.fromJson((_$e as String)))
+              .toList()),
     );
   }
 
@@ -646,7 +659,7 @@ class GSearchResultsQueryData_search__asDroid
 
 class GSearchResultsQueryData_search__unknown
     extends GSearchResultsQueryData_search {
-  const GSearchResultsQueryData_search__unknown({required G__typename})
+  GSearchResultsQueryData_search__unknown({required String G__typename})
       : super(G__typename: G__typename);
 
   factory GSearchResultsQueryData_search__unknown.fromJson(

@@ -85,21 +85,21 @@ class GAliasedHeroData {
 
 /// A character from the Star Wars universe.
 class GAliasedHeroData_empireHero {
-  const GAliasedHeroData_empireHero({
+  GAliasedHeroData_empireHero({
     required this.id,
     required this.name,
-    required this.from,
+    required List<_i1.GEpisode?> from,
     required this.G__typename,
-  });
+  }) : from = List.unmodifiable(from);
 
   factory GAliasedHeroData_empireHero.fromJson(Map<String, dynamic> json) {
     return GAliasedHeroData_empireHero(
       id: (json['id'] as String),
       name: (json['name'] as String),
-      from: (json['from'] as List<dynamic>)
+      from: List<_i1.GEpisode?>.unmodifiable((json['from'] as List<dynamic>)
           .map((_$e) =>
               _$e == null ? null : _i1.GEpisode.fromJson((_$e as String)))
-          .toList(),
+          .toList()),
       G__typename: (json['__typename'] as String),
     );
   }
@@ -160,21 +160,21 @@ class GAliasedHeroData_empireHero {
 
 /// A character from the Star Wars universe.
 class GAliasedHeroData_jediHero {
-  const GAliasedHeroData_jediHero({
+  GAliasedHeroData_jediHero({
     required this.id,
     required this.name,
-    required this.from,
+    required List<_i1.GEpisode?> from,
     required this.G__typename,
-  });
+  }) : from = List.unmodifiable(from);
 
   factory GAliasedHeroData_jediHero.fromJson(Map<String, dynamic> json) {
     return GAliasedHeroData_jediHero(
       id: (json['id'] as String),
       name: (json['name'] as String),
-      from: (json['from'] as List<dynamic>)
+      from: List<_i1.GEpisode?>.unmodifiable((json['from'] as List<dynamic>)
           .map((_$e) =>
               _$e == null ? null : _i1.GEpisode.fromJson((_$e as String)))
-          .toList(),
+          .toList()),
       G__typename: (json['__typename'] as String),
     );
   }

@@ -13,18 +13,11 @@ Expression fromJsonExpression({
   required FieldSpec field,
 }) {
   final accessExpr = refer("json").index(literalString(field.responseKey));
-  final valueExpr = _fromJsonForTypeNode(
+  return _fromJsonForTypeNode(
     ctx: ctx,
     field: field,
     node: field.typeNode,
     valueExpr: accessExpr,
-  );
-  return wrapCollectionValue(
-    config: ctx.config,
-    node: field.typeNode,
-    overrides: ctx.config.typeOverrides,
-    valueExpr: valueExpr,
-    nullGuard: nullGuard,
   );
 }
 
@@ -57,10 +50,16 @@ Expression _fromJsonForTypeNode({
         );
         final castExpr = valueExpr.asA(listDynamicType());
         final fromExpr = listTypeRef.property("from").call([castExpr]);
+        final wrapped = _wrapListIfNeeded(
+          ctx: ctx,
+          node: node,
+          field: field,
+          innerExpr: fromExpr,
+        );
         if (node.isNonNull) {
-          return fromExpr;
+          return wrapped;
         }
-        return nullGuard(valueExpr, fromExpr);
+        return nullGuard(valueExpr, wrapped);
       }
     }
     final innerExpr = _fromJsonForTypeNode(
@@ -84,10 +83,16 @@ Expression _fromJsonForTypeNode({
         ])
         .property("toList")
         .call([]);
+    final wrapped = _wrapListIfNeeded(
+      ctx: ctx,
+      node: node,
+      field: field,
+      innerExpr: mapped,
+    );
     if (node.isNonNull) {
-      return mapped;
+      return wrapped;
     }
-    return nullGuard(valueExpr, mapped);
+    return nullGuard(valueExpr, wrapped);
   }
   if (node is NamedTypeNode) {
     final typeName = node.name.value;
@@ -134,7 +139,28 @@ Expression _fromJsonForNamedType({
   }
 
   final scalarType = scalarReference(ctx: ctx, typeName: typeName);
-  return valueExpr.asA(scalarType);
+  final castExpr = valueExpr.asA(scalarType);
+  return ctx.collections.wrapMap(
+    typeName: typeName,
+    innerExpr: castExpr,
+  );
+}
+
+Expression _wrapListIfNeeded({
+  required DataEmitterContext ctx,
+  required TypeNode node,
+  required FieldSpec field,
+  required Expression innerExpr,
+}) {
+  final listTypeRef = typeReferenceForTypeNode(node, field.namedTypeRef);
+  final nonNullListRef = typeReferenceWithNullability(
+    listTypeRef,
+    isNullable: false,
+  );
+  return ctx.collections.wrapList(
+    listTypeRef: nonNullListRef,
+    innerExpr: innerExpr,
+  );
 }
 
 Expression toJsonExpression({

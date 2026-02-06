@@ -168,6 +168,10 @@ class _SchemaEmitter {
   final SchemaIndex schema;
   final BuilderConfig config;
   final Set<String> _extraImports = {};
+  late final CollectionPolicy _collections = CollectionPolicy(
+    config: config,
+    overrides: config.typeOverrides,
+  );
   bool _usesTriStateValue = false;
 
   _SchemaEmitter(this.schema, this.config);
@@ -238,17 +242,19 @@ class _SchemaEmitter {
     final wrapFields = fields.where(_needsCollectionWrapper).toList();
     final wrapNames = wrapFields.map((field) => field.propertyName).toSet();
 
-    final parameters = fields.map(
-      (field) => Parameter(
+    final parameters = fields.map((field) {
+      final useToThis = !wrapNames.contains(field.propertyName);
+      return Parameter(
         (b) => b
           ..name = field.propertyName
           ..named = true
           ..required = field.isRequired
-          ..toThis = !wrapNames.contains(field.propertyName)
+          ..toThis = useToThis
+          ..type = useToThis ? null : field.typeRef
           ..defaultTo =
               field.isTriState ? const Code("const Value.absent()") : null,
-      ),
-    );
+      );
+    });
 
     final initializers = <Code>[];
     for (final field in wrapFields) {
@@ -471,22 +477,10 @@ class _SchemaEmitter {
       final absentExpr = refer("Value").newInstanceNamed("absent", []);
       final valueExpr =
           _conditionalExpression(condition, presentExpr, absentExpr);
-      return wrapCollectionValue(
-        config: config,
-        node: field.typeNode,
-        overrides: config.typeOverrides,
-        valueExpr: valueExpr,
-        nullGuard: _nullGuard,
-      );
+      return valueExpr;
     }
     final valueExpr = _fromJsonForTypeNode(field.typeNode, field, accessExpr);
-    return wrapCollectionValue(
-      config: config,
-      node: field.typeNode,
-      overrides: config.typeOverrides,
-      valueExpr: valueExpr,
-      nullGuard: _nullGuard,
-    );
+    return valueExpr;
   }
 
   Expression _fromJsonForTypeNode(
@@ -511,10 +505,15 @@ class _SchemaEmitter {
           ])
           .property("toList")
           .call([]);
+      final wrapped = _wrapListIfNeeded(
+        node,
+        field,
+        mapped,
+      );
       if (node.isNonNull) {
-        return mapped;
+        return wrapped;
       }
-      return _nullGuard(valueExpr, mapped);
+      return _nullGuard(valueExpr, wrapped);
     }
     if (node is NamedTypeNode) {
       final typeName = node.name.value;
@@ -557,7 +556,11 @@ class _SchemaEmitter {
     }
 
     final scalarType = _scalarReference(typeName);
-    return valueExpr.asA(scalarType);
+    final castExpr = valueExpr.asA(scalarType);
+    return _collections.wrapMap(
+      typeName: typeName,
+      innerExpr: castExpr,
+    );
   }
 
   Expression _toJsonExpression(
@@ -572,21 +575,16 @@ class _SchemaEmitter {
   }
 
   bool _needsCollectionWrapper(_InputFieldSpec field) {
-    return needsCollectionWrapper(
-      config: config,
-      node: field.typeNode,
-      overrides: config.typeOverrides,
-    );
+    if (field.isTriState) return false;
+    return _collections.needsWrapper(field.typeNode);
   }
 
   String _collectionWrapperExpression(
     _InputFieldSpec field,
     String propertyName,
   ) {
-    return collectionWrapperExpression(
-      config: config,
+    return _collections.wrapConstructor(
       node: field.typeNode,
-      overrides: config.typeOverrides,
       propertyName: propertyName,
     );
   }
@@ -634,6 +632,23 @@ class _SchemaEmitter {
       return _nullGuard(valueExpr, inner);
     }
     throw StateError("Invalid type node");
+  }
+
+  Expression _wrapListIfNeeded(
+    TypeNode node,
+    _InputFieldSpec field,
+    Expression innerExpr,
+  ) {
+    final listTypeRef = _typeReferenceForTypeNode(
+      node,
+      field.namedTypeRef,
+      isTriState: false,
+      forceNonNullOuter: true,
+    );
+    return _collections.wrapList(
+      listTypeRef: listTypeRef,
+      innerExpr: innerExpr,
+    );
   }
 
   Expression _toJsonForNamedType({

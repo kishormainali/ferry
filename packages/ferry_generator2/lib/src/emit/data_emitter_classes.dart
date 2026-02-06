@@ -525,11 +525,7 @@ Constructor _buildConstructor(
   final wrapFields = fieldsList
       .where((field) => !superFields.contains(field))
       .where(
-        (field) => needsCollectionWrapper(
-          config: ctx.config,
-          node: field.typeNode,
-          overrides: ctx.config.typeOverrides,
-        ),
+        (field) => ctx.collections.needsWrapper(field.typeNode),
       )
       .toList();
   final wrapFieldNames = wrapFields.map((field) => field.propertyName).toSet();
@@ -539,22 +535,22 @@ Constructor _buildConstructor(
         ? !((field.typeRef as TypeReference).isNullable ?? false)
         : true;
     final shouldWrap = wrapFieldNames.contains(field.propertyName);
+    final useToThis = !superFields.contains(field) && !shouldWrap;
     return Parameter(
       (b) => b
         ..name = field.propertyName
         ..named = true
         ..required = isRequired
-        ..toThis = !superFields.contains(field) && !shouldWrap,
+        ..toThis = useToThis
+        ..type = useToThis ? null : field.typeRef,
     );
   });
 
   final initializers = <Code>[];
   for (final field in wrapFields) {
     final propertyName = field.propertyName;
-    final wrapper = collectionWrapperExpression(
-      config: ctx.config,
+    final wrapper = ctx.collections.wrapConstructor(
       node: field.typeNode,
-      overrides: ctx.config.typeOverrides,
       propertyName: propertyName,
     );
     initializers.add(Code("$propertyName = $wrapper"));
@@ -568,7 +564,7 @@ Constructor _buildConstructor(
 
   return Constructor(
     (b) => b
-      ..constant = wrapFields.isEmpty
+      ..constant = wrapFields.isEmpty && extendsRef == null
       ..optionalParameters.addAll(namedParameters)
       ..initializers.addAll(initializers),
   );

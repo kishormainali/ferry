@@ -1,10 +1,13 @@
 @TestOn('vm')
 
 import 'package:analyzer/dart/analysis/results.dart';
+import 'package:analyzer/dart/analysis/utilities.dart';
 import 'package:analyzer/dart/constant/value.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
+import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:analyzer/error/error.dart';
 import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
@@ -44,18 +47,24 @@ type Company implements Author {
 interface Book {
   title: String!
   author: Author!
+  tagMatrix: [[String!]!]!
+  relatedBooks: [[Book!]!]!
 }
 
 type Textbook implements Book {
   title: String!
   author: Author!
   courses: [String!]!
+  tagMatrix: [[String!]!]!
+  relatedBooks: [[Book!]!]!
 }
 
 type ColoringBook implements Book {
   title: String!
   author: Author!
   colors: [String!]!
+  tagMatrix: [[String!]!]!
+  relatedBooks: [[Book!]!]!
 }
 
 input BookFilter {
@@ -86,6 +95,13 @@ fragment BookFragment on Book {
     ...AuthorFragment
   }
   title
+  tagMatrix
+  relatedBooks {
+    title
+    author {
+      ...AuthorFragment
+    }
+  }
   ... on Textbook {
     courses
   }
@@ -116,12 +132,14 @@ class _Scenario {
   final Map<String, Object?> config;
   final bool expectTristate;
   final bool expectWhenExtensions;
+  final bool expectUnmodifiable;
 
   const _Scenario({
     required this.name,
     required this.config,
     required this.expectTristate,
     required this.expectWhenExtensions,
+    required this.expectUnmodifiable,
   });
 }
 
@@ -137,87 +155,135 @@ class _ResolvedLibraries {
   });
 }
 
-void main() {
-  final baseConfig = <String, Object?>{
-    'schema': {
-      'file': _schemaPath,
-      'add_typenames': true,
-    },
-  };
+class _ScenarioResult {
+  final Map<String, String> sources;
+  final _ResolvedLibraries libraries;
 
+  const _ScenarioResult({
+    required this.sources,
+    required this.libraries,
+  });
+}
+
+void main() {
   final scenarios = <_Scenario>[
     _Scenario(
-      name: 'tristate + when + type_safe',
-      config: {
-        ...baseConfig,
-        'vars': {
-          'tristate_optionals': true,
-        },
-        'data_classes': {
-          'when_extensions': {
-            'when': true,
-            'maybe_when': true,
-          },
-        },
-      },
+      name: 'tristate + when + plain collections',
+      config: _scenarioConfig(
+        tristate: true,
+        whenExtensions: true,
+        collectionsMode: 'plain',
+      ),
       expectTristate: true,
       expectWhenExtensions: true,
+      expectUnmodifiable: false,
     ),
     _Scenario(
-      name: 'no tristate + no when + type_safe',
-      config: {
-        ...baseConfig,
-        'vars': {
-          'tristate_optionals': false,
-        },
-        'collections': {
-          'mode': 'plain',
-        },
-      },
-      expectTristate: false,
-      expectWhenExtensions: false,
+      name: 'tristate + when + unmodifiable collections',
+      config: _scenarioConfig(
+        tristate: true,
+        whenExtensions: true,
+        collectionsMode: 'unmodifiable',
+      ),
+      expectTristate: true,
+      expectWhenExtensions: true,
+      expectUnmodifiable: true,
     ),
     _Scenario(
-      name: 'unmodifiable collections',
-      config: {
-        ...baseConfig,
-        'collections': {
-          'mode': 'unmodifiable',
-        },
-      },
+      name: 'no tristate + plain collections',
+      config: _scenarioConfig(
+        tristate: false,
+        whenExtensions: false,
+        collectionsMode: 'plain',
+      ),
       expectTristate: false,
       expectWhenExtensions: false,
+      expectUnmodifiable: false,
+    ),
+    _Scenario(
+      name: 'no tristate + unmodifiable collections',
+      config: _scenarioConfig(
+        tristate: false,
+        whenExtensions: false,
+        collectionsMode: 'unmodifiable',
+      ),
+      expectTristate: false,
+      expectWhenExtensions: false,
+      expectUnmodifiable: true,
     ),
   ];
 
   for (final scenario in scenarios) {
     test('analysis: ${scenario.name}', () async {
-      final sources = await _runBuilder(scenario.config);
-      final resolved = await _resolveGeneratedLibraries(sources);
+      final result = await _runScenario(scenario);
+      await _expectNoErrors(result.libraries);
 
-      await _expectNoErrors(resolved.fragmentsData);
-      await _expectNoErrors(resolved.vars);
-      await _expectNoErrors(resolved.req);
-
-      _expectIssue610Typing(resolved.fragmentsData);
+      _expectIssue610Typing(result.libraries.fragmentsData);
+      _expectNestedListTypes(result.libraries.fragmentsData);
       _expectWhenExtensions(
-        resolved.fragmentsData,
+        result.libraries.fragmentsData,
         expectWhenExtensions: scenario.expectWhenExtensions,
       );
       _expectVarTypes(
-        resolved.vars,
+        result.libraries.vars,
         expectTristate: scenario.expectTristate,
       );
-      _expectReqGenerics(resolved.req);
-      _expectDataToJsonSignature(resolved.req);
-      _expectReqDocumentDefinitions(resolved.req);
-      if (scenario.name == 'unmodifiable collections') {
-        final dataSource = readGeneratedDartSource(sources, _fragmentDataPath);
-        final varsSource = readGeneratedDartSource(sources, _queryVarPath);
-        _expectUnmodifiableCollections(dataSource + varsSource);
-      }
+      _expectReqGenerics(result.libraries.req);
+      _expectDataToJsonSignature(result.libraries.req);
+      _expectReqDocumentDefinitions(result.libraries.req);
+      final dataSource = readGeneratedDartSource(
+        result.sources,
+        _fragmentDataPath,
+      );
+      final varsSource = readGeneratedDartSource(
+        result.sources,
+        _queryVarPath,
+      );
+      _expectUnmodifiableCollections(
+        dataSource,
+        varsSource,
+        expectUnmodifiable: scenario.expectUnmodifiable,
+      );
     });
   }
+}
+
+Map<String, Object?> _baseConfig() {
+  return <String, Object?>{
+    'schema': {
+      'file': _schemaPath,
+      'add_typenames': true,
+    },
+  };
+}
+
+Map<String, Object?> _scenarioConfig({
+  required bool tristate,
+  required bool whenExtensions,
+  required String collectionsMode,
+}) {
+  final config = _baseConfig();
+  config['vars'] = {
+    'tristate_optionals': tristate,
+  };
+  if (whenExtensions) {
+    config['data_classes'] = {
+      'when_extensions': {
+        'when': true,
+        'maybe_when': true,
+      },
+    };
+  }
+  config['collections'] = {
+    'mode': collectionsMode,
+  };
+  return config;
+}
+
+Future<_ScenarioResult> _runScenario(_Scenario scenario) async {
+  final sources = await _runBuilder(scenario.config);
+  final libraries = await _resolveGeneratedLibraries(sources);
+  return _ScenarioResult(sources: sources, libraries: libraries);
 }
 
 Future<Map<String, String>> _runBuilder(Map<String, Object?> config) async {
@@ -266,18 +332,23 @@ Future<_ResolvedLibraries> _resolveGeneratedLibraries(
   );
 }
 
-Future<void> _expectNoErrors(LibraryElement library) async {
+Future<void> _expectNoErrors(_ResolvedLibraries libraries) async {
+  await _expectLibraryNoErrors(libraries.fragmentsData);
+  await _expectLibraryNoErrors(libraries.vars);
+  await _expectLibraryNoErrors(libraries.req);
+}
+
+Future<void> _expectLibraryNoErrors(LibraryElement library) async {
   final sourcePath = library.firstFragment.source.fullName;
   final result = await library.session.getErrors(sourcePath);
-  if (result is ErrorsResult) {
-    final errors = result.diagnostics
-        .where(
-          (diagnostic) =>
-              diagnostic.diagnosticCode.severity == DiagnosticSeverity.ERROR,
-        )
-        .toList();
-    expect(errors, isEmpty, reason: errors.join('\n'));
-  }
+  if (result is! ErrorsResult) return;
+  final errors = result.diagnostics
+      .where(
+        (diagnostic) =>
+            diagnostic.diagnosticCode.severity == DiagnosticSeverity.ERROR,
+      )
+      .toList();
+  expect(errors, isEmpty, reason: errors.join('\n'));
 }
 
 void _expectIssue610Typing(LibraryElement library) {
@@ -310,6 +381,25 @@ void _expectIssue610Typing(LibraryElement library) {
 
   final bookUnknown = _classByName(library, 'GBookFragmentData__unknown');
   expect(bookUnknown.supertype?.element.name, 'GBookFragmentData');
+}
+
+void _expectNestedListTypes(LibraryElement library) {
+  final bookBase = _classByName(library, 'GBookFragmentData');
+  final tagField = bookBase.getField('tagMatrix');
+  final relatedField = bookBase.getField('relatedBooks');
+  expect(tagField, isNotNull);
+  expect(relatedField, isNotNull);
+
+  _expectNestedListType(
+    tagField!.type,
+    innerName: 'String',
+    nullable: false,
+  );
+  _expectNestedListType(
+    relatedField!.type,
+    innerName: 'GBookFragmentData_relatedBooks',
+    nullable: false,
+  );
 }
 
 void _expectWhenExtensions(
@@ -405,8 +495,35 @@ void _expectReqDocumentDefinitions(LibraryElement library) {
   expect(bookByIdDefs.length, bookByIdExpected.length);
 }
 
-void _expectUnmodifiableCollections(String source) {
-  expect(source, contains('unmodifiable('));
+void _expectUnmodifiableCollections(
+  String dataSource,
+  String varsSource, {
+  required bool expectUnmodifiable,
+}) {
+  final dataUnit = parseString(content: dataSource).unit;
+  final varsUnit = parseString(content: varsSource).unit;
+  final hasUnmodifiable =
+      _containsUnmodifiableInvocation(dataUnit) ||
+      _containsUnmodifiableInvocation(varsUnit);
+  expect(hasUnmodifiable, expectUnmodifiable);
+}
+
+bool _containsUnmodifiableInvocation(CompilationUnit unit) {
+  final visitor = _UnmodifiableInvocationVisitor();
+  unit.visitChildren(visitor);
+  return visitor.found;
+}
+
+class _UnmodifiableInvocationVisitor extends RecursiveAstVisitor<void> {
+  bool found = false;
+
+  @override
+  void visitMethodInvocation(MethodInvocation node) {
+    if (node.methodName.name == 'unmodifiable') {
+      found = true;
+    }
+    super.visitMethodInvocation(node);
+  }
 }
 
 List<String> _reqDefinitionNames(
@@ -478,4 +595,29 @@ void _expectValueType(
   expect(interfaceType.typeArguments.length, 1);
   final innerType = interfaceType.typeArguments.first;
   _expectInterfaceType(innerType, name: innerName, nullable: false);
+}
+
+void _expectNestedListType(
+  DartType type, {
+  required String innerName,
+  required bool nullable,
+}) {
+  final outer = type is InterfaceType ? type : null;
+  if (outer == null) {
+    throw StateError('Expected List<List<$innerName>> to be an interface type.');
+  }
+  expect(outer.element.name, 'List');
+  expect(
+    outer.nullabilitySuffix,
+    nullable ? NullabilitySuffix.question : NullabilitySuffix.none,
+  );
+  final innerList = outer.typeArguments.first;
+  final innerInterface = innerList is InterfaceType ? innerList : null;
+  if (innerInterface == null) {
+    throw StateError('Expected inner List<$innerName> interface type.');
+  }
+  expect(innerInterface.element.name, 'List');
+  expect(innerInterface.nullabilitySuffix, NullabilitySuffix.none);
+  final innerElement = innerInterface.typeArguments.first;
+  _expectInterfaceType(innerElement, name: innerName, nullable: false);
 }

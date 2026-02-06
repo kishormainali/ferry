@@ -7,6 +7,7 @@ import "../ir/names.dart";
 import "../logging/sink.dart";
 import "../schema/schema.dart";
 import "../utils/docs.dart";
+import "collection_helpers.dart";
 import "data_emitter_types.dart";
 
 const utilsImportAlias = "_gqlUtils";
@@ -18,6 +19,7 @@ class DataEmitterContext {
   final SchemaIndex schema;
   final Map<FragmentName, String> fragmentSourceUrls;
   final String? utilsUrl;
+  final CollectionPolicy collections;
 
   final Set<String> extraImports = {};
   final Map<FragmentName, FragmentInfo> fragmentInfo = {};
@@ -33,7 +35,10 @@ class DataEmitterContext {
     required this.schema,
     required this.fragmentSourceUrls,
     required this.utilsUrl,
-  });
+  }) : collections = CollectionPolicy(
+          config: context.config,
+          overrides: context.config.typeOverrides,
+        );
 
   LogSink get log => context.log;
   BuilderConfig get config => context.config;

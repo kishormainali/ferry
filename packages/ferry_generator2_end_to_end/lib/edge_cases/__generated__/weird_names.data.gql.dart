@@ -66,17 +66,17 @@ class GWeirdNamesData {
 }
 
 class GWeirdNamesData_weirdNames {
-  const GWeirdNamesData_weirdNames({
+  GWeirdNamesData_weirdNames({
     this.Gclass,
     this.GtoJson,
     this.GfromJson,
     this.GcopyWith,
     this.GhashCode,
-    this.Gvalues,
+    List<String?>? Gvalues,
     this.result,
     this.GruntimeType,
     required this.G__typename,
-  });
+  }) : Gvalues = Gvalues == null ? null : List.unmodifiable(Gvalues);
 
   factory GWeirdNamesData_weirdNames.fromJson(Map<String, dynamic> json) {
     return GWeirdNamesData_weirdNames(
@@ -87,7 +87,8 @@ class GWeirdNamesData_weirdNames {
       GhashCode: json['hashCode'] == null ? null : (json['hashCode'] as String),
       Gvalues: json['values'] == null
           ? null
-          : List<String?>.from((json['values'] as List<dynamic>)),
+          : List<String?>.unmodifiable(
+              List<String?>.from((json['values'] as List<dynamic>))),
       result: json['result'] == null ? null : (json['result'] as String),
       GruntimeType:
           json['runtimeType'] == null ? null : (json['runtimeType'] as String),

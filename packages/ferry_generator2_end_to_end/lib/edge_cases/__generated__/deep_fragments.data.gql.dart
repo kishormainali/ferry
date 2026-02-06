@@ -15,12 +15,12 @@ abstract class GFragLevel1 {
 
 /// A character from the Star Wars universe.
 class GFragLevel1Data implements GFragLevel1, GFragLevel3, GFragLevel2 {
-  const GFragLevel1Data({
+  GFragLevel1Data({
     required this.id,
     required this.name,
-    this.friends,
+    List<GFragLevel4Data?>? friends,
     required this.G__typename,
-  });
+  }) : friends = friends == null ? null : List.unmodifiable(friends);
 
   factory GFragLevel1Data.fromJson(Map<String, dynamic> json) {
     return GFragLevel1Data(
@@ -28,11 +28,12 @@ class GFragLevel1Data implements GFragLevel1, GFragLevel3, GFragLevel2 {
       name: (json['name'] as String),
       friends: json['friends'] == null
           ? null
-          : (json['friends'] as List<dynamic>)
-              .map((_$e) => _$e == null
-                  ? null
-                  : GFragLevel4Data.fromJson((_$e as Map<String, dynamic>)))
-              .toList(),
+          : List<GFragLevel4Data?>.unmodifiable(
+              (json['friends'] as List<dynamic>)
+                  .map((_$e) => _$e == null
+                      ? null
+                      : GFragLevel4Data.fromJson((_$e as Map<String, dynamic>)))
+                  .toList()),
       G__typename: (json['__typename'] as String),
     );
   }
@@ -105,22 +106,23 @@ abstract class GFragLevel2 {
 
 /// A character from the Star Wars universe.
 class GFragLevel2Data implements GFragLevel2, GFragLevel3 {
-  const GFragLevel2Data({
+  GFragLevel2Data({
     required this.name,
-    this.friends,
+    List<GFragLevel4Data?>? friends,
     required this.G__typename,
-  });
+  }) : friends = friends == null ? null : List.unmodifiable(friends);
 
   factory GFragLevel2Data.fromJson(Map<String, dynamic> json) {
     return GFragLevel2Data(
       name: (json['name'] as String),
       friends: json['friends'] == null
           ? null
-          : (json['friends'] as List<dynamic>)
-              .map((_$e) => _$e == null
-                  ? null
-                  : GFragLevel4Data.fromJson((_$e as Map<String, dynamic>)))
-              .toList(),
+          : List<GFragLevel4Data?>.unmodifiable(
+              (json['friends'] as List<dynamic>)
+                  .map((_$e) => _$e == null
+                      ? null
+                      : GFragLevel4Data.fromJson((_$e as Map<String, dynamic>)))
+                  .toList()),
       G__typename: (json['__typename'] as String),
     );
   }
@@ -186,20 +188,21 @@ abstract class GFragLevel3 {
 
 /// A character from the Star Wars universe.
 class GFragLevel3Data implements GFragLevel3 {
-  const GFragLevel3Data({
-    this.friends,
+  GFragLevel3Data({
+    List<GFragLevel4Data?>? friends,
     required this.G__typename,
-  });
+  }) : friends = friends == null ? null : List.unmodifiable(friends);
 
   factory GFragLevel3Data.fromJson(Map<String, dynamic> json) {
     return GFragLevel3Data(
       friends: json['friends'] == null
           ? null
-          : (json['friends'] as List<dynamic>)
-              .map((_$e) => _$e == null
-                  ? null
-                  : GFragLevel4Data.fromJson((_$e as Map<String, dynamic>)))
-              .toList(),
+          : List<GFragLevel4Data?>.unmodifiable(
+              (json['friends'] as List<dynamic>)
+                  .map((_$e) => _$e == null
+                      ? null
+                      : GFragLevel4Data.fromJson((_$e as Map<String, dynamic>)))
+                  .toList()),
       G__typename: (json['__typename'] as String),
     );
   }

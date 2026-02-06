@@ -34,11 +34,7 @@ bool listEqualsDeep<T>(
 @pragma('vm:prefer-inline')
 int listHash<T>(List<T>? values) {
   if (values == null) return 0;
-  var _$hash = 0;
-  for (final _$value in values) {
-    _$hash = Object.hash(_$hash, _$value);
-  }
-  return _$hash;
+  return Object.hashAll(values);
 }
 
 @pragma('vm:prefer-inline')

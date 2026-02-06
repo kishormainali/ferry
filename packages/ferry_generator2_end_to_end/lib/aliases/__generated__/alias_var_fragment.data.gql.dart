@@ -211,20 +211,21 @@ class GPostFragmentData_isLiked implements GPostFragment_isLiked {
 
 /// The query type for the schema.
 class GPostsData {
-  const GPostsData({
-    this.posts,
+  GPostsData({
+    List<GPostFragmentData?>? posts,
     required this.G__typename,
-  });
+  }) : posts = posts == null ? null : List.unmodifiable(posts);
 
   factory GPostsData.fromJson(Map<String, dynamic> json) {
     return GPostsData(
       posts: json['posts'] == null
           ? null
-          : (json['posts'] as List<dynamic>)
+          : List<GPostFragmentData?>.unmodifiable((json['posts']
+                  as List<dynamic>)
               .map((_$e) => _$e == null
                   ? null
                   : GPostFragmentData.fromJson((_$e as Map<String, dynamic>)))
-              .toList(),
+              .toList()),
       G__typename: (json['__typename'] as String),
     );
   }

@@ -7,16 +7,19 @@ import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.g
 
 /// The query type for the schema.
 class GSettingsData {
-  const GSettingsData({
-    this.settings,
+  GSettingsData({
+    Map<String, dynamic>? settings,
     required this.G__typename,
-  });
+  }) : settings = settings == null
+            ? null
+            : Map<String, dynamic>.unmodifiable(settings);
 
   factory GSettingsData.fromJson(Map<String, dynamic> json) {
     return GSettingsData(
       settings: json['settings'] == null
           ? null
-          : (json['settings'] as Map<String, dynamic>),
+          : Map<String, dynamic>.unmodifiable(
+              (json['settings'] as Map<String, dynamic>)),
       G__typename: (json['__typename'] as String),
     );
   }

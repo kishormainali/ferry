@@ -1372,6 +1372,51 @@ const Book = _i1.InterfaceTypeDefinitionNode(
         isNonNull: true,
       ),
     ),
+    _i1.FieldDefinitionNode(
+      name: _i1.NameNode(value: 'tagMatrix'),
+      directives: [],
+      args: [],
+      type: _i1.ListTypeNode(
+        type: _i1.ListTypeNode(
+          type: _i1.NamedTypeNode(
+            name: _i1.NameNode(value: 'String'),
+            isNonNull: true,
+          ),
+          isNonNull: true,
+        ),
+        isNonNull: true,
+      ),
+    ),
+    _i1.FieldDefinitionNode(
+      name: _i1.NameNode(value: 'tagMatrixNullable'),
+      directives: [],
+      args: [],
+      type: _i1.ListTypeNode(
+        type: _i1.ListTypeNode(
+          type: _i1.NamedTypeNode(
+            name: _i1.NameNode(value: 'String'),
+            isNonNull: false,
+          ),
+          isNonNull: false,
+        ),
+        isNonNull: false,
+      ),
+    ),
+    _i1.FieldDefinitionNode(
+      name: _i1.NameNode(value: 'relatedBooks'),
+      directives: [],
+      args: [],
+      type: _i1.ListTypeNode(
+        type: _i1.ListTypeNode(
+          type: _i1.NamedTypeNode(
+            name: _i1.NameNode(value: 'Book'),
+            isNonNull: true,
+          ),
+          isNonNull: true,
+        ),
+        isNonNull: true,
+      ),
+    ),
   ],
 );
 const Textbook = _i1.ObjectTypeDefinitionNode(
@@ -1414,6 +1459,51 @@ const Textbook = _i1.ObjectTypeDefinitionNode(
         isNonNull: true,
       ),
     ),
+    _i1.FieldDefinitionNode(
+      name: _i1.NameNode(value: 'tagMatrix'),
+      directives: [],
+      args: [],
+      type: _i1.ListTypeNode(
+        type: _i1.ListTypeNode(
+          type: _i1.NamedTypeNode(
+            name: _i1.NameNode(value: 'String'),
+            isNonNull: true,
+          ),
+          isNonNull: true,
+        ),
+        isNonNull: true,
+      ),
+    ),
+    _i1.FieldDefinitionNode(
+      name: _i1.NameNode(value: 'tagMatrixNullable'),
+      directives: [],
+      args: [],
+      type: _i1.ListTypeNode(
+        type: _i1.ListTypeNode(
+          type: _i1.NamedTypeNode(
+            name: _i1.NameNode(value: 'String'),
+            isNonNull: false,
+          ),
+          isNonNull: false,
+        ),
+        isNonNull: false,
+      ),
+    ),
+    _i1.FieldDefinitionNode(
+      name: _i1.NameNode(value: 'relatedBooks'),
+      directives: [],
+      args: [],
+      type: _i1.ListTypeNode(
+        type: _i1.ListTypeNode(
+          type: _i1.NamedTypeNode(
+            name: _i1.NameNode(value: 'Book'),
+            isNonNull: true,
+          ),
+          isNonNull: true,
+        ),
+        isNonNull: true,
+      ),
+    ),
   ],
 );
 const ColoringBook = _i1.ObjectTypeDefinitionNode(
@@ -1451,6 +1541,51 @@ const ColoringBook = _i1.ObjectTypeDefinitionNode(
       type: _i1.ListTypeNode(
         type: _i1.NamedTypeNode(
           name: _i1.NameNode(value: 'String'),
+          isNonNull: true,
+        ),
+        isNonNull: true,
+      ),
+    ),
+    _i1.FieldDefinitionNode(
+      name: _i1.NameNode(value: 'tagMatrix'),
+      directives: [],
+      args: [],
+      type: _i1.ListTypeNode(
+        type: _i1.ListTypeNode(
+          type: _i1.NamedTypeNode(
+            name: _i1.NameNode(value: 'String'),
+            isNonNull: true,
+          ),
+          isNonNull: true,
+        ),
+        isNonNull: true,
+      ),
+    ),
+    _i1.FieldDefinitionNode(
+      name: _i1.NameNode(value: 'tagMatrixNullable'),
+      directives: [],
+      args: [],
+      type: _i1.ListTypeNode(
+        type: _i1.ListTypeNode(
+          type: _i1.NamedTypeNode(
+            name: _i1.NameNode(value: 'String'),
+            isNonNull: false,
+          ),
+          isNonNull: false,
+        ),
+        isNonNull: false,
+      ),
+    ),
+    _i1.FieldDefinitionNode(
+      name: _i1.NameNode(value: 'relatedBooks'),
+      directives: [],
+      args: [],
+      type: _i1.ListTypeNode(
+        type: _i1.ListTypeNode(
+          type: _i1.NamedTypeNode(
+            name: _i1.NameNode(value: 'Book'),
+            isNonNull: true,
+          ),
           isNonNull: true,
         ),
         isNonNull: true,

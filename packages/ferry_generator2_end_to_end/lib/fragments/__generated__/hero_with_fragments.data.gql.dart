@@ -157,11 +157,11 @@ class GcomparisonFieldsData implements GcomparisonFields, GheroData {
 
 class GcomparisonFieldsData_friendsConnection
     implements GcomparisonFields_friendsConnection {
-  const GcomparisonFieldsData_friendsConnection({
+  GcomparisonFieldsData_friendsConnection({
     this.totalCount,
-    this.edges,
+    List<GcomparisonFieldsData_friendsConnection_edges?>? edges,
     required this.G__typename,
-  });
+  }) : edges = edges == null ? null : List.unmodifiable(edges);
 
   factory GcomparisonFieldsData_friendsConnection.fromJson(
       Map<String, dynamic> json) {
@@ -170,12 +170,13 @@ class GcomparisonFieldsData_friendsConnection
           json['totalCount'] == null ? null : (json['totalCount'] as int),
       edges: json['edges'] == null
           ? null
-          : (json['edges'] as List<dynamic>)
-              .map((_$e) => _$e == null
-                  ? null
-                  : GcomparisonFieldsData_friendsConnection_edges.fromJson(
-                      (_$e as Map<String, dynamic>)))
-              .toList(),
+          : List<GcomparisonFieldsData_friendsConnection_edges?>.unmodifiable(
+              (json['edges'] as List<dynamic>)
+                  .map((_$e) => _$e == null
+                      ? null
+                      : GcomparisonFieldsData_friendsConnection_edges.fromJson(
+                          (_$e as Map<String, dynamic>)))
+                  .toList()),
       G__typename: (json['__typename'] as String),
     );
   }

@@ -68,6 +68,19 @@ Method _buildListEqualsHelper({required bool deep}) {
 Method _buildListHashHelper({required bool deep}) {
   final name = deep ? "listHashDeep" : "listHash";
   final elementHash = deep ? r"deepHash(_$value)" : r"_$value";
+  final body = deep
+      ? [
+          "if (values == null) return 0;",
+          r"var _$hash = 0;",
+          r"for (final _$value in values) {",
+          "  _\$hash = Object.hash(_\$hash, $elementHash);",
+          "}",
+          r"return _$hash;",
+        ]
+      : [
+          "if (values == null) return 0;",
+          "return Object.hashAll(values);",
+        ];
   return Method(
     (b) => b
       ..name = name
@@ -86,16 +99,7 @@ Method _buildListHashHelper({required bool deep}) {
             ),
         ),
       )
-      ..body = Code(
-        [
-          "if (values == null) return 0;",
-          r"var _$hash = 0;",
-          r"for (final _$value in values) {",
-          "  _\$hash = Object.hash(_\$hash, $elementHash);",
-          "}",
-          r"return _$hash;",
-        ].join("\n"),
-      ),
+      ..body = Code(body.join("\n")),
   );
 }
 

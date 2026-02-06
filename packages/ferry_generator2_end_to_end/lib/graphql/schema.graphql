@@ -243,18 +243,27 @@ interface Book {
     "Book title."
     title: String!
     author: Author!
+    tagMatrix: [[String!]!]!
+    tagMatrixNullable: [[String]]
+    relatedBooks: [[Book!]!]!
 }
 
 type Textbook implements Book {
     title: String!
     author: Author!
     courses: [String!]!
+    tagMatrix: [[String!]!]!
+    tagMatrixNullable: [[String]]
+    relatedBooks: [[Book!]!]!
 }
 
 type ColoringBook implements Book {
     title: String!
     author: Author!
     colors: [String!]!
+    tagMatrix: [[String!]!]!
+    tagMatrixNullable: [[String]]
+    relatedBooks: [[Book!]!]!
 }
 
 union SearchResult = Human | Droid | Starship

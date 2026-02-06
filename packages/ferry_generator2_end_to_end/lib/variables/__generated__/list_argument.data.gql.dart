@@ -9,21 +9,22 @@ import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.g
 
 /// The query type for the schema.
 class GreviewsWithListArgumentData {
-  const GreviewsWithListArgumentData({
-    this.reviews,
+  GreviewsWithListArgumentData({
+    List<GreviewsWithListArgumentData_reviews?>? reviews,
     required this.G__typename,
-  });
+  }) : reviews = reviews == null ? null : List.unmodifiable(reviews);
 
   factory GreviewsWithListArgumentData.fromJson(Map<String, dynamic> json) {
     return GreviewsWithListArgumentData(
       reviews: json['reviews'] == null
           ? null
-          : (json['reviews'] as List<dynamic>)
-              .map((_$e) => _$e == null
-                  ? null
-                  : GreviewsWithListArgumentData_reviews.fromJson(
-                      (_$e as Map<String, dynamic>)))
-              .toList(),
+          : List<GreviewsWithListArgumentData_reviews?>.unmodifiable(
+              (json['reviews'] as List<dynamic>)
+                  .map((_$e) => _$e == null
+                      ? null
+                      : GreviewsWithListArgumentData_reviews.fromJson(
+                          (_$e as Map<String, dynamic>)))
+                  .toList()),
       G__typename: (json['__typename'] as String),
     );
   }

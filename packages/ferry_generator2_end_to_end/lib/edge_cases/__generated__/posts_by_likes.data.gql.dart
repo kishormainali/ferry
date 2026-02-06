@@ -7,21 +7,23 @@ import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.g
 
 /// The query type for the schema.
 class GPostsByLikesData {
-  const GPostsByLikesData({
-    this.postsByLikes,
+  GPostsByLikesData({
+    List<GPostsByLikesData_postsByLikes?>? postsByLikes,
     required this.G__typename,
-  });
+  }) : postsByLikes =
+            postsByLikes == null ? null : List.unmodifiable(postsByLikes);
 
   factory GPostsByLikesData.fromJson(Map<String, dynamic> json) {
     return GPostsByLikesData(
       postsByLikes: json['postsByLikes'] == null
           ? null
-          : (json['postsByLikes'] as List<dynamic>)
-              .map((_$e) => _$e == null
-                  ? null
-                  : GPostsByLikesData_postsByLikes.fromJson(
-                      (_$e as Map<String, dynamic>)))
-              .toList(),
+          : List<GPostsByLikesData_postsByLikes?>.unmodifiable(
+              (json['postsByLikes'] as List<dynamic>)
+                  .map((_$e) => _$e == null
+                      ? null
+                      : GPostsByLikesData_postsByLikes.fromJson(
+                          (_$e as Map<String, dynamic>)))
+                  .toList()),
       G__typename: (json['__typename'] as String),
     );
   }

@@ -7,21 +7,22 @@ import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.g
 
 /// The query type for the schema.
 class GSearchWithDefaultData {
-  const GSearchWithDefaultData({
-    this.search,
+  GSearchWithDefaultData({
+    List<GSearchWithDefaultData_search?>? search,
     required this.G__typename,
-  });
+  }) : search = search == null ? null : List.unmodifiable(search);
 
   factory GSearchWithDefaultData.fromJson(Map<String, dynamic> json) {
     return GSearchWithDefaultData(
       search: json['search'] == null
           ? null
-          : (json['search'] as List<dynamic>)
-              .map((_$e) => _$e == null
-                  ? null
-                  : GSearchWithDefaultData_search.fromJson(
-                      (_$e as Map<String, dynamic>)))
-              .toList(),
+          : List<GSearchWithDefaultData_search?>.unmodifiable(
+              (json['search'] as List<dynamic>)
+                  .map((_$e) => _$e == null
+                      ? null
+                      : GSearchWithDefaultData_search.fromJson(
+                          (_$e as Map<String, dynamic>)))
+                  .toList()),
       G__typename: (json['__typename'] as String),
     );
   }

@@ -181,9 +181,9 @@ extension GHeroUnconditionalTypeFragmentData_heroWhenExtension
 
 class GHeroUnconditionalTypeFragmentData_hero__asHuman
     extends GHeroUnconditionalTypeFragmentData_hero implements GHumanName {
-  const GHeroUnconditionalTypeFragmentData_hero__asHuman({
-    required G__typename,
-    required id,
+  GHeroUnconditionalTypeFragmentData_hero__asHuman({
+    required String G__typename,
+    required String id,
     required this.name,
   }) : super(G__typename: G__typename, id: id);
 
@@ -239,9 +239,9 @@ class GHeroUnconditionalTypeFragmentData_hero__asHuman
 /// A character from the Star Wars universe.
 class GHeroUnconditionalTypeFragmentData_hero__unknown
     extends GHeroUnconditionalTypeFragmentData_hero {
-  const GHeroUnconditionalTypeFragmentData_hero__unknown({
-    required G__typename,
-    required id,
+  GHeroUnconditionalTypeFragmentData_hero__unknown({
+    required String G__typename,
+    required String id,
   }) : super(G__typename: G__typename, id: id);
 
   factory GHeroUnconditionalTypeFragmentData_hero__unknown.fromJson(

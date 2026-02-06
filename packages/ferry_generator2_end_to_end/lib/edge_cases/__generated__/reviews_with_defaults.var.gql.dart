@@ -20,7 +20,8 @@ class GReviewsWithDefaultsVars {
       stars: json.containsKey('stars')
           ? Value.present(json['stars'] == null
               ? null
-              : List<int>.from((json['stars'] as List<dynamic>)))
+              : List<int>.unmodifiable(
+                  List<int>.from((json['stars'] as List<dynamic>))))
           : Value.absent(),
     );
   }

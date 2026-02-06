@@ -9,21 +9,22 @@ import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.g
 
 /// The query type for the schema.
 class GSearchWithStarshipData {
-  const GSearchWithStarshipData({
-    this.search,
+  GSearchWithStarshipData({
+    List<GSearchWithStarshipData_search?>? search,
     required this.G__typename,
-  });
+  }) : search = search == null ? null : List.unmodifiable(search);
 
   factory GSearchWithStarshipData.fromJson(Map<String, dynamic> json) {
     return GSearchWithStarshipData(
       search: json['search'] == null
           ? null
-          : (json['search'] as List<dynamic>)
-              .map((_$e) => _$e == null
-                  ? null
-                  : GSearchWithStarshipData_search.fromJson(
-                      (_$e as Map<String, dynamic>)))
-              .toList(),
+          : List<GSearchWithStarshipData_search?>.unmodifiable(
+              (json['search'] as List<dynamic>)
+                  .map((_$e) => _$e == null
+                      ? null
+                      : GSearchWithStarshipData_search.fromJson(
+                          (_$e as Map<String, dynamic>)))
+                  .toList()),
       G__typename: (json['__typename'] as String),
     );
   }
@@ -136,13 +137,15 @@ extension GSearchWithStarshipData_searchWhenExtension
 
 class GSearchWithStarshipData_search__asStarship
     extends GSearchWithStarshipData_search {
-  const GSearchWithStarshipData_search__asStarship({
-    required G__typename,
+  GSearchWithStarshipData_search__asStarship({
+    required String G__typename,
     required this.id,
     required this.name,
     this.length,
-    this.coordinates,
-  }) : super(G__typename: G__typename);
+    List<List<double>>? coordinates,
+  })  : coordinates =
+            coordinates == null ? null : List.unmodifiable(coordinates),
+        super(G__typename: G__typename);
 
   factory GSearchWithStarshipData_search__asStarship.fromJson(
       Map<String, dynamic> json) {
@@ -153,9 +156,11 @@ class GSearchWithStarshipData_search__asStarship
       length: json['length'] == null ? null : (json['length'] as double),
       coordinates: json['coordinates'] == null
           ? null
-          : (json['coordinates'] as List<dynamic>)
-              .map((_$e) => List<double>.from((_$e as List<dynamic>)))
-              .toList(),
+          : List<List<double>>.unmodifiable(
+              (json['coordinates'] as List<dynamic>)
+                  .map((_$e) => List<double>.unmodifiable(
+                      List<double>.from((_$e as List<dynamic>))))
+                  .toList()),
     );
   }
 
@@ -225,12 +230,13 @@ class GSearchWithStarshipData_search__asStarship
 
 class GSearchWithStarshipData_search__asHuman
     extends GSearchWithStarshipData_search {
-  const GSearchWithStarshipData_search__asHuman({
-    required G__typename,
+  GSearchWithStarshipData_search__asHuman({
+    required String G__typename,
     required this.id,
     required this.name,
-    required this.appearsIn,
-  }) : super(G__typename: G__typename);
+    required List<_i1.GEpisode?> appearsIn,
+  })  : appearsIn = List.unmodifiable(appearsIn),
+        super(G__typename: G__typename);
 
   factory GSearchWithStarshipData_search__asHuman.fromJson(
       Map<String, dynamic> json) {
@@ -238,10 +244,11 @@ class GSearchWithStarshipData_search__asHuman
       G__typename: (json['__typename'] as String),
       id: (json['id'] as String),
       name: (json['name'] as String),
-      appearsIn: (json['appearsIn'] as List<dynamic>)
-          .map((_$e) =>
-              _$e == null ? null : _i1.GEpisode.fromJson((_$e as String)))
-          .toList(),
+      appearsIn: List<_i1.GEpisode?>.unmodifiable(
+          (json['appearsIn'] as List<dynamic>)
+              .map((_$e) =>
+                  _$e == null ? null : _i1.GEpisode.fromJson((_$e as String)))
+              .toList()),
     );
   }
 
@@ -298,7 +305,7 @@ class GSearchWithStarshipData_search__asHuman
 
 class GSearchWithStarshipData_search__unknown
     extends GSearchWithStarshipData_search {
-  const GSearchWithStarshipData_search__unknown({required G__typename})
+  GSearchWithStarshipData_search__unknown({required String G__typename})
       : super(G__typename: G__typename);
 
   factory GSearchWithStarshipData_search__unknown.fromJson(

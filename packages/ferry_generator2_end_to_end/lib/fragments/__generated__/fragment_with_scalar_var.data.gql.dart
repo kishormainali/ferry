@@ -141,21 +141,22 @@ class GPostFragmentForUser1Data_favoritedUsers
 
 /// The query type for the schema.
 class GPostsWithFixedVariableData {
-  const GPostsWithFixedVariableData({
-    this.posts,
+  GPostsWithFixedVariableData({
+    List<GPostFragmentForUser1Data?>? posts,
     required this.G__typename,
-  });
+  }) : posts = posts == null ? null : List.unmodifiable(posts);
 
   factory GPostsWithFixedVariableData.fromJson(Map<String, dynamic> json) {
     return GPostsWithFixedVariableData(
       posts: json['posts'] == null
           ? null
-          : (json['posts'] as List<dynamic>)
-              .map((_$e) => _$e == null
-                  ? null
-                  : GPostFragmentForUser1Data.fromJson(
-                      (_$e as Map<String, dynamic>)))
-              .toList(),
+          : List<GPostFragmentForUser1Data?>.unmodifiable(
+              (json['posts'] as List<dynamic>)
+                  .map((_$e) => _$e == null
+                      ? null
+                      : GPostFragmentForUser1Data.fromJson(
+                          (_$e as Map<String, dynamic>)))
+                  .toList()),
       G__typename: (json['__typename'] as String),
     );
   }

@@ -103,13 +103,14 @@ class GheroFieldsFragmentData__asHuman extends GheroFieldsFragmentData
         GheroFieldsFragment,
         GhumanFieldsFragment,
         GheroFieldsFragment__asHuman {
-  const GheroFieldsFragmentData__asHuman({
-    required id,
-    required name,
-    required G__typename,
+  GheroFieldsFragmentData__asHuman({
+    required String id,
+    required String name,
+    required String G__typename,
     this.homePlanet,
-    this.friends,
-  }) : super(id: id, name: name, G__typename: G__typename);
+    List<GheroFieldsFragmentData__asHuman_friends?>? friends,
+  })  : friends = friends == null ? null : List.unmodifiable(friends),
+        super(id: id, name: name, G__typename: G__typename);
 
   factory GheroFieldsFragmentData__asHuman.fromJson(Map<String, dynamic> json) {
     return GheroFieldsFragmentData__asHuman(
@@ -120,12 +121,13 @@ class GheroFieldsFragmentData__asHuman extends GheroFieldsFragmentData
           json['homePlanet'] == null ? null : (json['homePlanet'] as String),
       friends: json['friends'] == null
           ? null
-          : (json['friends'] as List<dynamic>)
-              .map((_$e) => _$e == null
-                  ? null
-                  : GheroFieldsFragmentData__asHuman_friends.fromJson(
-                      (_$e as Map<String, dynamic>)))
-              .toList(),
+          : List<GheroFieldsFragmentData__asHuman_friends?>.unmodifiable(
+              (json['friends'] as List<dynamic>)
+                  .map((_$e) => _$e == null
+                      ? null
+                      : GheroFieldsFragmentData__asHuman_friends.fromJson(
+                          (_$e as Map<String, dynamic>)))
+                  .toList()),
     );
   }
 
@@ -261,8 +263,8 @@ class GheroFieldsFragmentData__asHuman_friends__asDroid
         GhumanFieldsFragment_friends,
         GheroFieldsFragment__asHuman_friends,
         GdroidFieldsFragment {
-  const GheroFieldsFragmentData__asHuman_friends__asDroid({
-    required G__typename,
+  GheroFieldsFragmentData__asHuman_friends__asDroid({
+    required String G__typename,
     required this.id,
     required this.name,
     this.primaryFunction,
@@ -338,8 +340,8 @@ class GheroFieldsFragmentData__asHuman_friends__asHuman
     implements
         GhumanFieldsFragment_friends,
         GheroFieldsFragment__asHuman_friends {
-  const GheroFieldsFragmentData__asHuman_friends__asHuman({
-    required G__typename,
+  GheroFieldsFragmentData__asHuman_friends__asHuman({
+    required String G__typename,
     required this.id,
     required this.name,
     this.homePlanet,
@@ -414,8 +416,8 @@ class GheroFieldsFragmentData__asHuman_friends__unknown
     implements
         GhumanFieldsFragment_friends,
         GheroFieldsFragment__asHuman_friends {
-  const GheroFieldsFragmentData__asHuman_friends__unknown(
-      {required G__typename})
+  GheroFieldsFragmentData__asHuman_friends__unknown(
+      {required String G__typename})
       : super(G__typename: G__typename);
 
   factory GheroFieldsFragmentData__asHuman_friends__unknown.fromJson(
@@ -458,10 +460,10 @@ class GheroFieldsFragmentData__asDroid extends GheroFieldsFragmentData
         GheroFieldsFragment,
         GdroidFieldsFragment,
         GheroFieldsFragment__asDroid {
-  const GheroFieldsFragmentData__asDroid({
-    required id,
-    required name,
-    required G__typename,
+  GheroFieldsFragmentData__asDroid({
+    required String id,
+    required String name,
+    required String G__typename,
     this.primaryFunction,
   }) : super(id: id, name: name, G__typename: G__typename);
 
@@ -526,10 +528,10 @@ class GheroFieldsFragmentData__asDroid extends GheroFieldsFragmentData
 /// A character from the Star Wars universe.
 class GheroFieldsFragmentData__unknown extends GheroFieldsFragmentData
     implements GheroFieldsFragment {
-  const GheroFieldsFragmentData__unknown({
-    required id,
-    required name,
-    required G__typename,
+  GheroFieldsFragmentData__unknown({
+    required String id,
+    required String name,
+    required String G__typename,
   }) : super(id: id, name: name, G__typename: G__typename);
 
   factory GheroFieldsFragmentData__unknown.fromJson(Map<String, dynamic> json) {
@@ -589,11 +591,11 @@ abstract class GhumanFieldsFragment_friends {
 }
 
 class GhumanFieldsFragmentData implements GhumanFieldsFragment {
-  const GhumanFieldsFragmentData({
+  GhumanFieldsFragmentData({
     this.homePlanet,
-    this.friends,
+    List<GhumanFieldsFragmentData_friends?>? friends,
     required this.G__typename,
-  });
+  }) : friends = friends == null ? null : List.unmodifiable(friends);
 
   factory GhumanFieldsFragmentData.fromJson(Map<String, dynamic> json) {
     return GhumanFieldsFragmentData(
@@ -601,12 +603,13 @@ class GhumanFieldsFragmentData implements GhumanFieldsFragment {
           json['homePlanet'] == null ? null : (json['homePlanet'] as String),
       friends: json['friends'] == null
           ? null
-          : (json['friends'] as List<dynamic>)
-              .map((_$e) => _$e == null
-                  ? null
-                  : GhumanFieldsFragmentData_friends.fromJson(
-                      (_$e as Map<String, dynamic>)))
-              .toList(),
+          : List<GhumanFieldsFragmentData_friends?>.unmodifiable(
+              (json['friends'] as List<dynamic>)
+                  .map((_$e) => _$e == null
+                      ? null
+                      : GhumanFieldsFragmentData_friends.fromJson(
+                          (_$e as Map<String, dynamic>)))
+                  .toList()),
       G__typename: (json['__typename'] as String),
     );
   }
@@ -732,8 +735,8 @@ extension GhumanFieldsFragmentData_friendsWhenExtension
 class GhumanFieldsFragmentData_friends__asDroid
     extends GhumanFieldsFragmentData_friends
     implements GhumanFieldsFragment_friends, GdroidFieldsFragment {
-  const GhumanFieldsFragmentData_friends__asDroid({
-    required G__typename,
+  GhumanFieldsFragmentData_friends__asDroid({
+    required String G__typename,
     required this.id,
     required this.name,
     this.primaryFunction,
@@ -807,8 +810,8 @@ class GhumanFieldsFragmentData_friends__asDroid
 class GhumanFieldsFragmentData_friends__asHuman
     extends GhumanFieldsFragmentData_friends
     implements GhumanFieldsFragment_friends {
-  const GhumanFieldsFragmentData_friends__asHuman({
-    required G__typename,
+  GhumanFieldsFragmentData_friends__asHuman({
+    required String G__typename,
     required this.id,
     required this.name,
     this.homePlanet,
@@ -881,7 +884,7 @@ class GhumanFieldsFragmentData_friends__asHuman
 class GhumanFieldsFragmentData_friends__unknown
     extends GhumanFieldsFragmentData_friends
     implements GhumanFieldsFragment_friends {
-  const GhumanFieldsFragmentData_friends__unknown({required G__typename})
+  GhumanFieldsFragmentData_friends__unknown({required String G__typename})
       : super(G__typename: G__typename);
 
   factory GhumanFieldsFragmentData_friends__unknown.fromJson(

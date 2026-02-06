@@ -149,13 +149,15 @@ extension GHeroWithInterfaceUnnamedFragmentsData_heroWhenExtension
 
 class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman
     extends GHeroWithInterfaceUnnamedFragmentsData_hero {
-  const GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman({
-    required id,
-    required name,
-    required G__typename,
+  GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman({
+    required String id,
+    required String name,
+    required String G__typename,
     this.homePlanet,
-    this.friends,
-  }) : super(id: id, name: name, G__typename: G__typename);
+    List<GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends?>?
+        friends,
+  })  : friends = friends == null ? null : List.unmodifiable(friends),
+        super(id: id, name: name, G__typename: G__typename);
 
   factory GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman.fromJson(
       Map<String, dynamic> json) {
@@ -167,12 +169,14 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman
           json['homePlanet'] == null ? null : (json['homePlanet'] as String),
       friends: json['friends'] == null
           ? null
-          : (json['friends'] as List<dynamic>)
+          : List<
+              GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends?>.unmodifiable((json[
+                  'friends'] as List<dynamic>)
               .map((_$e) => _$e == null
                   ? null
                   : GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends
                       .fromJson((_$e as Map<String, dynamic>)))
-              .toList(),
+              .toList()),
     );
   }
 
@@ -317,8 +321,8 @@ extension GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friendsWhenExtens
 
 class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asHuman
     extends GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends {
-  const GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asHuman({
-    required G__typename,
+  GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asHuman({
+    required String G__typename,
     required this.id,
     required this.name,
     this.homePlanet,
@@ -390,8 +394,8 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asHuman
 
 class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asDroid
     extends GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends {
-  const GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asDroid({
-    required G__typename,
+  GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asDroid({
+    required String G__typename,
     required this.id,
     required this.name,
     this.primaryFunction,
@@ -466,8 +470,8 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__asDroid
 /// A character from the Star Wars universe.
 class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__unknown
     extends GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends {
-  const GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__unknown(
-      {required G__typename})
+  GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__unknown(
+      {required String G__typename})
       : super(G__typename: G__typename);
 
   factory GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__unknown.fromJson(
@@ -507,10 +511,10 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asHuman_friends__unknown
 
 class GHeroWithInterfaceUnnamedFragmentsData_hero__asDroid
     extends GHeroWithInterfaceUnnamedFragmentsData_hero {
-  const GHeroWithInterfaceUnnamedFragmentsData_hero__asDroid({
-    required id,
-    required name,
-    required G__typename,
+  GHeroWithInterfaceUnnamedFragmentsData_hero__asDroid({
+    required String id,
+    required String name,
+    required String G__typename,
     this.primaryFunction,
   }) : super(id: id, name: name, G__typename: G__typename);
 
@@ -576,10 +580,10 @@ class GHeroWithInterfaceUnnamedFragmentsData_hero__asDroid
 /// A character from the Star Wars universe.
 class GHeroWithInterfaceUnnamedFragmentsData_hero__unknown
     extends GHeroWithInterfaceUnnamedFragmentsData_hero {
-  const GHeroWithInterfaceUnnamedFragmentsData_hero__unknown({
-    required id,
-    required name,
-    required G__typename,
+  GHeroWithInterfaceUnnamedFragmentsData_hero__unknown({
+    required String id,
+    required String name,
+    required String G__typename,
   }) : super(id: id, name: name, G__typename: G__typename);
 
   factory GHeroWithInterfaceUnnamedFragmentsData_hero__unknown.fromJson(

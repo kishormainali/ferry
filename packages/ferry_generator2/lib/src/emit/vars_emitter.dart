@@ -20,6 +20,10 @@ class VarsEmitter {
   final DocumentIR document;
   final String? utilsUrl;
   final Set<String> extraImports = {};
+  late final CollectionPolicy _collections = CollectionPolicy(
+    config: config,
+    overrides: config.typeOverrides,
+  );
 
   bool _usesTriStateValue = false;
   bool _needsUtilsImport = false;
@@ -169,17 +173,19 @@ class VarsEmitter {
     final wrapFields = fields.where(_needsCollectionWrapper).toList();
     final wrapNames = wrapFields.map((field) => field.propertyName).toSet();
 
-    final parameters = fields.map(
-      (field) => Parameter(
+    final parameters = fields.map((field) {
+      final useToThis = !wrapNames.contains(field.propertyName);
+      return Parameter(
         (b) => b
           ..name = field.propertyName
           ..named = true
           ..required = field.isRequired
-          ..toThis = !wrapNames.contains(field.propertyName)
+          ..toThis = useToThis
+          ..type = useToThis ? null : field.typeRef
           ..defaultTo =
               field.isTriState ? const Code("const Value.absent()") : null,
-      ),
-    );
+      );
+    });
 
     final initializers = <Code>[];
     for (final field in wrapFields) {
@@ -464,22 +470,14 @@ class VarsEmitter {
       final absentExpr = refer("Value").newInstanceNamed("absent", []);
       final valueExpr =
           _conditionalExpression(condition, presentExpr, absentExpr);
-      return wrapCollectionValue(
-        config: config,
-        node: field.typeNode,
-        overrides: config.typeOverrides,
-        valueExpr: valueExpr,
-        nullGuard: _nullGuard,
-      );
+      return valueExpr;
     }
     final valueExpr = _fromJsonForTypeNode(field.typeNode, field, accessExpr);
-    return wrapCollectionValue(
-      config: config,
-      node: field.typeNode,
-      overrides: config.typeOverrides,
-      valueExpr: valueExpr,
-      nullGuard: _nullGuard,
-    );
+    return valueExpr;
+  }
+
+  Expression _wrapTriStateInner(TypeNode node, Expression inner) {
+    return inner;
   }
 
   Expression _fromJsonForTypeNode(
@@ -509,10 +507,11 @@ class VarsEmitter {
           );
           final castExpr = valueExpr.asA(_listDynamicType());
           final fromExpr = listTypeRef.property("from").call([castExpr]);
+          final wrapped = _wrapListIfNeeded(node, field, fromExpr);
           if (node.isNonNull) {
-            return fromExpr;
+            return wrapped;
           }
-          return _nullGuard(valueExpr, fromExpr);
+          return _nullGuard(valueExpr, wrapped);
         }
       }
       final innerExpr = _fromJsonForTypeNode(node.type, field, refer(r"_$e"));
@@ -531,10 +530,11 @@ class VarsEmitter {
           ])
           .property("toList")
           .call([]);
+      final wrapped = _wrapListIfNeeded(node, field, mapped);
       if (node.isNonNull) {
-        return mapped;
+        return wrapped;
       }
-      return _nullGuard(valueExpr, mapped);
+      return _nullGuard(valueExpr, wrapped);
     }
     if (node is NamedTypeNode) {
       final typeName = node.name.value;
@@ -576,7 +576,28 @@ class VarsEmitter {
     }
 
     final scalarType = _scalarReference(typeName);
-    return valueExpr.asA(scalarType);
+    final castExpr = valueExpr.asA(scalarType);
+    return _collections.wrapMap(
+      typeName: typeName,
+      innerExpr: castExpr,
+    );
+  }
+
+  Expression _wrapListIfNeeded(
+    TypeNode node,
+    InputFieldSpec field,
+    Expression innerExpr,
+  ) {
+    final listTypeRef = _typeReferenceForTypeNode(
+      node,
+      field.namedTypeRef,
+      isTriState: false,
+      forceNonNullOuter: true,
+    );
+    return _collections.wrapList(
+      listTypeRef: listTypeRef,
+      innerExpr: innerExpr,
+    );
   }
 
   Expression _toJsonExpression(
@@ -591,21 +612,16 @@ class VarsEmitter {
   }
 
   bool _needsCollectionWrapper(InputFieldSpec field) {
-    return needsCollectionWrapper(
-      config: config,
-      node: field.typeNode,
-      overrides: config.typeOverrides,
-    );
+    if (field.isTriState) return false;
+    return _collections.needsWrapper(field.typeNode);
   }
 
   String _collectionWrapperExpression(
     InputFieldSpec field,
     String propertyName,
   ) {
-    return collectionWrapperExpression(
-      config: config,
+    return _collections.wrapConstructor(
       node: field.typeNode,
-      overrides: config.typeOverrides,
       propertyName: propertyName,
     );
   }

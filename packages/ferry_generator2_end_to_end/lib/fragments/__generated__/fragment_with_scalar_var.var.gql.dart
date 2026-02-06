@@ -14,7 +14,8 @@ class GPostsWithFixedVariableVars {
         filter: json.containsKey('filter')
             ? Value.present(json['filter'] == null
                 ? null
-                : (json['filter'] as Map<String, dynamic>))
+                : Map<String, dynamic>.unmodifiable(
+                    (json['filter'] as Map<String, dynamic>)))
             : Value.absent());
   }
 

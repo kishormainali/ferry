@@ -92,9 +92,9 @@ extension GAuthorFragmentDataWhenExtension on GAuthorFragmentData {
 
 class GAuthorFragmentData__asPerson extends GAuthorFragmentData
     implements GAuthorFragment, GAuthorFragment__asPerson {
-  const GAuthorFragmentData__asPerson({
-    required displayName,
-    required G__typename,
+  GAuthorFragmentData__asPerson({
+    required String displayName,
+    required String G__typename,
     required this.firstName,
     required this.lastName,
   }) : super(displayName: displayName, G__typename: G__typename);
@@ -157,9 +157,9 @@ class GAuthorFragmentData__asPerson extends GAuthorFragmentData
 
 class GAuthorFragmentData__asCompany extends GAuthorFragmentData
     implements GAuthorFragment, GAuthorFragment__asCompany {
-  const GAuthorFragmentData__asCompany({
-    required displayName,
-    required G__typename,
+  GAuthorFragmentData__asCompany({
+    required String displayName,
+    required String G__typename,
     required this.name,
   }) : super(displayName: displayName, G__typename: G__typename);
 
@@ -214,9 +214,9 @@ class GAuthorFragmentData__asCompany extends GAuthorFragmentData
 /// Author interface.
 class GAuthorFragmentData__unknown extends GAuthorFragmentData
     implements GAuthorFragment {
-  const GAuthorFragmentData__unknown({
-    required displayName,
-    required G__typename,
+  GAuthorFragmentData__unknown({
+    required String displayName,
+    required String G__typename,
   }) : super(displayName: displayName, G__typename: G__typename);
 
   factory GAuthorFragmentData__unknown.fromJson(Map<String, dynamic> json) {
@@ -266,6 +266,17 @@ abstract class GBookFragment {
 
   /// Book title.
   String get title;
+  List<List<String>> get tagMatrix;
+  List<List<String?>?>? get tagMatrixNullable;
+  List<List<GBookFragment_relatedBooks>> get relatedBooks;
+  String get G__typename;
+}
+
+/// Book interface.
+abstract class GBookFragment_relatedBooks {
+  /// Book title.
+  String get title;
+  GAuthorFragment get author;
   String get G__typename;
 }
 
@@ -281,11 +292,18 @@ abstract class GBookFragment__asColoringBook implements GBookFragment {
 
 /// Book interface.
 sealed class GBookFragmentData implements GBookFragment {
-  const GBookFragmentData({
+  GBookFragmentData({
     required this.author,
     required this.title,
+    required List<List<String>> tagMatrix,
+    List<List<String?>?>? tagMatrixNullable,
+    required List<List<GBookFragmentData_relatedBooks>> relatedBooks,
     required this.G__typename,
-  });
+  })  : tagMatrix = List.unmodifiable(tagMatrix),
+        tagMatrixNullable = tagMatrixNullable == null
+            ? null
+            : List.unmodifiable(tagMatrixNullable),
+        relatedBooks = List.unmodifiable(relatedBooks);
 
   factory GBookFragmentData.fromJson(Map<String, dynamic> json) {
     switch (json['__typename'] as String) {
@@ -303,12 +321,32 @@ sealed class GBookFragmentData implements GBookFragment {
   /// Book title.
   final String title;
 
+  final List<List<String>> tagMatrix;
+
+  final List<List<String?>?>? tagMatrixNullable;
+
+  final List<List<GBookFragmentData_relatedBooks>> relatedBooks;
+
   final String G__typename;
 
   Map<String, dynamic> toJson() {
     final _$result = <String, dynamic>{};
     _$result['author'] = this.author.toJson();
     _$result['title'] = this.title;
+    _$result['tagMatrix'] =
+        this.tagMatrix.map((_$e) => _$e.map((_$e) => _$e).toList()).toList();
+    final _$tagMatrixNullableValue = this.tagMatrixNullable;
+    _$result['tagMatrixNullable'] = _$tagMatrixNullableValue == null
+        ? null
+        : _$tagMatrixNullableValue
+            .map((_$e) => _$e == null
+                ? null
+                : _$e.map((_$e) => _$e == null ? null : _$e).toList())
+            .toList();
+    _$result['relatedBooks'] = this
+        .relatedBooks
+        .map((_$e) => _$e.map((_$e) => _$e.toJson()).toList())
+        .toList();
     _$result['__typename'] = this.G__typename;
     return _$result;
   }
@@ -350,22 +388,119 @@ extension GBookFragmentDataWhenExtension on GBookFragmentData {
   }
 }
 
+/// Book interface.
+class GBookFragmentData_relatedBooks implements GBookFragment_relatedBooks {
+  const GBookFragmentData_relatedBooks({
+    required this.title,
+    required this.author,
+    required this.G__typename,
+  });
+
+  factory GBookFragmentData_relatedBooks.fromJson(Map<String, dynamic> json) {
+    return GBookFragmentData_relatedBooks(
+      title: (json['title'] as String),
+      author: GAuthorFragmentData.fromJson(
+          (json['author'] as Map<String, dynamic>)),
+      G__typename: (json['__typename'] as String),
+    );
+  }
+
+  /// Book title.
+  final String title;
+
+  final GAuthorFragmentData author;
+
+  final String G__typename;
+
+  Map<String, dynamic> toJson() {
+    final _$result = <String, dynamic>{};
+    _$result['title'] = this.title;
+    _$result['author'] = this.author.toJson();
+    _$result['__typename'] = this.G__typename;
+    return _$result;
+  }
+
+  GBookFragmentData_relatedBooks copyWith({
+    String? title,
+    GAuthorFragmentData? author,
+    String? G__typename,
+  }) {
+    return GBookFragmentData_relatedBooks(
+      title: title ?? this.title,
+      author: author ?? this.author,
+      G__typename: G__typename ?? this.G__typename,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GBookFragmentData_relatedBooks &&
+            title == other.title &&
+            author == other.author &&
+            G__typename == other.G__typename);
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(runtimeType, title, author, G__typename);
+  }
+
+  @override
+  String toString() {
+    return 'GBookFragmentData_relatedBooks(title: $title, author: $author, G__typename: $G__typename)';
+  }
+}
+
 class GBookFragmentData__asTextbook extends GBookFragmentData
     implements GBookFragment, GBookFragment__asTextbook {
-  const GBookFragmentData__asTextbook({
-    required author,
-    required title,
-    required G__typename,
-    required this.courses,
-  }) : super(author: author, title: title, G__typename: G__typename);
+  GBookFragmentData__asTextbook({
+    required GAuthorFragmentData author,
+    required String title,
+    required List<List<String>> tagMatrix,
+    List<List<String?>?>? tagMatrixNullable,
+    required List<List<GBookFragmentData_relatedBooks>> relatedBooks,
+    required String G__typename,
+    required List<String> courses,
+  })  : courses = List.unmodifiable(courses),
+        super(
+            author: author,
+            title: title,
+            tagMatrix: tagMatrix,
+            tagMatrixNullable: tagMatrixNullable,
+            relatedBooks: relatedBooks,
+            G__typename: G__typename);
 
   factory GBookFragmentData__asTextbook.fromJson(Map<String, dynamic> json) {
     return GBookFragmentData__asTextbook(
       author: GAuthorFragmentData.fromJson(
           (json['author'] as Map<String, dynamic>)),
       title: (json['title'] as String),
+      tagMatrix: List<List<String>>.unmodifiable(
+          (json['tagMatrix'] as List<dynamic>)
+              .map((_$e) => List<String>.unmodifiable(
+                  List<String>.from((_$e as List<dynamic>))))
+              .toList()),
+      tagMatrixNullable: json['tagMatrixNullable'] == null
+          ? null
+          : List<List<String?>?>.unmodifiable(
+              (json['tagMatrixNullable'] as List<dynamic>)
+                  .map((_$e) => _$e == null
+                      ? null
+                      : List<String?>.unmodifiable(
+                          List<String?>.from((_$e as List<dynamic>))))
+                  .toList()),
+      relatedBooks: List<List<GBookFragmentData_relatedBooks>>.unmodifiable(
+          (json['relatedBooks'] as List<dynamic>)
+              .map((_$e) => List<GBookFragmentData_relatedBooks>.unmodifiable(
+                  (_$e as List<dynamic>)
+                      .map((_$e) => GBookFragmentData_relatedBooks.fromJson(
+                          (_$e as Map<String, dynamic>)))
+                      .toList()))
+              .toList()),
       G__typename: (json['__typename'] as String),
-      courses: List<String>.from((json['courses'] as List<dynamic>)),
+      courses: List<String>.unmodifiable(
+          List<String>.from((json['courses'] as List<dynamic>))),
     );
   }
 
@@ -380,12 +515,20 @@ class GBookFragmentData__asTextbook extends GBookFragmentData
   GBookFragmentData__asTextbook copyWith({
     GAuthorFragmentData? author,
     String? title,
+    List<List<String>>? tagMatrix,
+    List<List<String?>?>? tagMatrixNullable,
+    bool tagMatrixNullableIsSet = false,
+    List<List<GBookFragmentData_relatedBooks>>? relatedBooks,
     String? G__typename,
     List<String>? courses,
   }) {
     return GBookFragmentData__asTextbook(
       author: author ?? this.author,
       title: title ?? this.title,
+      tagMatrix: tagMatrix ?? this.tagMatrix,
+      tagMatrixNullable:
+          tagMatrixNullableIsSet ? tagMatrixNullable : this.tagMatrixNullable,
+      relatedBooks: relatedBooks ?? this.relatedBooks,
       G__typename: G__typename ?? this.G__typename,
       courses: courses ?? this.courses,
     );
@@ -397,6 +540,10 @@ class GBookFragmentData__asTextbook extends GBookFragmentData
         (other is GBookFragmentData__asTextbook &&
             author == other.author &&
             title == other.title &&
+            _gqlUtils.listEqualsDeep(tagMatrix, other.tagMatrix) &&
+            _gqlUtils.listEqualsDeep(
+                tagMatrixNullable, other.tagMatrixNullable) &&
+            _gqlUtils.listEqualsDeep(relatedBooks, other.relatedBooks) &&
             G__typename == other.G__typename &&
             _gqlUtils.listEquals(courses, other.courses));
   }
@@ -404,23 +551,40 @@ class GBookFragmentData__asTextbook extends GBookFragmentData
   @override
   int get hashCode {
     return Object.hash(
-        runtimeType, author, title, G__typename, _gqlUtils.listHash(courses));
+        runtimeType,
+        author,
+        title,
+        _gqlUtils.listHashDeep(tagMatrix),
+        _gqlUtils.listHashDeep(tagMatrixNullable),
+        _gqlUtils.listHashDeep(relatedBooks),
+        G__typename,
+        _gqlUtils.listHash(courses));
   }
 
   @override
   String toString() {
-    return 'GBookFragmentData__asTextbook(author: $author, title: $title, G__typename: $G__typename, courses: $courses)';
+    return 'GBookFragmentData__asTextbook(author: $author, title: $title, tagMatrix: $tagMatrix, tagMatrixNullable: $tagMatrixNullable, relatedBooks: $relatedBooks, G__typename: $G__typename, courses: $courses)';
   }
 }
 
 class GBookFragmentData__asColoringBook extends GBookFragmentData
     implements GBookFragment, GBookFragment__asColoringBook {
-  const GBookFragmentData__asColoringBook({
-    required author,
-    required title,
-    required G__typename,
-    required this.colors,
-  }) : super(author: author, title: title, G__typename: G__typename);
+  GBookFragmentData__asColoringBook({
+    required GAuthorFragmentData author,
+    required String title,
+    required List<List<String>> tagMatrix,
+    List<List<String?>?>? tagMatrixNullable,
+    required List<List<GBookFragmentData_relatedBooks>> relatedBooks,
+    required String G__typename,
+    required List<String> colors,
+  })  : colors = List.unmodifiable(colors),
+        super(
+            author: author,
+            title: title,
+            tagMatrix: tagMatrix,
+            tagMatrixNullable: tagMatrixNullable,
+            relatedBooks: relatedBooks,
+            G__typename: G__typename);
 
   factory GBookFragmentData__asColoringBook.fromJson(
       Map<String, dynamic> json) {
@@ -428,8 +592,31 @@ class GBookFragmentData__asColoringBook extends GBookFragmentData
       author: GAuthorFragmentData.fromJson(
           (json['author'] as Map<String, dynamic>)),
       title: (json['title'] as String),
+      tagMatrix: List<List<String>>.unmodifiable(
+          (json['tagMatrix'] as List<dynamic>)
+              .map((_$e) => List<String>.unmodifiable(
+                  List<String>.from((_$e as List<dynamic>))))
+              .toList()),
+      tagMatrixNullable: json['tagMatrixNullable'] == null
+          ? null
+          : List<List<String?>?>.unmodifiable(
+              (json['tagMatrixNullable'] as List<dynamic>)
+                  .map((_$e) => _$e == null
+                      ? null
+                      : List<String?>.unmodifiable(
+                          List<String?>.from((_$e as List<dynamic>))))
+                  .toList()),
+      relatedBooks: List<List<GBookFragmentData_relatedBooks>>.unmodifiable(
+          (json['relatedBooks'] as List<dynamic>)
+              .map((_$e) => List<GBookFragmentData_relatedBooks>.unmodifiable(
+                  (_$e as List<dynamic>)
+                      .map((_$e) => GBookFragmentData_relatedBooks.fromJson(
+                          (_$e as Map<String, dynamic>)))
+                      .toList()))
+              .toList()),
       G__typename: (json['__typename'] as String),
-      colors: List<String>.from((json['colors'] as List<dynamic>)),
+      colors: List<String>.unmodifiable(
+          List<String>.from((json['colors'] as List<dynamic>))),
     );
   }
 
@@ -444,12 +631,20 @@ class GBookFragmentData__asColoringBook extends GBookFragmentData
   GBookFragmentData__asColoringBook copyWith({
     GAuthorFragmentData? author,
     String? title,
+    List<List<String>>? tagMatrix,
+    List<List<String?>?>? tagMatrixNullable,
+    bool tagMatrixNullableIsSet = false,
+    List<List<GBookFragmentData_relatedBooks>>? relatedBooks,
     String? G__typename,
     List<String>? colors,
   }) {
     return GBookFragmentData__asColoringBook(
       author: author ?? this.author,
       title: title ?? this.title,
+      tagMatrix: tagMatrix ?? this.tagMatrix,
+      tagMatrixNullable:
+          tagMatrixNullableIsSet ? tagMatrixNullable : this.tagMatrixNullable,
+      relatedBooks: relatedBooks ?? this.relatedBooks,
       G__typename: G__typename ?? this.G__typename,
       colors: colors ?? this.colors,
     );
@@ -461,6 +656,10 @@ class GBookFragmentData__asColoringBook extends GBookFragmentData
         (other is GBookFragmentData__asColoringBook &&
             author == other.author &&
             title == other.title &&
+            _gqlUtils.listEqualsDeep(tagMatrix, other.tagMatrix) &&
+            _gqlUtils.listEqualsDeep(
+                tagMatrixNullable, other.tagMatrixNullable) &&
+            _gqlUtils.listEqualsDeep(relatedBooks, other.relatedBooks) &&
             G__typename == other.G__typename &&
             _gqlUtils.listEquals(colors, other.colors));
   }
@@ -468,29 +667,67 @@ class GBookFragmentData__asColoringBook extends GBookFragmentData
   @override
   int get hashCode {
     return Object.hash(
-        runtimeType, author, title, G__typename, _gqlUtils.listHash(colors));
+        runtimeType,
+        author,
+        title,
+        _gqlUtils.listHashDeep(tagMatrix),
+        _gqlUtils.listHashDeep(tagMatrixNullable),
+        _gqlUtils.listHashDeep(relatedBooks),
+        G__typename,
+        _gqlUtils.listHash(colors));
   }
 
   @override
   String toString() {
-    return 'GBookFragmentData__asColoringBook(author: $author, title: $title, G__typename: $G__typename, colors: $colors)';
+    return 'GBookFragmentData__asColoringBook(author: $author, title: $title, tagMatrix: $tagMatrix, tagMatrixNullable: $tagMatrixNullable, relatedBooks: $relatedBooks, G__typename: $G__typename, colors: $colors)';
   }
 }
 
 /// Book interface.
 class GBookFragmentData__unknown extends GBookFragmentData
     implements GBookFragment {
-  const GBookFragmentData__unknown({
-    required author,
-    required title,
-    required G__typename,
-  }) : super(author: author, title: title, G__typename: G__typename);
+  GBookFragmentData__unknown({
+    required GAuthorFragmentData author,
+    required String title,
+    required List<List<String>> tagMatrix,
+    List<List<String?>?>? tagMatrixNullable,
+    required List<List<GBookFragmentData_relatedBooks>> relatedBooks,
+    required String G__typename,
+  }) : super(
+            author: author,
+            title: title,
+            tagMatrix: tagMatrix,
+            tagMatrixNullable: tagMatrixNullable,
+            relatedBooks: relatedBooks,
+            G__typename: G__typename);
 
   factory GBookFragmentData__unknown.fromJson(Map<String, dynamic> json) {
     return GBookFragmentData__unknown(
       author: GAuthorFragmentData.fromJson(
           (json['author'] as Map<String, dynamic>)),
       title: (json['title'] as String),
+      tagMatrix: List<List<String>>.unmodifiable(
+          (json['tagMatrix'] as List<dynamic>)
+              .map((_$e) => List<String>.unmodifiable(
+                  List<String>.from((_$e as List<dynamic>))))
+              .toList()),
+      tagMatrixNullable: json['tagMatrixNullable'] == null
+          ? null
+          : List<List<String?>?>.unmodifiable(
+              (json['tagMatrixNullable'] as List<dynamic>)
+                  .map((_$e) => _$e == null
+                      ? null
+                      : List<String?>.unmodifiable(
+                          List<String?>.from((_$e as List<dynamic>))))
+                  .toList()),
+      relatedBooks: List<List<GBookFragmentData_relatedBooks>>.unmodifiable(
+          (json['relatedBooks'] as List<dynamic>)
+              .map((_$e) => List<GBookFragmentData_relatedBooks>.unmodifiable(
+                  (_$e as List<dynamic>)
+                      .map((_$e) => GBookFragmentData_relatedBooks.fromJson(
+                          (_$e as Map<String, dynamic>)))
+                      .toList()))
+              .toList()),
       G__typename: (json['__typename'] as String),
     );
   }
@@ -503,11 +740,19 @@ class GBookFragmentData__unknown extends GBookFragmentData
   GBookFragmentData__unknown copyWith({
     GAuthorFragmentData? author,
     String? title,
+    List<List<String>>? tagMatrix,
+    List<List<String?>?>? tagMatrixNullable,
+    bool tagMatrixNullableIsSet = false,
+    List<List<GBookFragmentData_relatedBooks>>? relatedBooks,
     String? G__typename,
   }) {
     return GBookFragmentData__unknown(
       author: author ?? this.author,
       title: title ?? this.title,
+      tagMatrix: tagMatrix ?? this.tagMatrix,
+      tagMatrixNullable:
+          tagMatrixNullableIsSet ? tagMatrixNullable : this.tagMatrixNullable,
+      relatedBooks: relatedBooks ?? this.relatedBooks,
       G__typename: G__typename ?? this.G__typename,
     );
   }
@@ -518,33 +763,45 @@ class GBookFragmentData__unknown extends GBookFragmentData
         (other is GBookFragmentData__unknown &&
             author == other.author &&
             title == other.title &&
+            _gqlUtils.listEqualsDeep(tagMatrix, other.tagMatrix) &&
+            _gqlUtils.listEqualsDeep(
+                tagMatrixNullable, other.tagMatrixNullable) &&
+            _gqlUtils.listEqualsDeep(relatedBooks, other.relatedBooks) &&
             G__typename == other.G__typename);
   }
 
   @override
   int get hashCode {
-    return Object.hash(runtimeType, author, title, G__typename);
+    return Object.hash(
+        runtimeType,
+        author,
+        title,
+        _gqlUtils.listHashDeep(tagMatrix),
+        _gqlUtils.listHashDeep(tagMatrixNullable),
+        _gqlUtils.listHashDeep(relatedBooks),
+        G__typename);
   }
 
   @override
   String toString() {
-    return 'GBookFragmentData__unknown(author: $author, title: $title, G__typename: $G__typename)';
+    return 'GBookFragmentData__unknown(author: $author, title: $title, tagMatrix: $tagMatrix, tagMatrixNullable: $tagMatrixNullable, relatedBooks: $relatedBooks, G__typename: $G__typename)';
   }
 }
 
 /// The query type for the schema.
 class GGetBooksData {
-  const GGetBooksData({
-    required this.books,
+  GGetBooksData({
+    required List<GBookFragmentData> books,
     required this.G__typename,
-  });
+  }) : books = List.unmodifiable(books);
 
   factory GGetBooksData.fromJson(Map<String, dynamic> json) {
     return GGetBooksData(
-      books: (json['books'] as List<dynamic>)
-          .map((_$e) =>
-              GBookFragmentData.fromJson((_$e as Map<String, dynamic>)))
-          .toList(),
+      books: List<GBookFragmentData>.unmodifiable(
+          (json['books'] as List<dynamic>)
+              .map((_$e) =>
+                  GBookFragmentData.fromJson((_$e as Map<String, dynamic>)))
+              .toList()),
       G__typename: (json['__typename'] as String),
     );
   }

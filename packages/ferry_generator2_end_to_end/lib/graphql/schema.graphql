@@ -24,6 +24,11 @@ type Query {
   postsByLikes(likes: [PostLikesInput]): [Post]
   weirdNames: WeirdNames
   books: [Book!]!
+  aThing: A
+  bThing: B
+  cThing: C
+  dThing: D
+  other: Other
 }
 
 """The mutation type for the schema."""
@@ -273,3 +278,46 @@ scalar ISODate
 scalar CustomField
 
 scalar Json
+
+# Transitive interface inheritance example from:
+# https://github.com/gql-dart/ferry/pull/656#issuecomment-3896296190
+interface A {
+  id: ID!
+}
+
+interface B implements A {
+  id: ID!
+  bField: String!
+}
+
+type Foo implements B {
+  id: ID!
+  bField: String!
+  fooOnly: String!
+}
+
+type Bar implements B {
+  id: ID!
+  bField: String!
+  barOnly: String!
+}
+
+type John implements A {
+  id: ID!
+  johnOnly: String!
+}
+
+interface C {
+    id: ID!
+    cField: String!
+}
+interface D {
+    id: ID!
+    dField: String!
+}
+type Other implements C & D {
+    id: ID!
+    otherField: String!
+    cField: String!
+    dField: String!
+}

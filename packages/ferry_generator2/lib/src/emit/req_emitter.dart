@@ -911,13 +911,15 @@ String _equalsExpressionForField(
   _ReqFieldSpec field,
   String right,
 ) {
+  // Avoid collision with the `operator ==(Object other)` parameter name.
+  final left = field.name == "other" ? "this.other" : field.name;
   if (field.name == "vars") {
     return "${utilsPrefix}deepEquals(varsToJson(), other.varsToJson())";
   }
   if (field.isMap) {
-    return "${utilsPrefix}deepEquals(${field.name}, $right)";
+    return "${utilsPrefix}deepEquals($left, $right)";
   }
-  return "${field.name} == $right";
+  return "$left == $right";
 }
 
 String _hashExpressionForField(_ReqFieldSpec field) {

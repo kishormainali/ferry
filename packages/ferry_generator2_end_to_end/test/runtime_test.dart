@@ -27,6 +27,8 @@ import 'package:ferry_generator2_end_to_end/fragments/__generated__/shared_fragm
 import 'package:ferry_generator2_end_to_end/interfaces/__generated__/hero_for_episode.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/interfaces/__generated__/hero_for_episode.req.gql.dart';
 import 'package:ferry_generator2_end_to_end/interfaces/__generated__/hero_for_episode.var.gql.dart';
+import 'package:ferry_generator2_end_to_end/interfaces/__generated__/multiple_interfaces_plus_fragments.data.gql.dart';
+import 'package:ferry_generator2_end_to_end/interfaces/__generated__/transitive_interface_inheritance.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/issue_610/__generated__/books.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/no_vars/__generated__/hero_no_vars.req.gql.dart';
 import 'package:ferry_generator2_end_to_end/subscriptions/__generated__/review_added.data.gql.dart';
@@ -267,7 +269,7 @@ void main() {
           'id': '1000',
           'name': 'Luke',
           'appearsIn': ['NEWHOPE', 'SURPRISE'],
-          'friends': [],
+          'friends': const <Object?>[],
         },
       ],
     });
@@ -554,7 +556,7 @@ void main() {
           'tagMatrixNullable': [
             ['nullable', null],
             null,
-            [],
+            const <Object>[],
           ],
           'relatedBooks': [
             [
@@ -607,7 +609,7 @@ void main() {
           'tagMatrixNullable': [
             ['nullable', null],
             null,
-            [],
+            <Object>[],
           ],
           'relatedBooks': [
             [
@@ -656,7 +658,7 @@ void main() {
           'tagMatrixNullable': [
             ['nullable', null],
             null,
-            [],
+            <Object?>[],
           ],
           'relatedBooks': [
             [
@@ -703,7 +705,7 @@ void main() {
           'tagMatrixNullable': [
             ['nullable', null],
             null,
-            [],
+            <Object?>[],
           ],
           'relatedBooks': [
             [
@@ -730,6 +732,34 @@ void main() {
     });
 
     expect(first, isNot(equals(different)));
+  });
+
+  test('equals handles field named other', () {
+    final input = {
+      '__typename': 'Query',
+      'cThing': {
+        '__typename': 'Other',
+        'id': 'c-1',
+        'cField': 'cField-1',
+      },
+      'dThing': {
+        '__typename': 'Other',
+        'id': 'd-1',
+        'dField': 'dField-1',
+      },
+      'other': {
+        '__typename': 'Other',
+        'id': 'o-1',
+        'cField': 'cField-2',
+        'dField': 'dField-2',
+      },
+    };
+
+    final first = GMultipleInterfacesData.fromJson(input);
+    final second = GMultipleInterfacesData.fromJson(input);
+
+    expect(first, equals(second));
+    expect(first.hashCode, equals(second.hashCode));
   });
 
   test('create review mutation round-trips and vars serialize', () {
@@ -1007,7 +1037,7 @@ void main() {
       'hero': {
         '__typename': 'Droid',
         'name': 'R2-D2',
-        'friends': [],
+        'friends': const <Object?>[],
         'primaryFunction': 'Astromech',
       },
     });
@@ -1024,6 +1054,40 @@ void main() {
       orElse: () => 'fallback',
     );
     expect(maybe, 'fallback');
+  });
+
+  test('transitive interface fragments dispatch by concrete typename', () {
+    final dataFoo = GAThingTransitiveInterfaceInheritanceData.fromJson({
+      '__typename': 'Query',
+      'aThing': {
+        '__typename': 'Foo',
+        'id': 'foo-1',
+        'bField': 'b-1',
+      },
+    });
+
+    final selectedFoo = dataFoo.aThing!.when<String>(
+      b: (b) => 'b:${b.bField}',
+      john: (john) => 'john:${john.johnOnly}',
+      orElse: () => 'other',
+    );
+    expect(selectedFoo, 'b:b-1');
+
+    final dataJohn = GAThingTransitiveInterfaceInheritanceData.fromJson({
+      '__typename': 'Query',
+      'aThing': {
+        '__typename': 'John',
+        'id': 'john-1',
+        'johnOnly': 'j-1',
+      },
+    });
+
+    final selectedJohn = dataJohn.aThing!.when<String>(
+      b: (b) => 'b:${b.bField}',
+      john: (john) => 'john:${john.johnOnly}',
+      orElse: () => 'other',
+    );
+    expect(selectedJohn, 'john:j-1');
   });
 
   test('custom scalar overrides serialize via helpers', () {

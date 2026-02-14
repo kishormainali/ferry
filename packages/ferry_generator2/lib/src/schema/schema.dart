@@ -223,24 +223,15 @@ class SchemaIndex {
     if (typeDefinition is ObjectTypeDefinitionNode) {
       return [typeDefinition];
     }
-    if (typeDefinition is UnionTypeDefinitionNode) {
-      final unionExtensions = _unionExtensions[typeDefinition.name.value] ?? [];
-      final types = [
-        ...typeDefinition.types,
-        ...unionExtensions.expand((extension) => extension.types),
-      ];
-      return types.expand((typeRef) => lookupConcreteTypes(typeRef.name));
-    }
-
-    if (typeDefinition is InterfaceTypeDefinitionNode) {
-      return document.definitions.whereType<ObjectTypeDefinitionNode>().where(
-            (element) => element.interfaces
-                .where((iface) => iface.name.value == name.value)
-                .isNotEmpty,
-          );
-    }
-
-    return [];
+    final possibleTypes = possibleTypesMap()[name.value];
+    if (possibleTypes == null || possibleTypes.isEmpty) return const [];
+    return possibleTypes.map((typeName) {
+      final def = lookupTypeAs<ObjectTypeDefinitionNode>(NameNode(value: typeName));
+      if (def == null) {
+        throw StateError("Missing type definition for $typeName");
+      }
+      return def;
+    });
   }
 
   Map<String, Set<String>> possibleTypesMap() {
@@ -248,38 +239,98 @@ class SchemaIndex {
     if (cached != null) return cached;
     final possibleTypes = <String, Set<String>>{};
 
+    // Build interface -> super-interfaces graph (includes extensions).
+    final interfaceSupers = <String, Set<String>>{};
     for (final definition in document.definitions) {
-      if (definition is UnionTypeDefinitionNode) {
-        final types = possibleTypes[definition.name.value] ?? {};
-        for (final tpe in definition.types) {
-          types.add(tpe.name.value);
+      if (definition is InterfaceTypeDefinitionNode) {
+        final name = definition.name.value;
+        final supers = interfaceSupers[name] ?? <String>{};
+        supers.addAll(definition.interfaces.map((t) => t.name.value));
+        for (final ext in _interfaceExtensions[name] ?? const []) {
+          supers.addAll(ext.interfaces.map((t) => t.name.value));
         }
-        possibleTypes[definition.name.value] = types;
-      } else if (definition is UnionTypeExtensionNode) {
-        final types = possibleTypes[definition.name.value] ?? {};
-        for (final tpe in definition.types) {
-          types.add(tpe.name.value);
-        }
-        possibleTypes[definition.name.value] = types;
-      } else if (definition is ObjectTypeDefinitionNode) {
-        for (final tpe in definition.interfaces) {
-          final types = possibleTypes[tpe.name.value] ?? {};
-          types.add(definition.name.value);
-          possibleTypes[tpe.name.value] = types;
-        }
+        interfaceSupers[name] = supers;
       }
     }
 
-    final expanded = possibleTypes.map((key, value) {
-      final concrete = value
-          .expand<ObjectTypeDefinitionNode>(
-              (typeName) => lookupConcreteTypes(NameNode(value: typeName)))
-          .map((type) => type.name.value)
-          .toSet();
-      return MapEntry(key, concrete);
-    });
+    // Compute transitive super-interfaces for a given interface.
+    final superCache = <String, Set<String>>{};
+    Set<String> collectSupers(String interfaceName, Set<String> stack) {
+      final cached = superCache[interfaceName];
+      if (cached != null) return cached;
+      if (stack.contains(interfaceName)) {
+        throw StateError(
+          "Interface inheritance cycle detected: ${[...stack, interfaceName].join(' -> ')}",
+        );
+      }
+      final direct = interfaceSupers[interfaceName] ?? const <String>{};
+      if (direct.isEmpty) {
+        return superCache[interfaceName] = const <String>{};
+      }
+      final nextStack = {...stack, interfaceName};
+      final result = <String>{...direct};
+      for (final sup in direct) {
+        result.addAll(collectSupers(sup, nextStack));
+      }
+      return superCache[interfaceName] = result;
+    }
 
-    return _possibleTypesCache = expanded;
+    // Populate interface possible-types from object implementations (includes object extensions).
+    for (final definition in document.definitions) {
+      if (definition is! ObjectTypeDefinitionNode) continue;
+
+      final objectName = definition.name.value;
+      final directInterfaces = <String>{
+        ...definition.interfaces.map((t) => t.name.value),
+        ...(_objectExtensions[objectName] ?? const [])
+            .expand((ext) => ext.interfaces.map((t) => t.name.value)),
+      };
+
+      final allInterfaces = <String>{};
+      for (final iface in directInterfaces) {
+        allInterfaces.add(iface);
+        allInterfaces.addAll(collectSupers(iface, const <String>{}));
+      }
+
+      for (final iface in allInterfaces) {
+        final types = possibleTypes[iface] ?? <String>{};
+        types.add(objectName);
+        possibleTypes[iface] = types;
+      }
+    }
+
+    // Populate union possible-types (includes union extensions).
+    final unionNames = <String>{
+      ...document.definitions.whereType<UnionTypeDefinitionNode>().map((d) => d.name.value),
+      ..._unionExtensions.keys,
+    };
+    for (final unionName in unionNames) {
+      final unionDef = lookupTypeAs<UnionTypeDefinitionNode>(NameNode(value: unionName));
+      final unionExtensions = _unionExtensions[unionName] ?? const [];
+      final members = <String>{
+        ...?unionDef?.types.map((t) => t.name.value),
+        ...unionExtensions.expand((ext) => ext.types.map((t) => t.name.value)),
+      };
+
+      if (members.isEmpty) continue;
+
+      final types = possibleTypes[unionName] ?? <String>{};
+      for (final memberName in members) {
+        final memberDef = lookupType(NameNode(value: memberName));
+        if (memberDef is ObjectTypeDefinitionNode) {
+          types.add(memberName);
+          continue;
+        }
+        // Not expected per spec, but we can be permissive and expand.
+        final expanded = possibleTypes[memberName];
+        if (expanded != null) {
+          types.addAll(expanded);
+        }
+      }
+      possibleTypes[unionName] = types;
+    }
+
+    return _possibleTypesCache = possibleTypes;
   }
 
   FieldDefinitionNode? lookupFieldDefinitionNode(

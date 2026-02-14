@@ -222,8 +222,50 @@ Extension? _buildWhenExtension({
     paramNames[typeName] = uniqueParamName(typeName);
   }
 
+  final orderedInlineTypeNames = [
+    ...inlineTypeNames.where(
+      (typeName) =>
+          ctx.schema.lookupTypeAs<ObjectTypeDefinitionNode>(
+            NameNode(value: typeName),
+          ) !=
+          null,
+    ),
+    ...inlineTypeNames.where(
+      (typeName) =>
+          ctx.schema.lookupTypeAs<ObjectTypeDefinitionNode>(
+            NameNode(value: typeName),
+          ) ==
+          null,
+    ),
+  ];
+
+  List<Code> buildSwitchCases(String Function(String typeName) returnStatement) {
+    final usedCaseTypeNames = <String>{};
+    final switchCases = <Code>[];
+    for (final typeName in orderedInlineTypeNames) {
+      final typeDef = ctx.schema.lookupType(NameNode(value: typeName));
+      final concreteCaseTypes = typeDef is ObjectTypeDefinitionNode
+          ? <String>{typeName}
+          : (ctx.schema.possibleTypesMap()[typeName] ?? const <String>{});
+      final unusedCaseTypes =
+          concreteCaseTypes.difference(usedCaseTypeNames).toList()..sort();
+      if (unusedCaseTypes.isEmpty) continue;
+      usedCaseTypeNames.addAll(unusedCaseTypes);
+
+      for (final caseType in unusedCaseTypes) {
+        switchCases.add(Code("case '$caseType':"));
+      }
+      switchCases.add(Code(returnStatement(typeName)));
+    }
+    return switchCases;
+  }
+
   final methods = <Method>[];
   if (ctx.config.whenExtensionConfig.generateWhenExtensionMethod) {
+    final switchCases = buildSwitchCases(
+      (typeName) =>
+          "return ${paramNames[typeName]}(this as ${builtClassName("${baseName}__as$typeName")});",
+    );
     methods.add(
       Method(
         (b) => b
@@ -257,10 +299,7 @@ Extension? _buildWhenExtension({
           ])
           ..body = Block.of([
             const Code("switch(G__typename) {"),
-            for (final typeName in inlineTypeNames)
-              Code(
-                "case '$typeName': return ${paramNames[typeName]}(this as ${builtClassName("${baseName}__as$typeName")});",
-              ),
+            ...switchCases,
             const Code("default: return orElse();"),
             const Code("}"),
           ]),
@@ -269,6 +308,10 @@ Extension? _buildWhenExtension({
   }
 
   if (ctx.config.whenExtensionConfig.generateMaybeWhenExtensionMethod) {
+    final switchCases = buildSwitchCases(
+      (typeName) =>
+          "return ${paramNames[typeName]} == null ? orElse() : ${paramNames[typeName]}(this as ${builtClassName("${baseName}__as$typeName")});",
+    );
     methods.add(
       Method(
         (b) => b
@@ -303,10 +346,7 @@ Extension? _buildWhenExtension({
           ])
           ..body = Block.of([
             const Code("switch(G__typename) {"),
-            for (final typeName in inlineTypeNames)
-              Code(
-                "case '$typeName': return ${paramNames[typeName]} == null ? orElse() : ${paramNames[typeName]}(this as ${builtClassName("${baseName}__as$typeName")});",
-              ),
+            ...switchCases,
             const Code("default: return orElse();"),
             const Code("}"),
           ]),
@@ -424,7 +464,7 @@ Class _buildPolymorphicBaseClass({
       ..fields.addAll(baseFields.map(_buildField))
       ..constructors.addAll([
         _buildConstructor(ctx, baseFields, null),
-        _buildFromJsonFactory(className, baseFields, inlineTypeNames),
+        _buildFromJsonFactory(ctx, className, baseFields, inlineTypeNames),
       ])
       ..methods.add(
         _buildToJsonMethod(ctx, baseFields, usesSuper: false),
@@ -571,17 +611,49 @@ Constructor _buildConstructor(
 }
 
 Constructor _buildFromJsonFactory(
+  DataEmitterContext ctx,
   String className,
   List<FieldSpec> baseFields,
   List<String> inlineTypeNames,
 ) {
-  final switchCases = inlineTypeNames
-      .map(
-        (typeName) => Code(
-          "case '$typeName': return ${builtClassName("${stripPrefix(className)}__as$typeName")}.fromJson(json);",
-        ),
-      )
-      .toList();
+  final orderedInlineTypeNames = [
+    ...inlineTypeNames.where(
+      (typeName) =>
+          ctx.schema.lookupTypeAs<ObjectTypeDefinitionNode>(
+            NameNode(value: typeName),
+          ) !=
+          null,
+    ),
+    ...inlineTypeNames.where(
+      (typeName) =>
+          ctx.schema.lookupTypeAs<ObjectTypeDefinitionNode>(
+            NameNode(value: typeName),
+          ) ==
+          null,
+    ),
+  ];
+
+  final usedCaseTypeNames = <String>{};
+  final switchCases = <Code>[];
+  for (final typeName in orderedInlineTypeNames) {
+    final typeDef = ctx.schema.lookupType(NameNode(value: typeName));
+    final concreteCaseTypes = typeDef is ObjectTypeDefinitionNode
+        ? <String>{typeName}
+        : (ctx.schema.possibleTypesMap()[typeName] ?? const <String>{});
+    final unusedCaseTypes =
+        concreteCaseTypes.difference(usedCaseTypeNames).toList()..sort();
+    if (unusedCaseTypes.isEmpty) continue;
+    usedCaseTypeNames.addAll(unusedCaseTypes);
+
+    for (final caseType in unusedCaseTypes) {
+      switchCases.add(Code("case '$caseType':"));
+    }
+    switchCases.add(
+      Code(
+        "return ${builtClassName("${stripPrefix(className)}__as$typeName")}.fromJson(json);",
+      ),
+    );
+  }
   final body = [
     Code("switch(json['__typename'] as String) {"),
     ...switchCases,
@@ -686,19 +758,21 @@ String _equalsExpressionForTypeNode(
   String left,
   String right,
 ) {
+  // Avoid collision with the `operator ==(Object other)` parameter name.
+  final leftExpr = left == "other" ? "this.other" : left;
   if (node is ListTypeNode) {
     ctx.needsUtilsImport = true;
     final helper =
         _requiresDeepList(node.type, ctx) ? "listEqualsDeep" : "listEquals";
-    return "$utilsPrefix$helper($left, $right)";
+    return "$utilsPrefix$helper($leftExpr, $right)";
   }
   if (node is NamedTypeNode) {
     final typeName = node.name.value;
     if (isMapOverride(ctx: ctx, typeName: typeName)) {
       ctx.needsUtilsImport = true;
-      return "${utilsPrefix}deepEquals($left, $right)";
+      return "${utilsPrefix}deepEquals($leftExpr, $right)";
     }
-    return "$left == $right";
+    return "$leftExpr == $right";
   }
   throw StateError("Invalid type node");
 }

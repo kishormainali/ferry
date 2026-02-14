@@ -254,6 +254,17 @@ const Map<String, Set<String>> possibleTypesMap = {
     'Textbook',
     'ColoringBook',
   },
+  'B': {
+    'Foo',
+    'Bar',
+  },
+  'A': {
+    'Foo',
+    'Bar',
+    'John',
+  },
+  'C': {'Other'},
+  'D': {'Other'},
   'SearchResult': {
     'Human',
     'Droid',

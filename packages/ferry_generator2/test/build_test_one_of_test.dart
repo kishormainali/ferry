@@ -119,6 +119,16 @@ void main() {
     );
     expect(
       source,
+      contains(r'final _$entry = json.entries.single'),
+      reason: 'fromJson should read the single oneOf entry once.',
+    );
+    expect(
+      source,
+      contains(r'switch (_$entry.key)'),
+      reason: 'fromJson should dispatch by key using a switch statement.',
+    );
+    expect(
+      source,
       contains('tags = List.unmodifiable(tags)'),
       reason:
           'oneOf variants should wrap list values when collections are unmodifiable.',

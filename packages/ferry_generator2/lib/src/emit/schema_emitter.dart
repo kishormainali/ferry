@@ -397,16 +397,16 @@ class _SchemaEmitter {
         "throw ArgumentError.value(json, 'json', 'Expected exactly one field for oneOf input object $className');",
       ),
       const Code("}"),
+      const Code(r"final _$entry = json.entries.single;"),
+      const Code(r"final _$value = _$entry.value;"),
+      const Code(r"switch (_$entry.key) {"),
     ];
 
     for (final field in fields) {
       final responseKey = field.responseKey;
-      final valueName = "_\$${field.propertyName}Value";
+      statements.add(Code("case r'$responseKey':"));
 
-      statements.add(
-        Code("if (json.containsKey(r'$responseKey')) {"),
-      );
-      statements.add(Code("final $valueName = json[r'$responseKey'];"));
+      final valueName = r"_$value";
       statements.add(Code("if ($valueName == null) {"));
       statements.add(Code("throw ArgumentError.notNull(r'$responseKey');"));
       statements.add(const Code("}"));
@@ -416,6 +416,7 @@ class _SchemaEmitter {
         field,
         refer(valueName),
       );
+
       statements.add(
         refer(className)
             .newInstanceNamed(field.propertyName, [], {
@@ -424,14 +425,15 @@ class _SchemaEmitter {
             .returned
             .statement,
       );
-      statements.add(const Code("}"));
     }
 
+    statements.add(const Code("default:"));
     statements.add(
       Code(
-        "throw ArgumentError.value(json.keys.single, 'json', 'Unknown field for oneOf input object $className');",
+        "throw ArgumentError.value(_\$entry.key, 'json', 'Unknown field for oneOf input object $className');",
       ),
     );
+    statements.add(const Code("}"));
 
     return Constructor(
       (b) => b

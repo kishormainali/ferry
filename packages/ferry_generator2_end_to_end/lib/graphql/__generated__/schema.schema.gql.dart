@@ -193,43 +193,38 @@ sealed class GReviewBy {
       throw ArgumentError.value(json, 'json',
           'Expected exactly one field for oneOf input object GReviewBy');
     }
-    if (json.containsKey(r'id')) {
-      final _$idValue = json[r'id'];
-      if (_$idValue == null) {
-        throw ArgumentError.notNull(r'id');
-      }
-      return GReviewBy.id(id: (_$idValue as String));
+    final _$entry = json.entries.single;
+    final _$value = _$entry.value;
+    switch (_$entry.key) {
+      case r'id':
+        if (_$value == null) {
+          throw ArgumentError.notNull(r'id');
+        }
+        return GReviewBy.id(id: (_$value as String));
+      case r'createdAt':
+        if (_$value == null) {
+          throw ArgumentError.notNull(r'createdAt');
+        }
+        return GReviewBy.createdAt(createdAt: customDateFromJson(_$value));
+      case r'seenOn':
+        if (_$value == null) {
+          throw ArgumentError.notNull(r'seenOn');
+        }
+        return GReviewBy.seenOn(
+            seenOn: List<CustomDate?>.unmodifiable((_$value as List<dynamic>)
+                .map((_$e) => _$e == null ? null : customDateFromJson(_$e))
+                .toList()));
+      case r'favorite_color':
+        if (_$value == null) {
+          throw ArgumentError.notNull(r'favorite_color');
+        }
+        return GReviewBy.favorite_color(
+            favorite_color:
+                GColorInput.fromJson((_$value as Map<String, dynamic>)));
+      default:
+        throw ArgumentError.value(_$entry.key, 'json',
+            'Unknown field for oneOf input object GReviewBy');
     }
-    if (json.containsKey(r'createdAt')) {
-      final _$createdAtValue = json[r'createdAt'];
-      if (_$createdAtValue == null) {
-        throw ArgumentError.notNull(r'createdAt');
-      }
-      return GReviewBy.createdAt(
-          createdAt: customDateFromJson(_$createdAtValue));
-    }
-    if (json.containsKey(r'seenOn')) {
-      final _$seenOnValue = json[r'seenOn'];
-      if (_$seenOnValue == null) {
-        throw ArgumentError.notNull(r'seenOn');
-      }
-      return GReviewBy.seenOn(
-          seenOn: List<CustomDate?>.unmodifiable(
-              (_$seenOnValue as List<dynamic>)
-                  .map((_$e) => _$e == null ? null : customDateFromJson(_$e))
-                  .toList()));
-    }
-    if (json.containsKey(r'favorite_color')) {
-      final _$favorite_colorValue = json[r'favorite_color'];
-      if (_$favorite_colorValue == null) {
-        throw ArgumentError.notNull(r'favorite_color');
-      }
-      return GReviewBy.favorite_color(
-          favorite_color: GColorInput.fromJson(
-              (_$favorite_colorValue as Map<String, dynamic>)));
-    }
-    throw ArgumentError.value(json.keys.single, 'json',
-        'Unknown field for oneOf input object GReviewBy');
   }
 
   Map<String, dynamic> toJson();

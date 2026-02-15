@@ -1,7 +1,6 @@
 import "package:code_builder/code_builder.dart";
 import "package:gql/ast.dart";
 
-import "collection_helpers.dart";
 import "data_emitter_context.dart";
 import "data_emitter_fields.dart";
 import "data_emitter_json.dart";
@@ -239,7 +238,8 @@ Extension? _buildWhenExtension({
     ),
   ];
 
-  List<Code> buildSwitchCases(String Function(String typeName) returnStatement) {
+  List<Code> buildSwitchCases(
+      String Function(String typeName) returnStatement) {
     final usedCaseTypeNames = <String>{};
     final switchCases = <Code>[];
     for (final typeName in orderedInlineTypeNames) {

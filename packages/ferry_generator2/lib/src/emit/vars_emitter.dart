@@ -476,10 +476,6 @@ class VarsEmitter {
     return valueExpr;
   }
 
-  Expression _wrapTriStateInner(TypeNode node, Expression inner) {
-    return inner;
-  }
-
   Expression _fromJsonForTypeNode(
     TypeNode node,
     InputFieldSpec field,

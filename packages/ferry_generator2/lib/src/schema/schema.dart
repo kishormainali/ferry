@@ -226,7 +226,8 @@ class SchemaIndex {
     final possibleTypes = possibleTypesMap()[name.value];
     if (possibleTypes == null || possibleTypes.isEmpty) return const [];
     return possibleTypes.map((typeName) {
-      final def = lookupTypeAs<ObjectTypeDefinitionNode>(NameNode(value: typeName));
+      final def =
+          lookupTypeAs<ObjectTypeDefinitionNode>(NameNode(value: typeName));
       if (def == null) {
         throw StateError("Missing type definition for $typeName");
       }
@@ -260,7 +261,10 @@ class SchemaIndex {
       if (cached != null) return cached;
       if (stack.contains(interfaceName)) {
         throw StateError(
-          "Interface inheritance cycle detected: ${[...stack, interfaceName].join(' -> ')}",
+          "Interface inheritance cycle detected: ${[
+            ...stack,
+            interfaceName
+          ].join(' -> ')}",
         );
       }
       final direct = interfaceSupers[interfaceName] ?? const <String>{};
@@ -301,11 +305,14 @@ class SchemaIndex {
 
     // Populate union possible-types (includes union extensions).
     final unionNames = <String>{
-      ...document.definitions.whereType<UnionTypeDefinitionNode>().map((d) => d.name.value),
+      ...document.definitions
+          .whereType<UnionTypeDefinitionNode>()
+          .map((d) => d.name.value),
       ..._unionExtensions.keys,
     };
     for (final unionName in unionNames) {
-      final unionDef = lookupTypeAs<UnionTypeDefinitionNode>(NameNode(value: unionName));
+      final unionDef =
+          lookupTypeAs<UnionTypeDefinitionNode>(NameNode(value: unionName));
       final unionExtensions = _unionExtensions[unionName] ?? const [];
       final members = <String>{
         ...?unionDef?.types.map((t) => t.name.value),

@@ -502,8 +502,7 @@ void _expectUnmodifiableCollections(
 }) {
   final dataUnit = parseString(content: dataSource).unit;
   final varsUnit = parseString(content: varsSource).unit;
-  final hasUnmodifiable =
-      _containsUnmodifiableInvocation(dataUnit) ||
+  final hasUnmodifiable = _containsUnmodifiableInvocation(dataUnit) ||
       _containsUnmodifiableInvocation(varsUnit);
   expect(hasUnmodifiable, expectUnmodifiable);
 }
@@ -604,7 +603,8 @@ void _expectNestedListType(
 }) {
   final outer = type is InterfaceType ? type : null;
   if (outer == null) {
-    throw StateError('Expected List<List<$innerName>> to be an interface type.');
+    throw StateError(
+        'Expected List<List<$innerName>> to be an interface type.');
   }
   expect(outer.element.name, 'List');
   expect(

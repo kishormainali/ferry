@@ -1,7 +1,10 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
 
+// ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:ferry_generator2_end_to_end/custom/date.dart';
+import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.gql.dart'
+    as _gqlUtils;
 import 'package:gql_tristate_value/gql_tristate_value.dart';
 
 /// The episodes in the Star Wars trilogy.
@@ -137,6 +140,37 @@ class GReviewInput {
     }
     return _$result;
   }
+
+  GReviewInput copyWith({
+    int? stars,
+    Value<String>? commentary,
+    Value<GColorInput>? favorite_color,
+    Value<List<CustomDate?>>? seenOn,
+  }) {
+    return GReviewInput(
+      stars: stars ?? this.stars,
+      commentary: commentary ?? this.commentary,
+      favorite_color: favorite_color ?? this.favorite_color,
+      seenOn: seenOn ?? this.seenOn,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GReviewInput &&
+            _gqlUtils.deepEquals(toJson(), other.toJson()));
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(runtimeType, _gqlUtils.deepHash(toJson()));
+  }
+
+  @override
+  String toString() {
+    return 'GReviewInput(stars: $stars, commentary: $commentary, favorite_color: $favorite_color, seenOn: $seenOn)';
+  }
 }
 
 /// OneOf input used to locate a review by exactly one criterion.
@@ -199,6 +233,21 @@ sealed class GReviewBy {
   }
 
   Map<String, dynamic> toJson();
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GReviewBy && _gqlUtils.deepEquals(toJson(), other.toJson()));
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(runtimeType, _gqlUtils.deepHash(toJson()));
+  }
+
+  @override
+  String toString() {
+    return 'GReviewBy(${toJson()})';
+  }
 }
 
 final class GReviewBy_id extends GReviewBy {
@@ -213,6 +262,10 @@ final class GReviewBy_id extends GReviewBy {
     _$result['id'] = _$idValue;
     return _$result;
   }
+
+  GReviewBy_id copyWith({String? id}) {
+    return GReviewBy_id(id: id ?? this.id);
+  }
 }
 
 final class GReviewBy_createdAt extends GReviewBy {
@@ -226,6 +279,10 @@ final class GReviewBy_createdAt extends GReviewBy {
     final _$createdAtValue = this.createdAt;
     _$result['createdAt'] = customDateToJson(_$createdAtValue);
     return _$result;
+  }
+
+  GReviewBy_createdAt copyWith({CustomDate? createdAt}) {
+    return GReviewBy_createdAt(createdAt: createdAt ?? this.createdAt);
   }
 }
 
@@ -245,6 +302,10 @@ final class GReviewBy_seenOn extends GReviewBy {
         .toList();
     return _$result;
   }
+
+  GReviewBy_seenOn copyWith({List<CustomDate?>? seenOn}) {
+    return GReviewBy_seenOn(seenOn: seenOn ?? this.seenOn);
+  }
 }
 
 final class GReviewBy_favorite_color extends GReviewBy {
@@ -258,6 +319,11 @@ final class GReviewBy_favorite_color extends GReviewBy {
     final _$favorite_colorValue = this.favorite_color;
     _$result['favorite_color'] = _$favorite_colorValue.toJson();
     return _$result;
+  }
+
+  GReviewBy_favorite_color copyWith({GColorInput? favorite_color}) {
+    return GReviewBy_favorite_color(
+        favorite_color: favorite_color ?? this.favorite_color);
   }
 }
 
@@ -294,6 +360,33 @@ class GCustomFieldInput {
     }
     return _$result;
   }
+
+  GCustomFieldInput copyWith({
+    String? id,
+    Value<String>? customField,
+  }) {
+    return GCustomFieldInput(
+      id: id ?? this.id,
+      customField: customField ?? this.customField,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GCustomFieldInput &&
+            _gqlUtils.deepEquals(toJson(), other.toJson()));
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(runtimeType, _gqlUtils.deepHash(toJson()));
+  }
+
+  @override
+  String toString() {
+    return 'GCustomFieldInput(id: $id, customField: $customField)';
+  }
 }
 
 class GColorInput {
@@ -327,6 +420,35 @@ class GColorInput {
     _$result['blue'] = _$blueValue;
     return _$result;
   }
+
+  GColorInput copyWith({
+    int? red,
+    int? green,
+    int? blue,
+  }) {
+    return GColorInput(
+      red: red ?? this.red,
+      green: green ?? this.green,
+      blue: blue ?? this.blue,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GColorInput &&
+            _gqlUtils.deepEquals(toJson(), other.toJson()));
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(runtimeType, _gqlUtils.deepHash(toJson()));
+  }
+
+  @override
+  String toString() {
+    return 'GColorInput(red: $red, green: $green, blue: $blue)';
+  }
 }
 
 class GPostLikesInput {
@@ -344,6 +466,27 @@ class GPostLikesInput {
     _$result['id'] = _$idValue;
     return _$result;
   }
+
+  GPostLikesInput copyWith({String? id}) {
+    return GPostLikesInput(id: id ?? this.id);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GPostLikesInput &&
+            _gqlUtils.deepEquals(toJson(), other.toJson()));
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(runtimeType, _gqlUtils.deepHash(toJson()));
+  }
+
+  @override
+  String toString() {
+    return 'GPostLikesInput(id: $id)';
+  }
 }
 
 class GPostFavoritesInput {
@@ -360,6 +503,27 @@ class GPostFavoritesInput {
     final _$idValue = this.id;
     _$result['id'] = _$idValue;
     return _$result;
+  }
+
+  GPostFavoritesInput copyWith({String? id}) {
+    return GPostFavoritesInput(id: id ?? this.id);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GPostFavoritesInput &&
+            _gqlUtils.deepEquals(toJson(), other.toJson()));
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(runtimeType, _gqlUtils.deepHash(toJson()));
+  }
+
+  @override
+  String toString() {
+    return 'GPostFavoritesInput(id: $id)';
   }
 }
 

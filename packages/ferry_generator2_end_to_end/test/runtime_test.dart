@@ -376,6 +376,7 @@ void main() {
           },
         ],
         'primaryFunction': 'Astromech',
+        'result': null,
       },
     };
 

@@ -7,12 +7,14 @@ import 'package:ferry_generator2_end_to_end/graphql/__generated__/schema.utils.g
 
 abstract class GDroidFragment {
   String? get primaryFunction;
+  String? get result;
   String get G__typename;
 }
 
 class GDroidFragmentData implements GDroidFragment {
   const GDroidFragmentData({
     this.primaryFunction,
+    this.result,
     required this.G__typename,
   });
 
@@ -21,11 +23,14 @@ class GDroidFragmentData implements GDroidFragment {
       primaryFunction: json['primaryFunction'] == null
           ? null
           : (json['primaryFunction'] as String),
+      result: json['result'] == null ? null : (json['result'] as String),
       G__typename: (json['__typename'] as String),
     );
   }
 
   final String? primaryFunction;
+
+  final String? result;
 
   final String G__typename;
 
@@ -34,6 +39,8 @@ class GDroidFragmentData implements GDroidFragment {
     final _$primaryFunctionValue = this.primaryFunction;
     _$result['primaryFunction'] =
         _$primaryFunctionValue == null ? null : _$primaryFunctionValue;
+    final _$resultValue = this.result;
+    _$result['result'] = _$resultValue == null ? null : _$resultValue;
     _$result['__typename'] = this.G__typename;
     return _$result;
   }
@@ -41,11 +48,14 @@ class GDroidFragmentData implements GDroidFragment {
   GDroidFragmentData copyWith({
     String? primaryFunction,
     bool primaryFunctionIsSet = false,
+    String? result,
+    bool resultIsSet = false,
     String? G__typename,
   }) {
     return GDroidFragmentData(
       primaryFunction:
           primaryFunctionIsSet ? primaryFunction : this.primaryFunction,
+      result: resultIsSet ? result : this.result,
       G__typename: G__typename ?? this.G__typename,
     );
   }
@@ -55,17 +65,18 @@ class GDroidFragmentData implements GDroidFragment {
     return identical(this, other) ||
         (other is GDroidFragmentData &&
             primaryFunction == other.primaryFunction &&
+            result == other.result &&
             G__typename == other.G__typename);
   }
 
   @override
   int get hashCode {
-    return Object.hash(runtimeType, primaryFunction, G__typename);
+    return Object.hash(runtimeType, primaryFunction, result, G__typename);
   }
 
   @override
   String toString() {
-    return 'GDroidFragmentData(primaryFunction: $primaryFunction, G__typename: $G__typename)';
+    return 'GDroidFragmentData(primaryFunction: $primaryFunction, result: $result, G__typename: $G__typename)';
   }
 }
 
@@ -255,6 +266,7 @@ class GHeroForEpisodeData_hero__asDroid extends GHeroForEpisodeData_hero
     List<GHeroForEpisodeData_hero_friends?>? friends,
     required String G__typename,
     this.primaryFunction,
+    this.result,
   }) : super(name: name, friends: friends, G__typename: G__typename);
 
   factory GHeroForEpisodeData_hero__asDroid.fromJson(
@@ -274,16 +286,21 @@ class GHeroForEpisodeData_hero__asDroid extends GHeroForEpisodeData_hero
       primaryFunction: json['primaryFunction'] == null
           ? null
           : (json['primaryFunction'] as String),
+      result: json['result'] == null ? null : (json['result'] as String),
     );
   }
 
   final String? primaryFunction;
+
+  final String? result;
 
   Map<String, dynamic> toJson() {
     final _$result = super.toJson();
     final _$primaryFunctionValue = this.primaryFunction;
     _$result['primaryFunction'] =
         _$primaryFunctionValue == null ? null : _$primaryFunctionValue;
+    final _$resultValue = this.result;
+    _$result['result'] = _$resultValue == null ? null : _$resultValue;
     return _$result;
   }
 
@@ -294,6 +311,8 @@ class GHeroForEpisodeData_hero__asDroid extends GHeroForEpisodeData_hero
     String? G__typename,
     String? primaryFunction,
     bool primaryFunctionIsSet = false,
+    String? result,
+    bool resultIsSet = false,
   }) {
     return GHeroForEpisodeData_hero__asDroid(
       name: name ?? this.name,
@@ -301,6 +320,7 @@ class GHeroForEpisodeData_hero__asDroid extends GHeroForEpisodeData_hero
       G__typename: G__typename ?? this.G__typename,
       primaryFunction:
           primaryFunctionIsSet ? primaryFunction : this.primaryFunction,
+      result: resultIsSet ? result : this.result,
     );
   }
 
@@ -311,18 +331,19 @@ class GHeroForEpisodeData_hero__asDroid extends GHeroForEpisodeData_hero
             name == other.name &&
             _gqlUtils.listEquals(friends, other.friends) &&
             G__typename == other.G__typename &&
-            primaryFunction == other.primaryFunction);
+            primaryFunction == other.primaryFunction &&
+            result == other.result);
   }
 
   @override
   int get hashCode {
     return Object.hash(runtimeType, name, _gqlUtils.listHash(friends),
-        G__typename, primaryFunction);
+        G__typename, primaryFunction, result);
   }
 
   @override
   String toString() {
-    return 'GHeroForEpisodeData_hero__asDroid(name: $name, friends: $friends, G__typename: $G__typename, primaryFunction: $primaryFunction)';
+    return 'GHeroForEpisodeData_hero__asDroid(name: $name, friends: $friends, G__typename: $G__typename, primaryFunction: $primaryFunction, result: $result)';
   }
 }
 

@@ -1,5 +1,6 @@
 fragment DroidFragment on Droid {
   primaryFunction
+  result
 }
 
 query HeroForEpisode($ep: Episode!) {

@@ -5,6 +5,18 @@ class CustomDate {
 
   @override
   String toString() => value.toIso8601String();
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other case CustomDate(:final value)) {
+      return this.value == value;
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => value.hashCode;
 }
 
 CustomDate customDateFromJson(Object? input) {

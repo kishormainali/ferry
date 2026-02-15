@@ -116,6 +116,8 @@ type Droid implements Character {
   appearsIn: [Episode]!
   # This droid's primary function
   primaryFunction: String
+  # Used in generator tests (e.g. local variable name collisions in emitters).
+  result: String
 }
 
 # A connection object for a character's friends

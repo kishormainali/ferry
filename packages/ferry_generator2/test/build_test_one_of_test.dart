@@ -50,6 +50,12 @@ void main() {
           'file': _schemaPath,
           'add_typenames': false,
         },
+        'data_classes': {
+          'utils': {
+            'equals': true,
+            'hash_code': true,
+          },
+        },
         'outputs': {
           'ast': false,
           'data': false,
@@ -101,6 +107,10 @@ void main() {
     expect(variantSwitch.supertype?.element.name, 'GSearchBy');
     _expectNonNullDartType(variantSwitch.getField('Gswitch')!.type, 'String');
 
+    final color = _classByName(library, 'GColorInput');
+    expect(color.getMethod('=='), isNotNull);
+    expect(color.getGetter('hashCode'), isNotNull);
+
     final source = readGeneratedDartSource(sources, _schemaOut);
     expect(
       source,
@@ -112,6 +122,26 @@ void main() {
       contains('tags = List.unmodifiable(tags)'),
       reason:
           'oneOf variants should wrap list values when collections are unmodifiable.',
+    );
+    expect(
+      source,
+      contains("schema.utils.gql.dart'"),
+      reason: 'Schema library should import utils when equals/hashCode are on.',
+    );
+    expect(
+      source,
+      contains('as _gqlUtils'),
+      reason: 'Schema library should import utils when equals/hashCode are on.',
+    );
+    expect(
+      source,
+      contains('_gqlUtils.deepEquals(toJson(), other.toJson())'),
+      reason: 'Input objects should implement equality when enabled.',
+    );
+    expect(
+      source,
+      contains('_gqlUtils.deepHash(toJson())'),
+      reason: 'Input objects should implement hashCode when enabled.',
     );
   });
 }

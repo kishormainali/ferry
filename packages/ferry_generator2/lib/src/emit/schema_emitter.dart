@@ -4,6 +4,7 @@ import "package:gql/ast.dart";
 import "../config/builder_config.dart";
 import "../utils/naming.dart";
 import "collection_helpers.dart";
+import "emitter_helpers.dart";
 import "../schema/schema.dart";
 import "../schema/type_utils.dart";
 import "../utils/docs.dart";
@@ -11,8 +12,9 @@ import "../utils/docs.dart";
 Library buildSchemaLibrary({
   required SchemaIndex schema,
   required BuilderConfig config,
+  String? utilsUrl,
 }) {
-  final emitter = _SchemaEmitter(schema, config);
+  final emitter = _SchemaEmitter(schema, config, utilsUrl: utilsUrl);
   return emitter.buildLibrary();
 }
 
@@ -167,14 +169,16 @@ class _EnumMappedValue {
 class _SchemaEmitter {
   final SchemaIndex schema;
   final BuilderConfig config;
+  final String? utilsUrl;
   final Set<String> _extraImports = {};
   late final CollectionPolicy _collections = CollectionPolicy(
     config: config,
     overrides: config.typeOverrides,
   );
   bool _usesTriStateValue = false;
+  bool _needsUtilsImport = false;
 
-  _SchemaEmitter(this.schema, this.config);
+  _SchemaEmitter(this.schema, this.config, {required this.utilsUrl});
 
   List<String> _docs(String? description) =>
       config.generateDocs ? docLines(description) : const [];
@@ -215,7 +219,11 @@ class _SchemaEmitter {
     return Library(
       (b) => b
         ..directives.addAll(
-          _extraImports.map(Directive.import),
+          [
+            if (_needsUtilsImport && utilsUrl != null)
+              Directive.import(utilsUrl!, as: _utilsImportAlias),
+            ..._extraImports.map(Directive.import),
+          ],
         )
         ..body.addAll(specs),
     );
@@ -227,6 +235,52 @@ class _SchemaEmitter {
         .map(_fieldSpecFromDefinition)
         .toList();
     final className = builtClassName(node.name.value);
+
+    final methods = <Method>[
+      _buildToJsonMethod(fields),
+      if (config.generateCopyWith)
+        buildCopyWithMethod(
+          className,
+          fields
+              .map(
+                (field) => EmitterField(
+                  name: field.propertyName,
+                  typeRef: field.typeRef,
+                  isNullable: _isNullableField(field),
+                ),
+              )
+              .toList(),
+        ),
+      if (config.generateEquals) ...[
+        // Schema input objects use deep, JSON-shaped equality like vars.
+        //
+        // This handles nested inputs, list/map deep equality, and tri-state
+        // optionals (absent vs present null) without requiring per-field logic.
+        buildEqualsMethod(
+          className,
+          fields.isEmpty
+              ? const []
+              : ["${_utilsPrefix}deepEquals(toJson(), other.toJson())"],
+        ),
+      ],
+      if (config.generateHashCode) ...[
+        buildHashCodeGetter(
+          fields.isEmpty
+              ? ["runtimeType"]
+              : ["runtimeType", "${_utilsPrefix}deepHash(toJson())"],
+        ),
+      ],
+      if (config.generateToString)
+        buildToStringMethod(
+          className,
+          fields.map((field) => field.propertyName).toList(),
+        ),
+    ];
+
+    if (config.generateEquals || config.generateHashCode) {
+      _needsUtilsImport = true;
+    }
+
     return Class(
       (b) => b
         ..name = className
@@ -236,9 +290,7 @@ class _SchemaEmitter {
           _buildConstructor(fields),
           _buildFromJsonFactory(className, fields),
         ])
-        ..methods.add(
-          _buildToJsonMethod(fields),
-        ),
+        ..methods.addAll(methods),
     );
   }
 
@@ -270,6 +322,10 @@ class _SchemaEmitter {
     required String className,
     required List<_InputFieldSpec> fields,
   }) {
+    if (config.generateEquals || config.generateHashCode) {
+      _needsUtilsImport = true;
+    }
+
     return Class(
       (b) => b
         ..name = className
@@ -302,13 +358,32 @@ class _SchemaEmitter {
           ),
           _buildOneOfFromJsonFactory(className, fields),
         ])
-        ..methods.add(
+        ..methods.addAll([
           Method(
             (b) => b
               ..name = "toJson"
               ..returns = _mapStringDynamicType(),
           ),
-        ),
+          if (config.generateEquals)
+            buildEqualsMethod(
+              className,
+              // Base class has no fields; compare by JSON shape.
+              ["${_utilsPrefix}deepEquals(toJson(), other.toJson())"],
+            ),
+          if (config.generateHashCode)
+            buildHashCodeGetter([
+              "runtimeType",
+              "${_utilsPrefix}deepHash(toJson())",
+            ]),
+          if (config.generateToString)
+            Method(
+              (b) => b
+                ..annotations.add(refer("override"))
+                ..name = "toString"
+                ..returns = refer("String")
+                ..body = Code("return '$className(\${toJson()})';"),
+            ),
+        ]),
     );
   }
 
@@ -378,6 +453,22 @@ class _SchemaEmitter {
     _InputFieldSpec field,
   ) {
     final variantClassName = "${baseClassName}_${field.propertyName}";
+
+    final methods = <Method>[
+      _buildOneOfVariantToJsonMethod(field),
+      if (config.generateCopyWith)
+        buildCopyWithMethod(
+          variantClassName,
+          [
+            EmitterField(
+              name: field.propertyName,
+              typeRef: field.typeRef,
+              isNullable: _isNullableField(field),
+            ),
+          ],
+        ),
+    ];
+
     return Class(
       (b) => b
         ..name = variantClassName
@@ -388,9 +479,7 @@ class _SchemaEmitter {
         ..constructors.add(
           _buildOneOfVariantConstructor(field),
         )
-        ..methods.add(
-          _buildOneOfVariantToJsonMethod(field),
-        ),
+        ..methods.addAll(methods),
     );
   }
 
@@ -606,6 +695,14 @@ class _SchemaEmitter {
           ..type = field.typeRef
           ..modifier = FieldModifier.final$,
       );
+
+  bool _isNullableField(_InputFieldSpec field) {
+    final typeRef = field.typeRef;
+    if (typeRef is TypeReference) {
+      return typeRef.isNullable ?? false;
+    }
+    return false;
+  }
 
   _InputFieldSpec _fieldSpecFromDefinition(InputValueDefinitionNode node) {
     final responseKey = node.name.value;
@@ -922,6 +1019,9 @@ class _SchemaEmitter {
   bool get _useTriState =>
       config.triStateOptionalsConfig == TriStateValueConfig.onAllNullableFields;
 }
+
+const _utilsImportAlias = "_gqlUtils";
+const _utilsPrefix = "$_utilsImportAlias.";
 
 class _InputFieldSpec {
   final String responseKey;

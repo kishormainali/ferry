@@ -155,6 +155,13 @@ class GraphqlBuilder implements Builder {
     }
 
     if (buildStep.inputId == schemaId) {
+      final utilsUrl = (config.generateEquals || config.generateHashCode)
+          ? outputAssetId(
+              buildStep.inputId,
+              utilsExtension,
+              config.outputDir,
+            ).uri.toString()
+          : null;
       final outputs = <String>[];
       if (config.outputs.ast) {
         final outputId = outputAssetId(
@@ -181,6 +188,7 @@ class GraphqlBuilder implements Builder {
           buildSchemaLibrary(
             schema: schemaIndex,
             config: config,
+            utilsUrl: utilsUrl,
           ),
           outputId,
         );

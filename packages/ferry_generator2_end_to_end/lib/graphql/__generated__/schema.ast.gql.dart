@@ -39,6 +39,12 @@ const Gextends = _i1.DirectiveDefinitionNode(
   ],
   repeatable: false,
 );
+const oneOf = _i1.DirectiveDefinitionNode(
+  name: _i1.NameNode(value: 'oneOf'),
+  args: [],
+  locations: [_i1.DirectiveLocation.inputObject],
+  repeatable: false,
+);
 const Query = _i1.ObjectTypeDefinitionNode(
   name: _i1.NameNode(value: 'Query'),
   directives: [],
@@ -94,6 +100,25 @@ const Query = _i1.ObjectTypeDefinitionNode(
           name: _i1.NameNode(value: 'Review'),
           isNonNull: false,
         ),
+        isNonNull: false,
+      ),
+    ),
+    _i1.FieldDefinitionNode(
+      name: _i1.NameNode(value: 'reviewBy'),
+      directives: [],
+      args: [
+        _i1.InputValueDefinitionNode(
+          name: _i1.NameNode(value: 'by'),
+          directives: [],
+          type: _i1.NamedTypeNode(
+            name: _i1.NameNode(value: 'ReviewBy'),
+            isNonNull: true,
+          ),
+          defaultValue: null,
+        )
+      ],
+      type: _i1.NamedTypeNode(
+        name: _i1.NameNode(value: 'Review'),
         isNonNull: false,
       ),
     ),
@@ -971,6 +996,56 @@ const ReviewInput = _i1.InputObjectTypeDefinitionNode(
           name: _i1.NameNode(value: 'Date'),
           isNonNull: false,
         ),
+        isNonNull: false,
+      ),
+      defaultValue: null,
+    ),
+  ],
+);
+const ReviewBy = _i1.InputObjectTypeDefinitionNode(
+  name: _i1.NameNode(value: 'ReviewBy'),
+  directives: [
+    _i1.DirectiveNode(
+      name: _i1.NameNode(value: 'oneOf'),
+      arguments: [],
+    )
+  ],
+  fields: [
+    _i1.InputValueDefinitionNode(
+      name: _i1.NameNode(value: 'id'),
+      directives: [],
+      type: _i1.NamedTypeNode(
+        name: _i1.NameNode(value: 'ID'),
+        isNonNull: false,
+      ),
+      defaultValue: null,
+    ),
+    _i1.InputValueDefinitionNode(
+      name: _i1.NameNode(value: 'createdAt'),
+      directives: [],
+      type: _i1.NamedTypeNode(
+        name: _i1.NameNode(value: 'Date'),
+        isNonNull: false,
+      ),
+      defaultValue: null,
+    ),
+    _i1.InputValueDefinitionNode(
+      name: _i1.NameNode(value: 'seenOn'),
+      directives: [],
+      type: _i1.ListTypeNode(
+        type: _i1.NamedTypeNode(
+          name: _i1.NameNode(value: 'Date'),
+          isNonNull: false,
+        ),
+        isNonNull: false,
+      ),
+      defaultValue: null,
+    ),
+    _i1.InputValueDefinitionNode(
+      name: _i1.NameNode(value: 'favorite_color'),
+      directives: [],
+      type: _i1.NamedTypeNode(
+        name: _i1.NameNode(value: 'ColorInput'),
         isNonNull: false,
       ),
       defaultValue: null,
@@ -1931,6 +2006,7 @@ const Other = _i1.ObjectTypeDefinitionNode(
 const document = _i1.DocumentNode(definitions: [
   schema,
   Gextends,
+  oneOf,
   Query,
   Mutation,
   Subscription,
@@ -1944,6 +2020,7 @@ const document = _i1.DocumentNode(definitions: [
   PageInfo,
   Review,
   ReviewInput,
+  ReviewBy,
   CustomFieldInput,
   ColorInput,
   Starship,

@@ -139,6 +139,128 @@ class GReviewInput {
   }
 }
 
+/// OneOf input used to locate a review by exactly one criterion.
+sealed class GReviewBy {
+  const GReviewBy._();
+
+  const factory GReviewBy.id({required String id}) = GReviewBy_id;
+
+  const factory GReviewBy.createdAt({required CustomDate createdAt}) =
+      GReviewBy_createdAt;
+
+  factory GReviewBy.seenOn({required List<CustomDate?> seenOn}) =
+      GReviewBy_seenOn;
+
+  const factory GReviewBy.favorite_color(
+      {required GColorInput favorite_color}) = GReviewBy_favorite_color;
+
+  factory GReviewBy.fromJson(Map<String, dynamic> json) {
+    if (json.length != 1) {
+      throw ArgumentError.value(json, 'json',
+          'Expected exactly one field for oneOf input object GReviewBy');
+    }
+    if (json.containsKey(r'id')) {
+      final _$idValue = json[r'id'];
+      if (_$idValue == null) {
+        throw ArgumentError.notNull(r'id');
+      }
+      return GReviewBy.id(id: (_$idValue as String));
+    }
+    if (json.containsKey(r'createdAt')) {
+      final _$createdAtValue = json[r'createdAt'];
+      if (_$createdAtValue == null) {
+        throw ArgumentError.notNull(r'createdAt');
+      }
+      return GReviewBy.createdAt(
+          createdAt: customDateFromJson(_$createdAtValue));
+    }
+    if (json.containsKey(r'seenOn')) {
+      final _$seenOnValue = json[r'seenOn'];
+      if (_$seenOnValue == null) {
+        throw ArgumentError.notNull(r'seenOn');
+      }
+      return GReviewBy.seenOn(
+          seenOn: List<CustomDate?>.unmodifiable(
+              (_$seenOnValue as List<dynamic>)
+                  .map((_$e) => _$e == null ? null : customDateFromJson(_$e))
+                  .toList()));
+    }
+    if (json.containsKey(r'favorite_color')) {
+      final _$favorite_colorValue = json[r'favorite_color'];
+      if (_$favorite_colorValue == null) {
+        throw ArgumentError.notNull(r'favorite_color');
+      }
+      return GReviewBy.favorite_color(
+          favorite_color: GColorInput.fromJson(
+              (_$favorite_colorValue as Map<String, dynamic>)));
+    }
+    throw ArgumentError.value(json.keys.single, 'json',
+        'Unknown field for oneOf input object GReviewBy');
+  }
+
+  Map<String, dynamic> toJson();
+}
+
+final class GReviewBy_id extends GReviewBy {
+  const GReviewBy_id({required this.id}) : super._();
+
+  final String id;
+
+  @override
+  Map<String, dynamic> toJson() {
+    final _$result = <String, dynamic>{};
+    final _$idValue = this.id;
+    _$result['id'] = _$idValue;
+    return _$result;
+  }
+}
+
+final class GReviewBy_createdAt extends GReviewBy {
+  const GReviewBy_createdAt({required this.createdAt}) : super._();
+
+  final CustomDate createdAt;
+
+  @override
+  Map<String, dynamic> toJson() {
+    final _$result = <String, dynamic>{};
+    final _$createdAtValue = this.createdAt;
+    _$result['createdAt'] = customDateToJson(_$createdAtValue);
+    return _$result;
+  }
+}
+
+final class GReviewBy_seenOn extends GReviewBy {
+  GReviewBy_seenOn({required List<CustomDate?> seenOn})
+      : seenOn = List.unmodifiable(seenOn),
+        super._();
+
+  final List<CustomDate?> seenOn;
+
+  @override
+  Map<String, dynamic> toJson() {
+    final _$result = <String, dynamic>{};
+    final _$seenOnValue = this.seenOn;
+    _$result['seenOn'] = _$seenOnValue
+        .map((_$e) => _$e == null ? null : customDateToJson(_$e))
+        .toList();
+    return _$result;
+  }
+}
+
+final class GReviewBy_favorite_color extends GReviewBy {
+  const GReviewBy_favorite_color({required this.favorite_color}) : super._();
+
+  final GColorInput favorite_color;
+
+  @override
+  Map<String, dynamic> toJson() {
+    final _$result = <String, dynamic>{};
+    final _$favorite_colorValue = this.favorite_color;
+    _$result['favorite_color'] = _$favorite_colorValue.toJson();
+    return _$result;
+  }
+}
+
 class GCustomFieldInput {
   const GCustomFieldInput({
     required this.id,

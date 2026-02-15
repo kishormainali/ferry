@@ -13,6 +13,8 @@ import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/deep_fragme
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/fragment_directives.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/human_birthday.data.gql.dart';
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/posts_by_likes.var.gql.dart';
+import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/review_by_one_of.req.gql.dart';
+import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/review_by_one_of.var.gql.dart';
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/reviews_with_defaults.var.gql.dart';
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/search_with_default.var.gql.dart';
 import 'package:ferry_generator2_end_to_end/edge_cases/__generated__/search_with_starship.data.gql.dart';
@@ -824,6 +826,54 @@ void main() {
       equals(['2020-01-01T00:00:00.000Z', null]),
     );
     expect(_schema.GReviewInput.fromJson(json).toJson(), equals(json));
+  });
+
+  test('@oneOf input objects serialize as exactly one key', () {
+    final byId = _schema.GReviewBy.id(id: 'r-1');
+    expect(byId.toJson(), equals({'id': 'r-1'}));
+    expect(_schema.GReviewBy.fromJson(byId.toJson()).toJson(),
+        equals(byId.toJson()));
+
+    final bySeenOn = _schema.GReviewBy.seenOn(
+      seenOn: [
+        CustomDate(DateTime.utc(2020, 1, 1)),
+        null,
+      ],
+    );
+    expect(
+      bySeenOn.toJson(),
+      equals({
+        'seenOn': ['2020-01-01T00:00:00.000Z', null]
+      }),
+    );
+    expect(
+      _schema.GReviewBy.fromJson(bySeenOn.toJson()).toJson(),
+      equals(bySeenOn.toJson()),
+    );
+
+    final vars = GReviewByOneOfVars(by: byId);
+    final varsJson = vars.toJson();
+    expect(
+        varsJson,
+        equals({
+          'by': {'id': 'r-1'}
+        }));
+
+    final req = GReviewByOneOfReq(vars: vars);
+    expect(req.execRequest.variables, equals(varsJson));
+
+    expect(
+      () => _schema.GReviewBy.fromJson(const <String, dynamic>{}),
+      throwsA(isA<ArgumentError>()),
+    );
+    expect(
+      () => _schema.GReviewBy.fromJson({'id': 'r-1', 'createdAt': 'x'}),
+      throwsA(isA<ArgumentError>()),
+    );
+    expect(
+      () => _schema.GReviewBy.fromJson(const {'id': null}),
+      throwsA(isA<ArgumentError>()),
+    );
   });
 
   test('review added subscription round-trips and vars serialize', () {

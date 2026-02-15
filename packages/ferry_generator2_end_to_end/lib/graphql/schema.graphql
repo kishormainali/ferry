@@ -8,12 +8,15 @@ schema {
 
 directive @extends on OBJECT | INTERFACE
 
+directive @oneOf on INPUT_OBJECT
+
 """The query type for the schema."""
 type Query {
   "Hero for a given episode."
   hero(episode: Episode): Character
   "Reviews for a given episode."
   reviews(episode: Episode!, stars: [Int!]): [Review]
+  reviewBy(by: ReviewBy!): Review
   search(text: String): [SearchResult]
   character(id: ID!): Character
   droid(id: ID!): Droid
@@ -168,6 +171,14 @@ input ReviewInput {
   favorite_color: ColorInput
   # Date viewed
   seenOn: [Date]
+}
+
+"""OneOf input used to locate a review by exactly one criterion."""
+input ReviewBy @oneOf {
+  id: ID
+  createdAt: Date
+  seenOn: [Date]
+  favorite_color: ColorInput
 }
 
 input CustomFieldInput {

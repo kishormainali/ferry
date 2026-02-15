@@ -194,7 +194,11 @@ class _SchemaEmitter {
       }
       if (definition is InputObjectTypeDefinitionNode &&
           !definition.name.value.startsWith("__")) {
-        specs.add(_buildInputObject(definition));
+        if (_isOneOfInputObject(definition)) {
+          specs.addAll(_buildOneOfInputObject(definition));
+        } else {
+          specs.add(_buildInputObject(definition));
+        }
       }
     }
 
@@ -236,6 +240,253 @@ class _SchemaEmitter {
           _buildToJsonMethod(fields),
         ),
     );
+  }
+
+  bool _isOneOfInputObject(InputObjectTypeDefinitionNode node) {
+    return node.directives.any((directive) => directive.name.value == "oneOf");
+  }
+
+  List<Spec> _buildOneOfInputObject(InputObjectTypeDefinitionNode node) {
+    final fields = schema
+        .lookupInputValueDefinitions(node)
+        .map(_oneOfFieldSpecFromDefinition)
+        .toList();
+    final className = builtClassName(node.name.value);
+    final variantSpecs = fields
+        .map((field) => _buildOneOfVariantClass(className, field))
+        .toList();
+    return [
+      _buildOneOfBaseClass(
+        node: node,
+        className: className,
+        fields: fields,
+      ),
+      ...variantSpecs,
+    ];
+  }
+
+  Class _buildOneOfBaseClass({
+    required InputObjectTypeDefinitionNode node,
+    required String className,
+    required List<_InputFieldSpec> fields,
+  }) {
+    return Class(
+      (b) => b
+        ..name = className
+        ..sealed = true
+        ..abstract = true
+        ..docs.addAll(_docs(node.description?.value))
+        ..constructors.addAll([
+          Constructor(
+            (b) => b
+              ..name = "_"
+              ..constant = true,
+          ),
+          ...fields.map(
+            (field) => Constructor(
+              (b) => b
+                ..name = field.propertyName
+                ..factory = true
+                ..constant = !_needsCollectionWrapper(field)
+                ..redirect = refer("${className}_${field.propertyName}")
+                ..optionalParameters.add(
+                  Parameter(
+                    (b) => b
+                      ..name = field.propertyName
+                      ..named = true
+                      ..required = true
+                      ..type = field.typeRef,
+                  ),
+                ),
+            ),
+          ),
+          _buildOneOfFromJsonFactory(className, fields),
+        ])
+        ..methods.add(
+          Method(
+            (b) => b
+              ..name = "toJson"
+              ..returns = _mapStringDynamicType(),
+          ),
+        ),
+    );
+  }
+
+  Constructor _buildOneOfFromJsonFactory(
+    String className,
+    List<_InputFieldSpec> fields,
+  ) {
+    final statements = <Code>[
+      const Code("if (json.length != 1) {"),
+      Code(
+        "throw ArgumentError.value(json, 'json', 'Expected exactly one field for oneOf input object $className');",
+      ),
+      const Code("}"),
+    ];
+
+    for (final field in fields) {
+      final responseKey = field.responseKey;
+      final valueName = "_\$${field.propertyName}Value";
+
+      statements.add(
+        Code("if (json.containsKey(r'$responseKey')) {"),
+      );
+      statements.add(Code("final $valueName = json[r'$responseKey'];"));
+      statements.add(Code("if ($valueName == null) {"));
+      statements.add(Code("throw ArgumentError.notNull(r'$responseKey');"));
+      statements.add(const Code("}"));
+
+      final parsedExpr = _fromJsonForTypeNode(
+        field.typeNode,
+        field,
+        refer(valueName),
+      );
+      statements.add(
+        refer(className)
+            .newInstanceNamed(field.propertyName, [], {
+              field.propertyName: parsedExpr,
+            })
+            .returned
+            .statement,
+      );
+      statements.add(const Code("}"));
+    }
+
+    statements.add(
+      Code(
+        "throw ArgumentError.value(json.keys.single, 'json', 'Unknown field for oneOf input object $className');",
+      ),
+    );
+
+    return Constructor(
+      (b) => b
+        ..name = "fromJson"
+        ..factory = true
+        ..requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = "json"
+              ..type = _mapStringDynamicType(),
+          ),
+        )
+        ..body = Block.of(statements),
+    );
+  }
+
+  Class _buildOneOfVariantClass(
+    String baseClassName,
+    _InputFieldSpec field,
+  ) {
+    final variantClassName = "${baseClassName}_${field.propertyName}";
+    return Class(
+      (b) => b
+        ..name = variantClassName
+        ..modifier = ClassModifier.final$
+        ..extend = refer(baseClassName)
+        ..docs.addAll(_docs(field.description))
+        ..fields.add(_buildField(field))
+        ..constructors.add(
+          _buildOneOfVariantConstructor(field),
+        )
+        ..methods.add(
+          _buildOneOfVariantToJsonMethod(field),
+        ),
+    );
+  }
+
+  Constructor _buildOneOfVariantConstructor(_InputFieldSpec field) {
+    final propertyName = field.propertyName;
+    final needsWrapper = _needsCollectionWrapper(field);
+    final wrapper = _collectionWrapperExpression(field, propertyName);
+
+    return Constructor(
+      (b) => b
+        ..constant = !needsWrapper
+        ..optionalParameters.add(
+          Parameter(
+            (b) => b
+              ..name = propertyName
+              ..named = true
+              ..required = true
+              ..toThis = !needsWrapper
+              ..type = needsWrapper ? field.typeRef : null,
+          ),
+        )
+        ..initializers.addAll([
+          if (needsWrapper) Code("$propertyName = $wrapper"),
+          const Code("super._()"),
+        ]),
+    );
+  }
+
+  Method _buildOneOfVariantToJsonMethod(_InputFieldSpec field) {
+    final localName = "_\$${field.propertyName}Value";
+    final valueExpr = _toJsonExpression(
+      field,
+      valueExpr: refer(localName),
+    );
+
+    return Method(
+      (b) => b
+        ..annotations.add(refer("override"))
+        ..name = "toJson"
+        ..returns = _mapStringDynamicType()
+        ..body = Block.of([
+          const Code(r"final _$result = <String, dynamic>{};"),
+          Code("final $localName = this.${field.propertyName};"),
+          refer(r"_$result")
+              .index(literalString(field.responseKey))
+              .assign(valueExpr)
+              .statement,
+          refer(r"_$result").returned.statement,
+        ]),
+    );
+  }
+
+  _InputFieldSpec _oneOfFieldSpecFromDefinition(InputValueDefinitionNode node) {
+    final responseKey = node.name.value;
+    final propertyName = identifier(node.name.value);
+
+    final typeNode = _forceNonNullOuterTypeNode(node.type);
+    final namedTypeName = unwrapNamedTypeName(typeNode) ?? "Object";
+    final typeDef = schema.lookupType(NameNode(value: namedTypeName));
+
+    Reference namedTypeRef;
+    if (typeDef is InputObjectTypeDefinitionNode ||
+        typeDef is EnumTypeDefinitionNode) {
+      namedTypeRef = Reference(builtClassName(namedTypeName));
+    } else if (typeDef is ScalarTypeDefinitionNode) {
+      namedTypeRef = _scalarReference(namedTypeName);
+    } else {
+      namedTypeRef = refer("Object");
+    }
+
+    final typeRef = _typeReferenceForTypeNode(
+      typeNode,
+      namedTypeRef,
+      isTriState: false,
+    );
+
+    return _InputFieldSpec(
+      responseKey: responseKey,
+      propertyName: propertyName,
+      typeNode: typeNode,
+      typeRef: typeRef,
+      namedTypeRef: namedTypeRef,
+      isTriState: false,
+      description: node.description?.value,
+    );
+  }
+
+  TypeNode _forceNonNullOuterTypeNode(TypeNode node) {
+    if (node.isNonNull) return node;
+    if (node is NamedTypeNode) {
+      return NamedTypeNode(name: node.name, isNonNull: true);
+    }
+    if (node is ListTypeNode) {
+      return ListTypeNode(type: node.type, isNonNull: true);
+    }
+    throw StateError("Invalid type node");
   }
 
   Constructor _buildConstructor(List<_InputFieldSpec> fields) {

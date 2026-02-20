@@ -446,6 +446,55 @@ class GColorInput {
   }
 }
 
+/// Repro input for duplicate null checks in generated schema toJson.
+class GDuplicateNullChecksInput {
+  const GDuplicateNullChecksInput({this.nullableText = const Value.absent()});
+
+  factory GDuplicateNullChecksInput.fromJson(Map<String, dynamic> json) {
+    return GDuplicateNullChecksInput(
+        nullableText: json.containsKey('nullableText')
+            ? Value.present(json['nullableText'] == null
+                ? null
+                : (json['nullableText'] as String))
+            : Value.absent());
+  }
+
+  final Value<String> nullableText;
+
+  Map<String, dynamic> toJson() {
+    final _$result = <String, dynamic>{};
+    final _$nullableTextValue = this.nullableText;
+    if (_$nullableTextValue.isPresent) {
+      final _$nullableTextRequired = _$nullableTextValue.requireValue;
+      _$result['nullableText'] =
+          _$nullableTextRequired == null ? null : _$nullableTextRequired;
+    }
+    return _$result;
+  }
+
+  GDuplicateNullChecksInput copyWith({Value<String>? nullableText}) {
+    return GDuplicateNullChecksInput(
+        nullableText: nullableText ?? this.nullableText);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other is GDuplicateNullChecksInput &&
+            _gqlUtils.deepEquals(toJson(), other.toJson()));
+  }
+
+  @override
+  int get hashCode {
+    return Object.hash(runtimeType, _gqlUtils.deepHash(toJson()));
+  }
+
+  @override
+  String toString() {
+    return 'GDuplicateNullChecksInput(nullableText: $nullableText)';
+  }
+}
+
 class GPostLikesInput {
   const GPostLikesInput({required this.id});
 

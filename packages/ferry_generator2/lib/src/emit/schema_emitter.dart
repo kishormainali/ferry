@@ -669,7 +669,11 @@ class _SchemaEmitter {
               .statement,
         );
       } else {
-        final valueExpr = _toJsonExpression(field, valueExpr: localRef);
+        final valueExpr = _toJsonExpression(
+          field,
+          valueExpr: localRef,
+          includeTopLevelNullGuard: false,
+        );
         statements.add(Code("if ($localName != null) {"));
         statements.add(
           refer(r"_$result")
@@ -916,11 +920,13 @@ class _SchemaEmitter {
   Expression _toJsonExpression(
     _InputFieldSpec field, {
     required Expression valueExpr,
+    bool includeTopLevelNullGuard = true,
   }) {
     return _toJsonForTypeNode(
       field.typeNode,
       field,
       valueExpr,
+      includeNullGuardAtCurrentLevel: includeTopLevelNullGuard,
     );
   }
 
@@ -942,10 +948,15 @@ class _SchemaEmitter {
   Expression _toJsonForTypeNode(
     TypeNode node,
     _InputFieldSpec field,
-    Expression valueExpr,
-  ) {
+    Expression valueExpr, {
+    bool includeNullGuardAtCurrentLevel = true,
+  }) {
     if (node is ListTypeNode) {
-      final innerExpr = _toJsonForTypeNode(node.type, field, refer(r"_$e"));
+      final innerExpr = _toJsonForTypeNode(
+        node.type,
+        field,
+        refer(r"_$e"),
+      );
       final mapped = valueExpr
           .property("map")
           .call([
@@ -963,6 +974,9 @@ class _SchemaEmitter {
       if (node.isNonNull) {
         return mapped;
       }
+      if (!includeNullGuardAtCurrentLevel) {
+        return mapped;
+      }
       return _nullGuard(valueExpr, mapped);
     }
     if (node is NamedTypeNode) {
@@ -977,6 +991,9 @@ class _SchemaEmitter {
         valueExpr: valueExpr,
       );
       if (node.isNonNull) {
+        return inner;
+      }
+      if (!includeNullGuardAtCurrentLevel) {
         return inner;
       }
       return _nullGuard(valueExpr, inner);

@@ -17,6 +17,7 @@ type Query {
   "Reviews for a given episode."
   reviews(episode: Episode!, stars: [Int!]): [Review]
   reviewBy(by: ReviewBy!): Review
+  duplicateNullChecks(input: DuplicateNullChecksInput): String
   search(text: String): [SearchResult]
   character(id: ID!): Character
   droid(id: ID!): Droid
@@ -193,6 +194,11 @@ input ColorInput {
   red: Int!
   green: Int!
   blue: Int!
+}
+
+"""Repro input for duplicate null checks in generated schema toJson."""
+input DuplicateNullChecksInput {
+  nullableText: String
 }
 
 type Starship {

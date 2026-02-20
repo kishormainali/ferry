@@ -123,6 +123,25 @@ const Query = _i1.ObjectTypeDefinitionNode(
       ),
     ),
     _i1.FieldDefinitionNode(
+      name: _i1.NameNode(value: 'duplicateNullChecks'),
+      directives: [],
+      args: [
+        _i1.InputValueDefinitionNode(
+          name: _i1.NameNode(value: 'input'),
+          directives: [],
+          type: _i1.NamedTypeNode(
+            name: _i1.NameNode(value: 'DuplicateNullChecksInput'),
+            isNonNull: false,
+          ),
+          defaultValue: null,
+        )
+      ],
+      type: _i1.NamedTypeNode(
+        name: _i1.NameNode(value: 'String'),
+        isNonNull: false,
+      ),
+    ),
+    _i1.FieldDefinitionNode(
       name: _i1.NameNode(value: 'search'),
       directives: [],
       args: [
@@ -1118,6 +1137,21 @@ const ColorInput = _i1.InputObjectTypeDefinitionNode(
     ),
   ],
 );
+const DuplicateNullChecksInput = _i1.InputObjectTypeDefinitionNode(
+  name: _i1.NameNode(value: 'DuplicateNullChecksInput'),
+  directives: [],
+  fields: [
+    _i1.InputValueDefinitionNode(
+      name: _i1.NameNode(value: 'nullableText'),
+      directives: [],
+      type: _i1.NamedTypeNode(
+        name: _i1.NameNode(value: 'String'),
+        isNonNull: false,
+      ),
+      defaultValue: null,
+    )
+  ],
+);
 const Starship = _i1.ObjectTypeDefinitionNode(
   name: _i1.NameNode(value: 'Starship'),
   directives: [],
@@ -2032,6 +2066,7 @@ const document = _i1.DocumentNode(definitions: [
   ReviewBy,
   CustomFieldInput,
   ColorInput,
+  DuplicateNullChecksInput,
   Starship,
   Post,
   PostLikes,
